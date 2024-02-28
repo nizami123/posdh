@@ -1,0 +1,2 @@
+[02-Jul-2022 06:43:47 UTC] PHP Fatal error:  Cannot redeclare Inventaris::tes() in /home/codeling/public_html/demo/cimart3/application/controllers/Inventaris.php on line 108
+[02-Jul-2022 06:44:13 UTC] PHP Fatal error:  Cannot redeclare Inventaris::tes() in /home/codeling/public_html/demo/cimart3/application/controllers/Inventaris.php on line 108

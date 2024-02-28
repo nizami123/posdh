@@ -1,0 +1,64 @@
+body {
+    background-color: var(--bg-hd-left);
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+h2 {
+    font-size: 1.6rem;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+}
+.auth-wrap {
+    background-color: rgba(255, 255, 255, 0.9);
+    background: linear-gradient(
+        to top left,
+        rgba(255, 255, 255, 0.6),
+        rgba(255, 255, 255, 0.95)
+    );
+    box-shadow: 0 0 30px 0 rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(20px);
+    border-radius: 1rem;
+    position: relative;
+    max-width: 310px;
+    width: 100%;
+}
+.auth-wrap ._header {
+    padding: 25px 20px 10px;
+    color: var(--bg-hd-left);
+}
+.auth-wrap ._body {
+    padding: 20px 20px 30px;
+}
+label {
+    display: inline-block;
+}
+._field {
+    width: 100%;
+    border: 0;
+    outline: none;
+    padding: 12px 20px;
+    font-size: 15px;
+    border-radius: 2rem;
+    background-color: rgba(255, 255, 255, 0.7);
+    transition: 250ms ease;
+}
+._field:focus {
+    background-color: rgb(255, 255, 255);
+}
+._btn {
+    padding: 12px 20px;
+    width: 100%;
+    border: 0;
+    border-radius: 2rem;
+    background-color: var(--bg-hd-left);
+    color: #fff;
+    font-weight: 600;
+    letter-spacing: 0.8px;
+    outline: none;
+}
+._btn:hover {
+    opacity: 0.8;
+}

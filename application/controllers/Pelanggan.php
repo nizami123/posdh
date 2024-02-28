@@ -1,0 +1,118 @@
+<?php
+defined('BASEPATH') OR exit('No direct script access allowed');
+
+class Pelanggan extends CI_Controller {
+    function __construct() {
+        parent::__construct();
+		belum_login();
+		waktu_local();
+        $this->load->model('m_pelanggan', 'plg');
+    }
+
+    function index() {
+        $conf = [
+			'tabTitle' 	=> 'Data Pelanggan | ' . webTitle(),
+			'webInfo' => '
+				<strong>
+					Pelanggan
+				</strong>
+				<span>
+					Data
+				</span>
+			',
+			
+		];
+		$this->layout->load('layout', 'pelanggan/index', $conf);
+    }
+
+    function load_data_plg() {
+		$list = $this->plg->data_plg();
+		$data = [];
+		$no = $this->input->post('start');
+		foreach ($list as $item) { 
+			$ponsel = $item->no_ponsel ? $item->no_ponsel : '-';
+			$aksi = admin()->level != 'Admin' ? '
+				<div class="mt-2">                                       
+					<a href="#modal_ubah_plg" data-toggle="modal" class="badge badge-primary btn_ubah_plg" data-id="'.$item->id_plg.'">
+						Ubah
+					</a>
+					<a href="'.site_url('pelanggan/hapus/'.$item->id_plg).'" class="badge badge-danger hps" data-text="<strong>'.$item->nama_plg.'</strong> akan dihapus dari daftar">
+						Hapus
+					</a>
+				</div>
+			' : '';          
+			$no++;
+			$row   = [];
+			$row[] = $no;
+			$row[] = $item->nama_plg .
+				'<div class="text-muted">
+					<small>
+						<span> '.$ponsel.' </span>
+					</small>
+					<small class="mx-2"> | </small>
+					<small>
+						<span> '.$item->alamat.' </span>
+					</small>
+				</div>								
+			' . $aksi ;
+			$data[] = $row;
+		}
+		$output = [
+			"draw"             => $this->input->post('draw'),
+			"recordsTotal"     => $this->plg->count_all_plg(),
+			"recordsFiltered"  => $this->plg->count_plg(),
+			"data"             => $data,
+		];
+		echo json_encode($output);
+	}
+
+    function form_ubah_plg($id = null) {
+        $data = $this->plg->pelanggan($id);
+        $html = '
+            <div class="modal-header">
+                <div>
+                    <h5 class="mb-0 text-primary">Pelanggan</h5>
+                    <small class="text-muted">Ubah Data Pelanggan</small>
+                </div>
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="form-group col-md-12">
+                        <label for="">Nama Pelanggan <span class="text-danger">*</span> </label>
+                        <input type="hidden" name="u_id_plg" value="'.$data->id_plg.'" >
+                        <input type="text" class="form-control form-control-sm" name="u_nama_plg" value="'.$data->nama_plg.'" required>
+                    </div>                    
+                    <div class="form-group col-md-12">
+                        <label for="">No Ponsel</label>
+                        <input type="text" class="form-control form-control-sm" name="u_no_ponsel" value="'.$data->no_ponsel.'">
+                    </div>                    
+                    <div class="form-group col-md-12">
+                        <label for="">Alamat</label>
+                        <input type="text" class="form-control form-control-sm" name="u_alamat" value="'.$data->alamat.'">
+                    </div>                      
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary">
+                    Simpan
+                </button>
+            </div>
+        ';
+        echo $html;
+    } 
+
+	function proses_tambah_plg() {
+		$input = $this->input->post(null, true);
+		$this->plg->tambah_plg($input);
+	}
+
+	function proses_ubah_plg() {
+		$input = $this->input->post(null, true);
+		$this->plg->ubah_plg($input);
+	}
+
+	function hapus($id = null) {
+		$this->plg->hapus($id);
+	}
+}

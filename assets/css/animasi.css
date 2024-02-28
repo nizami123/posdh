@@ -1,0 +1,28 @@
+@keyframes _navinfo {
+    0% {
+        width: 0;
+    }
+    50% {
+        width: 100%;
+    }
+    100% {
+        width: 70%;
+    }
+}
+
+@keyframes a_load {
+    0% {
+        top: -30px;
+    }    
+    30% {
+        top: -55px;
+    }
+    50% {
+        top: -25px;
+    }
+    100% {
+        height: 17px;
+        width: 24px;
+        top: -30px;
+    }
+}

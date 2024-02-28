@@ -1,0 +1,31 @@
+@media screen and (max-width: 768px) {
+    header ._left {
+        left: -120%;
+    }    
+    .showhide-group, .navInfo, main, .colls-menu main, .colls-menu .navInfo, .mini-sidebar .navInfo {
+        width: 100% !important;
+        left: 0;
+    }
+    .showhide-group, .colls-menu .showhide-group {
+        left: 23px !important;
+    }
+    header ._right ._text, .mini-sidebar .webTitle ._short, .mini-sidebar header ._right, .mini-sidebar .showhide-group strong  {
+        display: none;
+    }
+    .mini-sidebar .webTitle ._long, .mini-sidebar .navmenu ._text {
+        display: block;
+    }
+    header ._right > ul > li > a {
+        width: unset;
+    }
+    .mini-sidebar header ._left {
+        left: 0;
+        width: var(--w-hleft);
+    }
+    .mini-sidebar .showhide-group, .collps-menu.mini-sidebar .showhide-group {
+        left: calc(var(--w-hleft) + 20px) !important;
+    }
+    .collps-menu .navInfo, .collps-menu.mini-sidebar .navInfo {
+        left: 0;
+    }
+}
