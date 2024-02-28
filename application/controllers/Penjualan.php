@@ -879,8 +879,7 @@ class Penjualan extends CI_Controller {
 		$list = $this->jual->data_riwayat(null);
 		$data = [];
 		$no = $this->input->post('start');
-		foreach ($list as $item) { 	
-			// print_r($list);die;
+		foreach ($list as $item) { 
 			$nama_plg = $item->id_plg ? $item->nama_plg : 'Umum';
 			$jml = $this->jual->cek_jml_jual($item->kode_penjualan);
 			if ($item->status_penjualan == 0){
