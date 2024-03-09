@@ -16,6 +16,8 @@
                                 <th>No</th>
                                 <th>Tanggal</th>
                                 <th>Barang</th>
+                                <th>Cara Bayar</th>
+                                <th>Bank</th>
                                 <th>Status</th>
                                 <th>Aksi</th>
                             </tr>

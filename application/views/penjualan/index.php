@@ -89,6 +89,7 @@
             <div class="card-body">
                 <p class="mb-1">Total Keranjang</p>
                 <h4 class="text-danger total_cart">0</h4>
+                <input type="text" name="status" id="status" value="<?= isset($_GET['status']) ? $_GET['status'] : '' ?>">
                 <input type="hidden" class="total_cart_inp" value="0" name="total_keranjang">
                 <div class="card-icon d-flex">
                     <i class="fa fa-money-bill-alt"></i>
@@ -108,8 +109,13 @@
         
         <div class="card">
             <div class="card-body form_pembayaran">
+            
                 <div class="form-group">
                     <label> Pelanggan </label>
+                    <input disabled class="form-control form-control-sm">
+                </div>
+                <div class="form-group">
+                    <label> Kasir </label>
                     <input disabled class="form-control form-control-sm">
                 </div>
                 <div class="form-group">
@@ -118,6 +124,10 @@
                 </div>
                 <div class="form-group">
                     <label for="">Bayar</label>
+                    <input disabled class="form-control form-control-sm">
+                </div>
+                <div class="form-group">
+                    <label> Bank </label>
                     <input disabled class="form-control form-control-sm">
                 </div>
                 <div class="mt-4">
@@ -174,6 +184,60 @@
                         <thead class="bg-light">
                             <th></th>
                             <th>Pelanggan</th>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modal_data_ksr">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div>
+                    <h5 class="mb-0 text-primary">
+                        Kasir
+                    </h5>
+                    <small>Data Kasir</small>
+                </div>
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered w-100" id="data_ksr">
+                        <thead class="bg-light">
+                            <th></th>
+                            <th>Kasir</th>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modal_data_bank">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div>
+                    <h5 class="mb-0 text-primary">
+                        Bank
+                    </h5>
+                    <small>Data Bank</small>
+                </div>
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered w-100" id="data_bank">
+                        <thead class="bg-light">
+                            <th></th>
+                            <th>Bank</th>
+                            <th>No Rekening</th>
+                            <th>Nama Rekening</th>
                         </thead>
                     </table>
                 </div>

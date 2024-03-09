@@ -4,6 +4,12 @@ class m_pelanggan extends CI_Model {
     private $tb_plg = 'tb_pelanggan';
     var $src_plg    = ['nama_plg'];
 
+    private $tb_ksr = 'tb_kasir';
+    var $src_ksr    = ['nama_ksr'];
+
+    private $tb_bank = 'tb_bank';
+    var $src_bank    = ['nama_bank'];
+
     private function __data_plg() {
         $this->db->from($this->tb_plg . ' plg');
         
@@ -24,6 +30,46 @@ class m_pelanggan extends CI_Model {
         }
     }
 
+    private function __data_ksr() {
+        $this->db->from($this->tb_ksr . ' ksr');
+        
+        $i = 0;
+        foreach ($this->src_ksr as $item) {  
+            if(@$_POST['search']['value']) { 
+                if($i == 0) { 
+                    $this->db->group_start();
+                    $this->db->like($item, $_POST['search']['value']);
+                } else {
+                    $this->db->or_like($item, $_POST['search']['value']);
+                }
+                if(count($this->src_ksr) - 1 == $i) {
+                    $this->db->group_end(); 
+                }
+            }
+            $i++;
+        }
+    }
+
+    private function __data_bank() {
+        $this->db->from($this->tb_bank . ' ksr');
+        
+        $i = 0;
+        foreach ($this->src_bank as $item) {  
+            if(@$_POST['search']['value']) { 
+                if($i == 0) { 
+                    $this->db->group_start();
+                    $this->db->like($item, $_POST['search']['value']);
+                } else {
+                    $this->db->or_like($item, $_POST['search']['value']);
+                }
+                if(count($this->src_bank) - 1 == $i) {
+                    $this->db->group_end(); 
+                }
+            }
+            $i++;
+        }
+    }
+
     function count_plg() {
         $this->__data_plg();
         return $this->db->get()->num_rows();
@@ -37,6 +83,44 @@ class m_pelanggan extends CI_Model {
     function data_plg() {
         $this->__data_plg();
         $this->db->order_by('id_plg', 'desc');
+        if(@$_POST['length'] != -1) {
+            $this->db->limit(@$_POST['length'], @$_POST['start']);
+        }
+        return $this->db->get()->result();
+    }
+
+    function count_ksr() {
+        $this->__data_ksr();
+        return $this->db->get()->num_rows();
+    }
+
+    function count_all_ksr() {
+        $this->db->from($this->tb_ksr);
+        return $this->db->count_all_results();
+    }
+
+    function data_ksr() {
+        $this->__data_ksr();
+        $this->db->order_by('id_ksr', 'desc');
+        if(@$_POST['length'] != -1) {
+            $this->db->limit(@$_POST['length'], @$_POST['start']);
+        }
+        return $this->db->get()->result();
+    }
+
+    function count_bank() {
+        $this->__data_bank();
+        return $this->db->get()->num_rows();
+    }
+
+    function count_all_bank() {
+        $this->db->from($this->tb_bank);
+        return $this->db->count_all_results();
+    }
+
+    function data_bank() {
+        $this->__data_bank();
+        $this->db->order_by('id_bank', 'desc');
         if(@$_POST['length'] != -1) {
             $this->db->limit(@$_POST['length'], @$_POST['start']);
         }

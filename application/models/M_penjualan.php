@@ -23,6 +23,8 @@ class m_penjualan extends CI_Model {
         $this->db->join('tb_toko tt', 'tbk.id_toko = tt.id_toko', 'LEFT');
         $this->db->join('tb_admin ta', 'tdp.id_admin = ta.id_admin', 'LEFT');
         $this->db->join('tb_pelanggan tpp', 'tdp.id_plg = tpp.id_plg', 'LEFT');
+        $this->db->join('tb_kasir tk', 'tdp.id_ksr = tk.id_ksr', 'LEFT');
+        $this->db->join('tb_bank tbn', 'tp.id_bank = tbn.id_bank', 'LEFT');
 
         $i = 0;
         foreach ($this->src_riwayat as $item) {  
@@ -66,7 +68,7 @@ class m_penjualan extends CI_Model {
         $id_toko = $this->session->userdata('sesi_toko');
         $q       = $this->db->query(
                         "SELECT MAX(RIGHT(kode_penjualan, 4)) AS kode FROM tb_detail_penjualan 
-                                                                      WHERE id_toko = '$id_toko' AND DATE(tgl_transaksi) = CURDATE()"
+                         WHERE id_toko = '$id_toko' AND DATE(tgl_transaksi) = CURDATE()"
                     );
         $kd      = '';
 
@@ -154,7 +156,7 @@ class m_penjualan extends CI_Model {
         ];
         
         $insert = [
-            'id_keluar'        => $kode,
+            'id_keluar'       => $kode,
             'jml'             => 1,
             'id_toko'         => $id_toko,
             'kasir'           => $admin    

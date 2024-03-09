@@ -1922,6 +1922,66 @@
                 ]
             });
 
+            let data_ksr = $('#data_ksr').dataTable({
+                pageLength: 25, 
+                ordering: false,
+                serverSide: true,
+                processing: true, 
+                ajax: {
+                    type: 'post',
+                    url: '<?= site_url('penjualan/load_data_ksr') ?>',
+                    complete: function() {
+                        $('._add_user_ksr').on('click', function(e) {
+                            e.preventDefault();
+                            let nama = $(this).data('nama');
+                            let id   = $(this).data('id');
+
+                            $('.id_ksr').val(id);
+                            $('.nama_ksr').val(nama);
+
+                            $('.modal').modal('hide');
+                            toast('info', 'Kasir ' + nama + ' ditambahkan');
+                        })
+                    }
+                },
+                columnDefs: [
+                    {
+                        className: 'wp-10 text-center',
+                        targets: 0
+                    }
+                ]
+            });
+
+            let data_bank = $('#data_bank').dataTable({
+                pageLength: 25, 
+                ordering: false,
+                serverSide: true,
+                processing: true, 
+                ajax: {
+                    type: 'post',
+                    url: '<?= site_url('penjualan/load_data_bank') ?>',
+                    complete: function() {
+                        $('._add_user_bank').on('click', function(e) {
+                            e.preventDefault();
+                            let nama = $(this).data('nama');
+                            let id   = $(this).data('id');
+
+                            $('.id_bank').val(id);
+                            $('.nama_bank').val(nama);
+
+                            $('.modal').modal('hide');
+                            toast('info', 'Bank ' + nama + ' ditambahkan');
+                        })
+                    }
+                },
+                columnDefs: [
+                    {
+                        className: 'wp-10 text-center',
+                        targets: 0
+                    }
+                ]
+            });
+
             let data_brg = $('#data_brg').dataTable({
                 pageLength: 25, 
                 ordering: false,
@@ -2476,6 +2536,16 @@
                 );
             }
 
+            function getParameterByName(name, url) {
+                if (!url) url = window.location.href;
+                name = name.replace(/[\[\]]/g, '\\$&');
+                var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+                    results = regex.exec(url);
+                if (!results) return null;
+                if (!results[2]) return '';
+                return decodeURIComponent(results[2].replace(/\+/g, ' '));
+            }
+
             function hitung_pembayaran() {
                 let bayar            = $('._bayar').val() ? $('._bayar').val() : 0;
                 let diskon           = $('._diskon').val() ? $('._diskon').val() : 0;
@@ -2503,12 +2573,16 @@
                     toast('warning', 'Diskon tidak valid');
                 }           
 
-                if(parseInt(bayar) >= parseInt(hitung_diskon) && parseInt(total_inp) > 0) {
-                    $('#btn_simpan').removeAttr('disabled');
+                var status = getParameterByName('status');
 
+                if (status === 'dp') {
+                    $('#btn_simpan').removeAttr('disabled');
+                } else if (parseInt(bayar) >= parseInt(hitung_diskon) && parseInt(total_inp) > 0) {
+                    $('#btn_simpan').removeAttr('disabled');
                 } else {
-                    $('#btn_simpan').attr('disabled', true);
+                    $('#btn_simpan').prop('disabled', true);
                 }
+
 
                 // form_pembayaran();
             }

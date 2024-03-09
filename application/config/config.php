@@ -24,8 +24,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 |
 */
 // $config['base_url'] = 'https://demo.codelingker.com/cimart3/';
-// $config['base_url'] = 'http://localhost/cimart3/';
-$config['base_url'] = 'https://live.akira.id/posdh';
+$config['base_url'] = 'http://localhost/cimart3/';
+// $config['base_url'] = 'https://live.akira.id/posdh';
 
 /*
 |--------------------------------------------------------------------------

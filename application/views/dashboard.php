@@ -14,9 +14,20 @@
 			</div>
 		<?php endif ?>
 	</div>
-	<div class="col-lg-8">
+	<div class="col-lg-12">
 		<div class="row">
 			<div class="col-md-12">
+				<a href="<?= site_url('laporan/keuangan') ?>" class="card card-primary mb-3">
+					<div class="card-body">
+						<p class="mb-1">Tutup Toko</p>
+						<h4><?= nf($pemasukan_today) ?></h4>
+						<div class="card-icon d-flex">
+							<i class="fa fa-money-bill-alt"></i>
+						</div>
+					</div>
+				</a>
+			</div>
+			<div class="col-md-6">
 				<a href="<?= site_url('laporan/keuangan') ?>" class="card card-primary mb-3">
 					<div class="card-body">
 						<p class="mb-1">Pemasukan hari ini</p>
@@ -27,10 +38,32 @@
 					</div>
 				</a>
 			</div>
-			<div class="col-md-12">
+			<div class="col-md-6">
+				<a href="<?= site_url('laporan/keuangan') ?>" class="card card-primary mb-3">
+					<div class="card-body">
+						<p class="mb-1">Uang Kasir</p>
+						<h4><?= nf($pemasukan_today) ?></h4>
+						<div class="card-icon d-flex">
+							<i class="fa fa-money-bill-alt"></i>
+						</div>
+					</div>
+				</a>
+			</div>
+			<div class="col-md-6">
 				<a href="<?= site_url('penjualan/riwayat') ?>" class="card card-danger">
 					<div class="card-body">
 						<p class="mb-1">Penjualan hari ini</p>
+						<h4><?= $total_jual ?></h4>
+						<div class="card-icon d-flex">
+							<i class="fa fa-shopping-basket"></i>
+						</div>
+					</div>
+				</a>
+			</div>
+			<div class="col-md-6">
+				<a href="<?= site_url('penjualan/riwayat') ?>" class="card card-danger">
+					<div class="card-body">
+						<p class="mb-1">Total Saldo</p>
 						<h4><?= $total_jual ?></h4>
 						<div class="card-icon d-flex">
 							<i class="fa fa-shopping-basket"></i>

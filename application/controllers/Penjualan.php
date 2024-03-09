@@ -23,8 +23,14 @@ class Penjualan extends CI_Controller {
 			'webInfo' 	=> '
 				<div class="d-flex justify-content-between align-items-center">
 					<div>
-                        <a href="'.site_url('penjualan/retur').'" class="btn dashed bg-white">
-                            Retur
+						<a href="' . site_url('penjualan') . '" class="btn ' . ((!isset($_GET['status']) || empty($_GET['status'])) ? 'dashed bg-black' : 'dashed bg-white') . '">
+							Transaksi
+						</a>
+                        <a href="'.site_url('penjualan?status=dp').'" class="btn ' . (isset($_GET['status']) && $_GET['status'] == 'dp' ? 'dashed bg-black' : 'dashed bg-white') . '">
+                            DP
+                        </a>
+						<a href="'.site_url('penjualan?status=trade').'" class="btn ' . (isset($_GET['status']) && $_GET['status'] == 'trade' ? 'dashed bg-black' : 'dashed bg-white') . '">
+                            Trade In
                         </a>
                         <a href="'.site_url('penjualan/riwayat').'" class="btn bg-white dashed">
                             Riwayat
@@ -109,6 +115,63 @@ class Penjualan extends CI_Controller {
 			"draw"             => $this->input->post('draw'),
 			"recordsTotal"     => $this->plg->count_all_plg(),
 			"recordsFiltered"  => $this->plg->count_plg(),
+			"data"             => $data,
+		];
+		echo json_encode($output);
+	}
+
+	function load_data_ksr() {
+		$list = $this->plg->data_ksr();
+		$data = [];
+		$no = $this->input->post('start');
+		foreach ($list as $item) {         
+			$row   = [];
+			$row[] = '
+				<a href="" 
+				   data-id="'.$item->id_ksr.'" 
+				   data-nama="'.$item->nama_ksr.'" 
+				   class="btn btn-secondary _add_user_ksr"
+				>
+					<i class="fa fa-user-plus"></i>
+				</a>
+			';
+			$row[] = '<strong>'. $item->nama_ksr . '</strong>';
+			$data[] = $row;
+		}
+		$output = [
+			"draw"             => $this->input->post('draw'),
+			"recordsTotal"     => $this->plg->count_all_ksr(),
+			"recordsFiltered"  => $this->plg->count_ksr(),
+			"data"             => $data,
+		];
+		echo json_encode($output);
+	}
+
+
+	function load_data_bank() {
+		$list = $this->plg->data_bank();
+		$data = [];
+		$no = $this->input->post('start');
+		foreach ($list as $item) {         
+			$row   = [];
+			$row[] = '
+				<a href="" 
+				   data-id="'.$item->id_bank.'" 
+				   data-nama="'.$item->nama_bank.'" 
+				   class="btn btn-secondary _add_user_bank"
+				>
+					<i class="fa fa-user-plus"></i>
+				</a>
+			';
+			$row[] = '<strong>'. $item->nama_bank . '</strong>';
+			$row[] = '<strong>'. $item->no_rek . '</strong>';
+			$row[] = '<strong>'. $item->nama_rek . '</strong>';
+			$data[] = $row;
+		}
+		$output = [
+			"draw"             => $this->input->post('draw'),
+			"recordsTotal"     => $this->plg->count_all_bank(),
+			"recordsFiltered"  => $this->plg->count_bank(),
 			"data"             => $data,
 		];
 		echo json_encode($output);
@@ -305,6 +368,21 @@ class Penjualan extends CI_Controller {
 					</div>
 				</div>
 				<div class="form-group">
+					<label> Kasir </label>
+					<div class="input-group">
+						<input readonly class="form-control form-control-sm nama_ksr" required>
+						<input type="hidden" class="id_ksr" name="id_ksr" required>
+						<div class="input-group-append">
+							<a class="btn btn-sm bg-white border px-3" 
+									href="#modal_data_ksr" 
+									data-toggle="modal"
+							>
+								<i class="fa fa-search"></i>
+							</a>
+						</div>
+					</div>
+				</div>
+				<div class="form-group">
 					<label for="">Diskon</label>
 					<div class="input-group">
 						<div class="input-group-prepend">
@@ -325,29 +403,20 @@ class Penjualan extends CI_Controller {
 							</div>
 						</div>
 						<input type="number" class="form-control form-control-sm bg-secondary _bayar" name="bayar">
-					</div>
-					<div>
-					    <span class="auto-input badge badge-light border mr-1 mt-2" data-value="20000">20Rb</span>
-    				    <span class="auto-input badge badge-light border mr-1 mt-2" data-value="50000">50Rb</span>
-    				    <span class="auto-input badge badge-light border mr-1 mt-2" data-value="75000">75Rb</span>
-    				    <span class="auto-input badge badge-light border mt-2" data-value="100000">100Rb</span>
-					</div>
-					
+					</div>					
 				</div>
-
 				<div class="form-group">
-					<div class="">
-						<label for="is_donasi">Donasi</label>
-						<input type="checkbox" id="is_donasi" name="is_donasi">
-					</div>
-					<div class="inp_donasi d-none">
-						<div class="input-group input-group-sm">
-							<div class="input-group-prepend">
-								<div class="input-group-text bg-white px-3">
-									Rp
-								</div>
-							</div>
-							<input type="number" min="0" class="form-control form-control-sm bg-secondary" name="jml_donasi" placeholder="0">
+					<label> Cara Bayar </label>
+					<div class="input-group">
+						<input readonly class="form-control form-control-sm nama_bank" value="Tunai">
+						<input type="hidden" value="Tunai" class="id_bank" name="id_bank">
+						<div class="input-group-append">
+							<a class="btn btn-sm bg-white border px-3" 
+									href="#modal_data_bank" 
+									data-toggle="modal"
+							>
+								<i class="fa fa-search"></i>
+							</a>
 						</div>
 					</div>
 				</div>
@@ -400,20 +469,29 @@ class Penjualan extends CI_Controller {
 		$kode  	 = $this->jual->kode();
 		$input 	 = $this->input->post(null, true);
 		$brg   	 = [];
-
 		foreach($input['id_keluar'] as $i => $v) {
 			$id_keluar = $this->input->post('id_keluar['.$i.']');
 			$jml 	  = $this->input->post('jml['.$i.']');
 			$harga 	  = $this->input->post('harga_jual['.$i.']');
-
+			if ($input['status'] == 'dp') {
+				$cara_bayar = 'DP';
+				$upstok['status']  = 4;
+        		$this->db->update('tb_brg_keluar', $upstok, ['id_keluar' => $id_keluar]);
+			} else {
+				if ($input['id_bank'] > 0) {
+					$cara_bayar = 'Transfer';
+				} else {
+					$cara_bayar = 'Tunai';
+				}
+			}
 			$brg[] = [
 				'kode_penjualan' => $kode,
-				'id_keluar' 		 => $id_keluar,
+				'id_keluar' 	 => $id_keluar,
 				'jml'			 => $jml,
-				'harga_jual'	 => $harga
+				'harga_jual'	 => $harga,
+				'cara_bayar'	 => $cara_bayar,
+				'id_bank'		 => $input['id_bank']
 			];
-
-// 			$this-> jual->update_stok($v, $jml);
 
 		}
 		$is_donasi = isset($input['is_donasi']) ? 1 : 0;
@@ -425,6 +503,7 @@ class Penjualan extends CI_Controller {
 			'bayar'      	 	=> $input['bayar'],
 			'diskon'      	 	=> $input['diskon'] ?  $input['diskon'] : 0,
 			'id_plg'      	 	=> $input['id_plg'],
+			'id_ksr'      	 	=> $input['id_ksr'],
 			'jenis_diskon'  	=> $input['jenis_diskon'],
 			'is_donasi'  		=> $is_donasi,
 			'jml_donasi'  		=> isset($input['is_donasi']) ? $input['jml_donasi'] : 0,
@@ -852,20 +931,7 @@ class Penjualan extends CI_Controller {
 	function riwayat() {
 		$conf = [
 			'tabTitle' 	=> 'Riwayat Penjualan | ' . webTitle(),
-			'webInfo' 	=> '
-				<div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <a href="'.site_url('penjualan').'" class="btn bg-white dashed">
-                            <i class="fa fa-shopping-basket"></i>
-                        </a>
-                        <a href="'.site_url('penjualan/retur').'" class="btn bg-white dashed">
-                            Retur
-                        </a>
-                    </div>
-                </div>
-				
-			'
-			
+			'webInfo' 	=> ''
 		];
 		if(admin()->level != 'Admin') {
 			$this->layout->load('layout', 'penjualan/riwayat', $conf);
@@ -925,7 +991,17 @@ class Penjualan extends CI_Controller {
 					</small>
 				</div>
 			';
-			
+			$row[]  = $item->cara_bayar;
+			$row[]  = '
+				<strong>'. $item->nama_bank.'</strong>
+				<div>
+					<small class="text-muted">
+						<span>'.$item->no_rek.'</span>
+						<span class="mx-2"> | </span>
+						<span>'.$item->nama_rek.'</span>
+					</small>
+				</div>
+			';
 			$row[]  = $status_penjualan;
 			$row[]  = $aksi;
 			$data[] = $row;
@@ -974,7 +1050,7 @@ class Penjualan extends CI_Controller {
 							<tr>
 								<td>Kasir</td>
 								<td>:</td>
-								<th>'.$detail->nama_admin.'</th>
+								<th>'.$detail->nama_ksr.'</th>
 							</tr>
 						</table>
 					</div>
@@ -1010,7 +1086,18 @@ class Penjualan extends CI_Controller {
 							</tr>
 						';
 					}
-							
+
+		if ($jual[0]->cara_bayar == 'DP'){
+			$table = '<tr>
+				<th class="text-right" colspan="3">Sisa Belum Dibayar</th>
+				<th class="text-right text-primary">'.nf($detail->total_keranjang - $detail->bayar).'</th>
+			</tr>';
+		}else{
+			$table = '<tr>
+				<th class="text-right" colspan="3">Kembalian</th>
+				<th class="text-right text-primary">'.nf($detail->total_kembalian).'</th>
+			</tr>';
+		}
 		$html .= '
 						</tbody>  
 						<tfoot>
@@ -1026,14 +1113,7 @@ class Penjualan extends CI_Controller {
 								<th class="text-right" colspan="3">Bayar</th>
 								<th class="text-right">'.nf($detail->bayar).'</th>
 							</tr>
-							<tr>
-								<th class="text-right" colspan="3">Donasi</th>
-								<th class="text-right">'.nf($detail->jml_donasi).'</th>
-							</tr>
-							<tr>
-								<th class="text-right" colspan="3">Kembalian</th>
-								<th class="text-right text-primary">'.nf($detail->total_kembalian - $detail->jml_donasi).'</th>
-							</tr>
+							'.$table.'
 						</tfoot>                      
 					</table>
 				</div>
