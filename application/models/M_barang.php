@@ -48,12 +48,32 @@ class m_barang extends CI_Model {
         }
     }
 
+    function __data_kat () {
+        $this->db->from('tb_barang tbk');
+
+        $i = 0;
+        foreach ($this->src_brg as $item) {  
+            if(@$_POST['search']['value']) { 
+                if($i == 0) { 
+                    $this->db->group_start();
+                    $this->db->like($item, $_POST['search']['value']);
+                } else {
+                    $this->db->or_like($item, $_POST['search']['value']);
+                }
+                if(count($this->src_brg) - 1 == $i) {
+                    $this->db->group_end(); 
+                }
+            }
+            $i++;
+        }
+    }
+
     private function __data_masuk() {
        $this->db->from($this->brg_masuk . ' brgm');
-       $this->db->join($this->detail_brgm . ' detail', 'brgm.kode_masuk = detail.kode_masuk');
-       $this->db->join($this->barang . ' brg', 'brgm.kode_brg = brg.kode_brg');
+       $this->db->join($this->barang . ' brg', 'brgm.id_brg = brg.id_brg');
        $this->db->join($this->supplier . ' supplier', 'brgm.id_supplier = supplier.id_supplier', 'left');
-       $this->db->join($this->admin . ' admin', 'detail.id_admin = admin.id_admin', 'left');
+       $this->db->join($this->brg_keluar . ' tbk', 'brgm.id_masuk = tbk.id_masuk', 'left');
+       $this->db->where('tbk.status', '2');
 
         $i = 0;
         foreach ($this->src_brg as $item) {  
@@ -223,7 +243,7 @@ class m_barang extends CI_Model {
     function total_brg() {
         $toko = $this->session->userdata('sesi_toko');
         $this->db->from($this->barang);
-        $this->db->where('id_toko', $toko);        
+        $this->db->where('tbk.id_toko', $toko);        
         return $this->db->count_all_results();
     }
     
@@ -250,6 +270,16 @@ class m_barang extends CI_Model {
         return $this->db->get ()->row ();
     }
     
+
+    function merk () {
+        return $this->db->query ("select * from tb_kategori where kode = 'MRK'")->result();
+    }
+
+    function jenis () {
+        return $this->db->query ("select * from tb_kategori where kode = 'JNS'")->result();
+    }
+    
+
     function brg_by_kode ($kode) {
         $id_toko = $this->session->userdata('sesi_toko');
         $this->__data_brg ();       
@@ -442,8 +472,7 @@ class m_barang extends CI_Model {
         $id      = $this->session->userdata('sesi_id_admin');
         
         $this->__data_masuk();
-        $this->db->where ('detail.id_admin', $id);
-        $this->db->where ('brg.id_toko', $id_toko);
+        $this->db->where ('tbk.id_toko', $id_toko);
         $this->db->limit (10);
         return $this->db->get()->result();
     }
@@ -451,40 +480,67 @@ class m_barang extends CI_Model {
     function count_masuk() {
         $toko = $this->session->userdata('sesi_toko');
         $this->__data_masuk();
-        $this->db->where ('detail.id_toko', $toko);
+        $this->db->where ('tbk.id_toko', $toko);
+        if ($this->input->post('id_brg')){
+            $this->db->where ('brg.id_brg', $this->input->post('id_brg'));
+        }
         return $this->db->get()->num_rows();
     }
 
-    function count_all_masuk($tgl = null) {
+    function count_kat() {
+        $toko = $this->session->userdata('sesi_toko');
+        $this->__data_kat();
+        return $this->db->get()->num_rows();
+    }
+
+    function nama_kat($id) {
+        $this->__data_kat();
+        $this->db->where ('id_brg', $id);
+        return $this->db->get()->row();
+    }
+
+    function count_all_masuk() {
         $toko = $this->session->userdata('sesi_toko');
         $this->db-> from ($this->barang . ' brg');
-        $this->db-> join ($this->brg_masuk . ' masuk', 'brg.kode_brg = masuk.kode_brg');
-        $this->db-> join ($this->detail_brgm . ' detail', 'detail.kode_masuk = masuk.kode_masuk');
+        $this->db-> join ($this->brg_masuk . ' masuk', 'brg.id_brg = masuk.id_brg');
+        $this->db-> join ($this->brg_keluar . ' tbk', 'tbk.id_masuk = masuk.id_masuk');
+        $this->db->where ('tbk.id_toko', $toko);
         
-        $this->db->where ('detail.id_toko', $toko);
-
-        if($tgl) {
-            $this->db->where('DATE(tgl_masuk)', date('Y-m-d'));
+        if ($this->input->post('id_brg')){
+            $this->db->where ('brg.id_brg', $this->input->post('id_brg'));
         }
-        
+
         return $this->db->get()->num_rows();
     }
 
     function count_jml_masuk ($kode) {
-        return $this->db->get_where ($this->brg_masuk, ['kode_masuk' => $kode])->num_rows ();
+        return $this->db->get_where ($this->brg_masuk, ['id_masuk' => $kode])->num_rows ();
     }
 
     function total_harga_masuk ($kode) {
-        $cek =  $this->db->get_where ($this->brg_masuk, ['kode_masuk' => $kode])->result ();
+        $cek =  $this->db->get_where ($this->brg_masuk, ['id_masuk' => $kode])->result ();
         $total = 0;
         foreach($cek as $data) {
-            $brg = $this->brg($data->kode_brg);
+            $brg = $this->brg($data->id_brg);
             $harga = $brg ? $brg->harga_modal : 0;
-            $subharga = $harga * $data->stok_masuk;
+            $subharga = $harga * 1;
             $total += $subharga; 
         }
 
         return $total;
+    }
+
+    function detail_kat() {
+        $toko = $this->session->userdata('sesi_toko');
+        $level = $this->session->userdata('sesi_level');
+        $id_admin = $this->session->userdata('sesi_id_admin');
+
+        $this->__data_kat();
+
+        if(@$_POST['length'] != -1) {
+            $this->db->limit(@$_POST['length'], @$_POST['start']);
+        }
+        return $this->db->get()->result ();
     }
 
     function detail_masuk() {
@@ -498,12 +554,11 @@ class m_barang extends CI_Model {
             $this->db->limit(@$_POST['length'], @$_POST['start']);
         }
 
-        $this->db->group_by ('brgm.kode_masuk');
-        $this->db->order_by ('detail.kode_masuk', 'desc');
-        $this->db->where ('brg.id_toko', $toko);
-        
-        if($level == 'Admin') {
-            $this->db->where ('detail.id_admin', $id_admin);
+        $this->db->order_by ('brgm.tgl_masuk', 'desc');
+        $this->db->where ('tbk.id_toko', $toko);
+
+        if ($this->input->post('id_brg')){
+            $this->db->where ('brg.id_brg', $this->input->post('id_brg'));
         }
 
         return $this->db->get()->result ();
@@ -511,15 +566,15 @@ class m_barang extends CI_Model {
 
     function brg_masuk($id) {
         $this->__data_masuk();
-        $this->db->where ('brgm.kode_masuk', $id);
-        $this->db->group_by('brgm.kode_brg');
+        $this->db->where ('brgm.id_brg', $id);
+        $this->db->group_by('brgm.id_brg');
         return $this->db->get ();
     }
 
     function detail_brg_masuk($id) {
         $this->__data_masuk();
-        $this->db->group_by ('brgm.kode_masuk');
-        $this->db->where ('detail.kode_masuk', $id);
+        $this->db->group_by ('brgm.id_brg');
+        $this->db->where ('brgm.id_brg', $id);
 
         return $this->db->get ()->row ();
     }
@@ -545,8 +600,8 @@ class m_barang extends CI_Model {
     }
 
     function hps_masuk ($id) {
-        $this->db->delete ($this->brg_masuk, ['kode_masuk' => $id]);
-        $this->db->delete ($this->detail_brgm, ['kode_masuk' => $id]);
+        $this->db->delete ($this->brg_masuk, ['id_masuk' => $id]);
+        $this->db->delete ($this->detail_brgm, ['id_masuk' => $id]);
     }
 
     function kode_keluar() {

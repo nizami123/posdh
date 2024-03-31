@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Karyawan extends CI_Controller {
+class Barang extends CI_Controller {
 	function __construct() {
 		parent::__construct();
 		belum_login();
@@ -17,18 +17,18 @@ class Karyawan extends CI_Controller {
 	
 	function index() {
 		$conf = [
-			'tabTitle' 	=> 'Data Karyawan | ' . webTitle(),
+			'tabTitle' 	=> 'Data Barang | ' . webTitle(),
 			'data_toko' => $this->toko->data_toko(),
 			'webInfo' => '
 				<strong>
-					Karyawan
+					Barang Tersedia
 				</strong>
 				<span>
 					Data
 				</span>
 			',
 		];
-			$this->layout->load('layout', 'karyawan/index', $conf);
+			$this->layout->load('layout', 'barang/index', $conf);
 	}
 
 	function load_data() {

@@ -672,39 +672,6 @@
                             });
                     },
                 },
-                // columns: [
-                //     {data: 'kode_brg'},
-                //     {data: 'nama_brg'},
-                // ],
-                // columnDefs: [
-                //     {
-                //         targets: 0,
-                //         className: 'text-center wc-50',
-                //         render: function(data, type, row, meta) {
-                //             return meta.row + meta.settings._iDisplayStart + 1;
-                //         }
-                //     },
-                //     {
-                //         targets: 1,
-                //         render: function(data, type, row, meta) {
-                //             return row.detail + row.act;
-                //         }
-                //     }
-                // ],
-                // order: [0, 'asc'],
-                // columnDefs: [
-                //     {
-                //         className: 'text-center',
-                //         targets: [0,1,4]
-                //     },
-                //     {
-                //         targets: 3,
-                //         className: 'text-center',
-                //         render: function(data, type, row, meta) {
-                //             return row.stok_tersedia + ' ' + row.satuan;
-                //         }
-                //     }
-                // ],
                 language: {
                     lengthMenu: "_MENU_",
                     zeroRecords: "No Data.",
@@ -781,6 +748,77 @@
                     },
                 ]
             });
+
+            let id_brg = $('#nama_brg_tambah').val();
+            let brg_tambah = $('#brg_tambah').dataTable({
+                ordering: false,
+                pageLength: 50,
+                processing: true,
+                servetSide: true,
+                ajax: {
+                    url: '<?php echo site_url('inventaris/load_modal_data_brgm/'); ?>',
+                    type: 'post',
+                    data : {id_brg : id_brg},
+                    complete:  () => {
+                        $('.hps').on('click', function (e) {
+                            e.preventDefault();
+                            let text = $(this).data('text');
+                            let href = $(this).attr('href');
+
+                            hps (href, text, brg_tambah);
+                        });
+
+                        $('.btn_load_brgm').on('click', function () {
+                            let href = $(this).attr('href');
+                            $.get(
+                                href,
+                                function (data) {
+                                    $('#modal_detail_brgm .modal-content').html(data);
+
+                                    $('.hps_brgm').on('click', function (e) {
+                                        e.preventDefault();
+                                        let href = $(this).attr('href');
+                                        $(this).closest('tr').remove(); 
+
+                                        Swal.fire({
+                                            icon: 'question',
+                                            title: 'Apakah anda yakin?',
+                                            showCancelButton: true,
+                                            confirmButtonText: 'Hapus',
+                                            cancelButtonText: 'Batal',
+                                            buttonsStyling: false,
+                                            customClass: {
+                                                confirmButton: 'btn btn-danger mr-2',
+                                                cancelButton: 'btn btn-secondary'
+                                            },
+                                        }).then(
+                                            result => {
+                                                if(result.isConfirmed) {
+                                                    $.get(
+                                                        href,
+                                                        function() {
+                                                            toast('success', 'Data barang masuk sudah dihapus');
+                                                            brg_tambah.api().ajax.reload(null, true);
+                                                        }
+                                                    );
+                                                }
+                                            }
+                                        );
+                                        
+                                    })
+                                }
+                            )
+                        })
+                    }
+                },
+                columnDefs: [
+                    {
+                        className: 'text-center wc-50',
+                        targets: 0
+                    },
+                ]
+            });
+
 
             let brg_keluar = $('#brg_keluar').dataTable({
                 ordering: false,
@@ -1471,10 +1509,6 @@
                     },
                     // dataType: 'json',
                     success: function(data) {
-                        // if(data != 'undefined') {
-                        //     $('#val').attr('data-harga', data.harga);
-                        //     $('#val').attr('data-min', data.min);
-                        // }
                         console.log(data);
                     }
                 })
@@ -1491,6 +1525,7 @@
                         data_brg.api().ajax.reload(null, true);
                         $('.modal').trigger('reset').modal('hide');
                         toast('success', 'Barang baru sudah ditambahkan');
+                        brg_tambah.api().ajax.reload(null, true);
                         $('#sw_grosir').attr('checked', false);
                     } else {
                         toast('warning', data);
@@ -1941,6 +1976,74 @@
 
                             $('.modal').modal('hide');
                             toast('info', 'Kasir ' + nama + ' ditambahkan');
+                        })
+                    }
+                },
+                columnDefs: [
+                    {
+                        className: 'wp-10 text-center',
+                        targets: 0
+                    }
+                ]
+            });
+
+            let data_trade = $('#data_trade').dataTable({
+                pageLength: 25, 
+                ordering: false,
+                serverSide: true,
+                processing: true, 
+                ajax: {
+                    type: 'post',
+                    url: '<?= site_url('penjualan/load_data_trade') ?>',
+                    complete: function() {
+                        $('._add_user_trade').on('click', function(e) {
+                            e.preventDefault();
+                            let nama = $(this).data('nama');
+                            let id   = $(this).data('id');
+                            let harga   = $(this).data('harga');
+
+                            $('.id_trade').val(id);
+                            $('.nama_trade').val(nama);
+
+                            $('#trade').val(harga);
+                            $('#jenis_trade').val(nama);
+                            $('.modal').modal('hide');
+                            hitung_pembayaran();
+                            toast('info', 'Barang ' + nama + ' ditambahkan');
+                        })
+                    }
+                },
+                columnDefs: [
+                    {
+                        className: 'wp-10 text-center',
+                        targets: 0
+                    }
+                ]
+            });
+
+            let data_diskon = $('#data_diskon').dataTable({
+                pageLength: 25, 
+                ordering: false,
+                serverSide: true,
+                processing: true, 
+                ajax: {
+                    type: 'post',
+                    url: '<?= site_url('penjualan/load_data_diskon') ?>',
+                    complete: function() {
+                        $('._add_user_diskon').on('click', function(e) {
+                            e.preventDefault();
+                            let nama = $(this).data('nama');
+                            let id   = $(this).data('id');
+                            let tipe   = $(this).data('tipe');
+
+                            $('.id_diskon').val(id);
+                            $('.nama_diskon').val(id);
+
+                            $('#diskon').val(nama);
+                            $('#jenis_diskon').val(tipe);
+                            $('.modal').modal('hide');
+                            hitung_pembayaran();
+                            toast('info', 'diskon ' + nama + ' ditambahkan');
                         })
                     }
                 },
@@ -2500,14 +2603,20 @@
             }
             
             function form_pembayaran() {
+                var status = getParameterByName('status');
                 $('.form_pembayaran').load(
                     '<?= site_url('penjualan/form_pembayaran') ?>',
+                    { status: status },
                     function() {
                         $('._bayar, ._diskon').on('input',  function() {
                             hitung_pembayaran();
                         });
 
                         $('.jenis_diskon').on('change', function() {
+                            hitung_pembayaran();
+                        });
+
+                        $('.jenis_trade').on('change', function() {
                             hitung_pembayaran();
                         });
 
@@ -2550,25 +2659,34 @@
                 let bayar            = $('._bayar').val() ? $('._bayar').val() : 0;
                 let diskon           = $('._diskon').val() ? $('._diskon').val() : 0;
                 let jenis_diskon     = $('.jenis_diskon').val();
+                let trade           = $('._trade').val() ? $('._trade').val() : 0;
+                let jenis_trade     = $('.jenis_trade').val();
                 let total            = $('.total_cart_inp').val();
                 let total_inp        = $('.total_cart_inp').val();
                 let hitung_diskon;
+                let hitung_kembalian;
 
-                if(jenis_diskon == 'uang') {
+                total = parseInt(total) - parseInt(trade);
+                if(jenis_diskon == 'Nominal') {
                     hitung_diskon    = parseInt(diskon) > parseInt(total) ? parseInt(total) : parseInt(total) - parseInt(diskon);
 
                 } else {
                     hitung_diskon    = parseInt(diskon) > 100 ?  parseInt(total) : parseInt(total) - (parseInt(total * diskon) / 100);
                 }
 
-                let hitung_kembalian = parseInt(bayar) > parseInt(hitung_diskon) ?  parseInt(bayar) - parseInt(hitung_diskon) : 0;
+                
+                hitung_kembalian = parseInt(bayar) > parseInt(hitung_diskon) ?  parseInt(bayar) - parseInt(hitung_diskon) : 0;
+
+                if (parseInt(trade) > parseInt(total_inp)) {
+                    hitung_diskon = 0;
+                }
 
                 $('.total_kembalian_inp').val(hitung_kembalian);
                 $('[name="jml_donasi"]').val(hitung_kembalian);
                 $('.total_kembalian').text(format(hitung_kembalian));
                 $('.total_cart').text(format(hitung_diskon));     
 
-                if(parseInt(diskon) > parseInt(total) && jenis_diskon == 'uang' || parseInt(diskon) > 100 && jenis_diskon == 'persen') {
+                if(parseInt(diskon) > parseInt(total) && jenis_diskon == 'Nominal' || parseInt(diskon) > 100 && jenis_diskon == 'persen') {
                     $('._diskon').val('');
                     toast('warning', 'Diskon tidak valid');
                 }           

@@ -1,7 +1,7 @@
 <div class="card pt-3">
     <div class="card-header d-flex justify-content-between align-items-start">
         <div>
-            <h2 class="mb-0 text-primary">Data Barang Masuk</h2>
+            <h2 class="mb-0 text-primary">Data <?=$nama_brg->nama_brg?></h2>
             <small>Barang Masuk</small>
         </div>
         <div>
@@ -11,6 +11,7 @@
             </a>
         </div>
     </div>
+    <input type="hidden" id="nama_brg_tambah" value="<?=$nama_brg->id_brg?>">
     <div class="card-body">
         <div class="table-responsive">
             <table class="table table-bordered w-100" id="brg_tambah">
@@ -20,7 +21,8 @@
                     <th>Kategori</th>
                     <th>Serial Number</th>
                     <th>Spesifikasi</th>
-                    <th>Kondisi</th>
+                    <th>Keterangan</th>
+                    <th>Aksi</th>
                 </thead>
             </table>
         </div>
@@ -40,26 +42,9 @@
             <div class="modal-body">
                 <div class="row">
                     <div class="form-group col-md-12">
+                        <input type="hidden" id="id_brg" name="id_brg" value="<?=$nama_brg->id_brg?>">
                         <label for="">Nama Barang <span class="text-danger">*</span> </label>
                         <input type="text" class="form-control form-control-sm" name="nama_brg" required>
-                    </div>      
-                    <div class="form-group col-md-12">
-                        <label for="">Merk </label>
-                        <select name="merk" id="merk" class="form-control form-control-sm">
-                            <option value="">-- Pilih Merk --</option>
-                            <?php foreach ($data_merk as $m) { ?>   
-                                <option value="<?=$m->nama_kategori?>"><?=$m->nama_kategori?></option>
-                            <?php } ?>
-                        </select>
-                    </div>  
-                    <div class="form-group col-md-12">
-                        <label for="">Jenis </label>
-                        <select name="jenis" id="jenis" class="form-control form-control-sm">
-                            <option value="">-- Pilih Jenis --</option>
-                            <?php foreach ($data_jenis as $m) { ?>   
-                                <option value="<?=$m->nama_kategori?>"><?=$m->nama_kategori?></option>
-                            <?php } ?>
-                        </select>
                     </div>                    
                     <div class="form-group col-md-12">
                         <label for="">Serial Number</label>

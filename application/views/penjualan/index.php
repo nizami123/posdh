@@ -89,7 +89,7 @@
             <div class="card-body">
                 <p class="mb-1">Total Keranjang</p>
                 <h4 class="text-danger total_cart">0</h4>
-                <input type="text" name="status" id="status" value="<?= isset($_GET['status']) ? $_GET['status'] : '' ?>">
+                <input type="hidden" name="status" id="status" value="<?= isset($_GET['status']) ? $_GET['status'] : '' ?>">
                 <input type="hidden" class="total_cart_inp" value="0" name="total_keranjang">
                 <div class="card-icon d-flex">
                     <i class="fa fa-money-bill-alt"></i>
@@ -158,6 +158,7 @@
                         <thead class="bg-light">
                             <th></th>
                             <th>Barang</th>
+                            <th>Harga</th>
                         </thead>
                     </table>
                 </div>
@@ -210,6 +211,61 @@
                         <thead class="bg-light">
                             <th></th>
                             <th>Kasir</th>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modal_data_trade">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div>
+                    <h5 class="mb-0 text-primary">
+                        Trade
+                    </h5>
+                    <small>Data Trade</small>
+                </div>
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered w-100" id="data_trade">
+                        <thead class="bg-light">
+                            <th></th>
+                            <th>Trade</th>
+                            <th>Harga</th>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modal_data_diskon">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div>
+                    <h5 class="mb-0 text-primary">
+                        Diskon
+                    </h5>
+                    <small>Data Diskon</small>
+                </div>
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered w-100" id="data_diskon">
+                        <thead class="bg-light">
+                            <th></th>
+                            <th>Diskon</th>
+                            <th>Nominal</th>
+                            <th>Nilai</th>
                         </thead>
                     </table>
                 </div>

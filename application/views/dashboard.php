@@ -16,19 +16,56 @@
 	</div>
 	<div class="col-lg-12">
 		<div class="row">
-			<div class="col-md-12">
-				<a href="<?= site_url('laporan/keuangan') ?>" class="card card-primary mb-3">
-					<div class="card-body">
-						<p class="mb-1">Tutup Toko</p>
-						<h4><?= nf($pemasukan_today) ?></h4>
-						<div class="card-icon d-flex">
-							<i class="fa fa-money-bill-alt"></i>
+		<div class="col-md-12">
+			<div class="card card-primary mb-3">
+				<div class="card-body">
+					<p class="mb-1">Saldo Awal</p>
+					<h4><?= nf($uang_kasir) ?></h4>
+					<div class="card-icon d-flex">
+						<i class="fa fa-money-bill-alt"></i>
+					</div>
+					<!-- Button to open modal -->
+					<?php if (nf($uang_kasir) > 0 && $status == 0){ ?>
+					<button type="button" class="btn btn-primary mt-3" onclick="window.location.href='<?php echo site_url('dashboard/tutup_toko'); ?>'">
+						Tutup Toko
+					</button>
+					<?php }elseif (nf($uang_kasir) == 0){ ?>
+					<button type="button" class="btn btn-primary mt-3" data-toggle="modal" data-target="#saldoModal">
+						Buka Toko
+					</button>
+					<?php } ?>
+				</div>
+			</div>
+		</div>
+
+		<!-- Modal -->
+		<div class="modal fade" id="saldoModal" tabindex="-1" role="dialog" aria-labelledby="saldoModalLabel" aria-hidden="true">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="saldoModalLabel">Input Saldo Toko</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<form method="post" action="<?php echo site_url('dashboard/simpan_saldo'); ?>">
+					<div class="modal-body">
+						<div class="form-group">
+							<label for="saldoInput">Saldo:</label>
+							<input type="text" class="form-control" id="saldoInput" name="saldo" placeholder="Masukkan saldo">
 						</div>
 					</div>
-				</a>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+						<button type="submit" class="btn btn-primary">Save changes</button>
+					</div>
+					</form>
+				</div>
 			</div>
+		</div>
+
 			<div class="col-md-6">
-				<a href="<?= site_url('laporan/keuangan') ?>" class="card card-primary mb-3">
+				<a class="card card-primary mb-3">
 					<div class="card-body">
 						<p class="mb-1">Pemasukan hari ini</p>
 						<h4><?= nf($pemasukan_today) ?></h4>
@@ -39,10 +76,10 @@
 				</a>
 			</div>
 			<div class="col-md-6">
-				<a href="<?= site_url('laporan/keuangan') ?>" class="card card-primary mb-3">
+				<a class="card card-primary mb-3">
 					<div class="card-body">
 						<p class="mb-1">Uang Kasir</p>
-						<h4><?= nf($pemasukan_today) ?></h4>
+						<h4><?= nf($pemasukan_today + $uang_kasir) ?></h4>
 						<div class="card-icon d-flex">
 							<i class="fa fa-money-bill-alt"></i>
 						</div>
@@ -64,7 +101,7 @@
 				<a href="<?= site_url('penjualan/riwayat') ?>" class="card card-danger">
 					<div class="card-body">
 						<p class="mb-1">Total Saldo</p>
-						<h4><?= $total_jual ?></h4>
+						<h4><?= nf($pemasukan_today + $uang_kasir) ?></h4>
 						<div class="card-icon d-flex">
 							<i class="fa fa-shopping-basket"></i>
 						</div>

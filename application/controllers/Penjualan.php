@@ -82,6 +82,7 @@ class Penjualan extends CI_Controller {
 						</small>
 					</div>
 				';
+			$row[] = nf($item->hrg_jual);
 			$data[] = $row;
 		}
 		$output = [
@@ -147,6 +148,35 @@ class Penjualan extends CI_Controller {
 		echo json_encode($output);
 	}
 
+	function load_data_trade() {
+		$list = $this->plg->data_trade();
+		$data = [];
+		$no = $this->input->post('start');
+		foreach ($list as $item) {         
+			$row   = [];
+			$row[] = '
+				<a href="" 
+				   data-id="'.$item->id_trade.'" 
+				   data-nama="'.$item->nama_trade.'" 
+				   data-harga="'.$item->harga.'" 
+				   class="btn btn-secondary _add_user_trade"
+				>
+					<i class="fa fa-user-plus"></i>
+				</a>
+			';
+			$row[] = '<strong>'. $item->nama_trade . '</strong>';
+			$row[] = nf($item->harga) ;
+			$data[] = $row;
+		}
+		$output = [
+			"draw"             => $this->input->post('draw'),
+			"recordsTotal"     => $this->plg->count_all_trade(),
+			"recordsFiltered"  => $this->plg->count_trade(),
+			"data"             => $data,
+		];
+		echo json_encode($output);
+	}
+
 
 	function load_data_bank() {
 		$list = $this->plg->data_bank();
@@ -164,14 +194,44 @@ class Penjualan extends CI_Controller {
 				</a>
 			';
 			$row[] = '<strong>'. $item->nama_bank . '</strong>';
-			$row[] = '<strong>'. $item->no_rek . '</strong>';
-			$row[] = '<strong>'. $item->nama_rek . '</strong>';
+			$row[] = $item->no_rek ;
+			$row[] = $item->nama_rek ;
 			$data[] = $row;
 		}
 		$output = [
 			"draw"             => $this->input->post('draw'),
 			"recordsTotal"     => $this->plg->count_all_bank(),
 			"recordsFiltered"  => $this->plg->count_bank(),
+			"data"             => $data,
+		];
+		echo json_encode($output);
+	}
+
+	function load_data_diskon() {
+		$list = $this->plg->data_diskon();
+		$data = [];
+		$no = $this->input->post('start');
+		foreach ($list as $item) {         
+			$row   = [];
+			$row[] = '
+				<a href="" 
+				   data-id="'.$item->kode_diskon.'" 
+				   data-nama="'.$item->nilai.'" 
+				   data-tipe="'.$item->tipe.'" 
+				   class="btn btn-secondary _add_user_diskon"
+				>
+					<i class="fa fa-user-plus"></i>
+				</a>
+			';
+			$row[] = '<strong>'. $item->kode_diskon . '</strong>';
+			$row[] = $item->tipe ;
+			$row[] = nf($item->nilai) ;
+			$data[] = $row;
+		}
+		$output = [
+			"draw"             => $this->input->post('draw'),
+			"recordsTotal"     => $this->plg->count_all_diskon(),
+			"recordsFiltered"  => $this->plg->count_diskon(),
 			"data"             => $data,
 		];
 		echo json_encode($output);
@@ -350,6 +410,29 @@ class Penjualan extends CI_Controller {
 	function form_pembayaran() {
 		$cek = $this->jual->data_keranjang();
 
+		if ($this->input->post('status') == 'trade'){
+
+		$trade = '	<div class="form-group">
+			<label> Trade Barang </label>
+			<div class="input-group">
+				<input readonly class="form-control form-control-sm nama_trade" required>
+				<input type="hidden" class="id_trade" name="id_trade" required>
+				<div class="input-group-append">
+					<a class="btn btn-sm bg-white border px-3" 
+							href="#modal_data_trade" 
+							data-toggle="modal"
+					>
+						<i class="fa fa-search"></i>
+					</a>
+				</div>
+			</div>
+			<input type="hidden" class="form-control form-control-sm jenis_trade" id="jenis_trade" name="jenis_trade" placeholder="0">
+			<input type="hidden" min="0" class="form-control form-control-sm bg-secondary _trade" id="trade" name="trade" placeholder="0">
+		</div>';
+		}else{
+			$trade = '';
+		}
+
 		if($cek) {
 			$html = '
 				<div class="form-group">
@@ -382,17 +465,25 @@ class Penjualan extends CI_Controller {
 						</div>
 					</div>
 				</div>
+
+				'.$trade.'
+
 				<div class="form-group">
 					<label for="">Diskon</label>
 					<div class="input-group">
-						<div class="input-group-prepend">
-							<select class="form-control form-control-sm jenis_diskon" name="jenis_diskon">
-								<option value="uang">Rp </option>
-								<option value="persen">% </option>
-							</select>
+						<input readonly class="form-control form-control-sm nama_diskon" required>
+						<input type="hidden" class="id_diskon" name="id_diskon" required>
+						<div class="input-group-append">
+							<a class="btn btn-sm bg-white border px-3" 
+									href="#modal_data_diskon" 
+									data-toggle="modal"
+							>
+								<i class="fa fa-search"></i>
+							</a>
 						</div>
-						<input type="number" min="0" class="form-control form-control-sm bg-secondary _diskon" name="diskon" placeholder="0">
 					</div>
+					<input type="hidden" class="form-control form-control-sm jenis_diskon" id="jenis_diskon" name="jenis_diskon" placeholder="0">
+					<input type="hidden" min="0" class="form-control form-control-sm bg-secondary _diskon" id="diskon" name="diskon" placeholder="0">
 				</div>
 				<div class="form-group">
 					<label class="mr-2">Bayar</label>
@@ -477,6 +568,8 @@ class Penjualan extends CI_Controller {
 				$cara_bayar = 'DP';
 				$upstok['status']  = 4;
         		$this->db->update('tb_brg_keluar', $upstok, ['id_keluar' => $id_keluar]);
+			}elseif ($input['status'] == 'trade') {
+				$cara_bayar = 'Trade In';
 			} else {
 				if ($input['id_bank'] > 0) {
 					$cara_bayar = 'Transfer';
@@ -490,7 +583,9 @@ class Penjualan extends CI_Controller {
 				'jml'			 => $jml,
 				'harga_jual'	 => $harga,
 				'cara_bayar'	 => $cara_bayar,
-				'id_bank'		 => $input['id_bank']
+				'id_bank'		 => $input['id_bank'],
+				'id_diskon'		 => $input['id_diskon'],
+				'id_trade'		 => isset($input['id_trade']) ? $input['id_trade'] : ''
 			];
 
 		}
@@ -951,20 +1046,28 @@ class Penjualan extends CI_Controller {
 			if ($item->status_penjualan == 0){
 				$status_penjualan = '<span class="label label-warning">Menunggu Konfirmasi</span>';
 				$hapus = '';
+				$lunas = '';
 				$cetak = '';
 			}else if ($item->status_penjualan == 1){
+				$status_penjualan = '<span class="label label-success">DP Konfirmasi</span>';
+				$lunas = '<a href="' . site_url('penjualan/lunas/' . $item->kode_penjualan) . '" class="badge badge-success border btn-cetak-inv">Lunasi</a>';;
+				$hapus = '';
+				$cetak = '<a href="' . site_url('penjualan/struk/' . $item->kode_penjualan) . '" target="_blank" class="badge badge-light border btn-cetak-inv">Cetak struk</a>';
+			}else if ($item->status_penjualan == 2){
 				$status_penjualan = '<span class="label label-success">Sudah Dikonfirmasi</span>';
 				$hapus = '';
-				$cetak = '<a href="javascript:void(0)"  data-id="'.$item->kode_penjualan.'" class="badge badge-light border btn-cetak-inv">
-				Cetak struk</a>  ';
+				$lunas = '';
+				$cetak = '<a href="' . site_url('penjualan/struk/' . $item->kode_penjualan) . '" target="_blank" class="badge badge-light border btn-cetak-inv">Cetak struk</a>';
 			}else{
 				$status_penjualan = '<span class="label label-danger">Ditolak</span>';
 				$hapus = '<a href="'.site_url('penjualan/hps_riwayat/'.$item->kode_penjualan).'" data-text="Riwayat belanja <strong>'.$item->kode_penjualan.'</strong> akan dihapus dari daftar" class="badge badge-danger hps">
 				Hapus</a> ';
+				$lunas = '';
 				$cetak = '';
 			}
 			$aksi 	  = '
 				<div class="mt-2">
+					'.$lunas.'
 					'.$hapus.'
 					<a href="#modal_detail_riwayat" data-toggle="modal" data-id="'.$item->kode_penjualan.'" class="badge badge-secondary btn_detail_riwayat">
 						Detail
@@ -1090,13 +1193,24 @@ class Penjualan extends CI_Controller {
 		if ($jual[0]->cara_bayar == 'DP'){
 			$table = '<tr>
 				<th class="text-right" colspan="3">Sisa Belum Dibayar</th>
-				<th class="text-right text-primary">'.nf($detail->total_keranjang - $detail->bayar).'</th>
+				<th class="text-right text-primary">'.nf($detail->total_keranjang - $detail->diskon - $detail->bayar).'</th>
 			</tr>';
 		}else{
 			$table = '<tr>
 				<th class="text-right" colspan="3">Kembalian</th>
 				<th class="text-right text-primary">'.nf($detail->total_kembalian).'</th>
 			</tr>';
+		}
+
+		
+		if ($jual[0]->cara_bayar == 'Trade In'){
+			$harga = $this->db->query("select * from tb_brg_keluar where id_keluar = ".$jual[0]->id_trade)->row();
+			$trade = '<tr>
+				<th class="text-right" colspan="3">Harga Barang</th>
+				<th class="text-right text-primary">'.nf($harga->hrg_hpp).'</th>
+			</tr>';
+		}else{
+			$trade = '';
 		}
 		$html .= '
 						</tbody>  
@@ -1105,6 +1219,7 @@ class Penjualan extends CI_Controller {
 								<th class="text-right" colspan="3">Total Belanja</th>
 								<th class="text-right">'.nf($detail->total_keranjang).'</th>
 							</tr>
+							'.$trade.'
 							<tr>
 								<th class="text-right" colspan="3">Diskon</th>
 								<th class="text-right text-danger">'.nf($detail->diskon).'</th>

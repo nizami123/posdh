@@ -23,6 +23,8 @@ class Dashboard extends CI_Controller {
 		$conf = [
 			'tabTitle' 		  => 'Dashboard | ' . webTitle (),
 			'pemasukan_today' => $this->pemasukan_today(),
+			'uang_kasir'      => $this->uang_kasir('Saldo'),
+			'status'	      => $this->uang_kasir('status'),
 			'data_jual'  	  => $this->jual->data_riwayat (10),
 			'total_jual'  	  => $this->jual->jml_penjualan(),
 			'webInfo' 	      => '
@@ -39,11 +41,47 @@ class Dashboard extends CI_Controller {
 		$total = 0;
 
 		foreach($data as $item) {
-			$total += $item->total_keranjang;
+			$total += $item->bayar;
 		}
 
 		return $total;
 	}
+
+	function uang_kasir($name) {
+		if ($name == 'Saldo'){
+			$data = $this->db->query("SELECT COALESCE(SUM(saldo), 0) AS saldo FROM tb_saldo WHERE tanggal = '".date('Y-m-d')."'")->row();
+			return $data->saldo;
+		}else{
+			$data = $this->db->query("SELECT COALESCE(sum(status), 0) AS status FROM tb_saldo WHERE tanggal = '".date('Y-m-d')."'")->row();
+			return $data->status;
+		}
+	}
+
+	function simpan_saldo() {
+        $saldo = $this->input->post('saldo'); // Mengambil nilai saldo dari formulir
+
+        if (!empty($saldo)) {
+            $data = array(
+                'tanggal' => date('Y-m-d'),
+                'saldo' => $saldo
+            );
+
+            $this->db->insert('tb_saldo', $data);
+
+           redirect('Dashboard');
+        } else {
+            redirect('Dashboard');
+        }
+    }
+
+	function tutup_toko() {
+		$data = array(
+			'status' => 1
+		);
+		$this->db->where('tanggal', date('Y-m-d'));
+		$this->db->update('tb_saldo', $data);
+		redirect('Dashboard');
+    }
 
 	function menu () {
 		$conf = [

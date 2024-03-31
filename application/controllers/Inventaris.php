@@ -690,46 +690,54 @@ class Inventaris extends CI_Controller {
 	}
 
 	function proses_tambah_brg() {
+		$uniqueId = uniqid('', true); // Include more entropy
+		$randomNumericPart = rand(1000, 9999); // Generate a random 4-digit number using rand()
+		
+		$newID = 'DHP-' . str_pad($randomNumericPart, 4, '0', STR_PAD_LEFT);
+
 		$input = $this->input->post(null, true);
 
 		if(empty($input['nama_brg'])) {
 			echo 'Nama barang belum diisi!';
 
-		} else if(empty($input['harga_eceran'])) {
-			echo 'Harga eceran belum diisi!';
-			
 		} else {
-			if(filter_angka($input['harga_eceran']) == 0) {
-				echo 'Inputan harga eceran harus angka';
-				
-			} else {
-				$kode = $input['kode_brg'] ? $input['kode_brg'] : $this->brg->kode_brg();
-				$input['kode_brg'] = $kode;
-				$toko = $this->session->userdata('sesi_toko');
-				$cek  = $this->db->get_where('tb_barang', ['kode_brg' => $kode, 'id_toko' => $toko])->num_rows();
 
-				if($cek == 0) {
-					if(isset($input['is_grosir'])) {
-						$toko = $this->session->userdata('sesi_toko');
-						$data_grosir = array_combine($input['harga_grosir'], $input['min_grosir']);
-						$ins_grosir = [];
-						foreach($data_grosir as $harga => $min) {
-							$ins_grosir[] = [
-								'kode_brg' => $kode,
-								'min_jml_grosir' => $min,
-								'harga_grosir_brg' => $harga,
-								'id_toko' => $toko
-							];
-						}
-						$this->brg->tambah_grosir($ins_grosir);
-					}
-					
-					$this->brg-> tambah_barang ($input);
+			$data = array(
+				'id_brg'		=> $newID,
+				'merk'			=> $input['merk'],
+				'jenis'			=> $input['jenis'],
+				'nama_brg'		=> $input['nama_brg'],
+				'Status'		=> 1
+			);
 
-				} else {
-					echo 'Kode Barang sudah tersedia';
-				}
-			}
+			$barang = $this->db->insert('tb_barang', $data);
+
+			$data = array(
+				'id_supplier'	=> 'DHSUPP-0001',
+				'id_brg'		=> $newID,
+				'tgl_masuk'		=> date('Y-m-d H:i:s'),
+				'no_fm'			=> '123',
+				'sn_brg'		=> $input['sn_brg'],
+				'spek'			=> $input['spek'],
+				'kondisi'		=> 'Bekas',
+				'Status'		=> 1
+			);
+
+			$masuk = $this->db->insert('tb_brg_masuk', $data);
+
+			$kode_masuk = $this->db->query("select id_masuk from tb_brg_masuk order by id_masuk desc limit 1")->row();
+			$harga = str_replace('.', '', $input['harga']); // Hilangkan tanda titik sebagai pemisah ribuan
+			$harga = (int) $harga;
+			$data = array(
+				'id_masuk	'	=> $kode_masuk->id_masuk,
+				'id_toko'		=> $this->session->userdata('sesi_toko'),
+				'tgl_keluar'	=> date('Y-m-d H:i:s'),
+				'no_surat_keluar'=> '123',
+				'hrg_hpp'		=> $harga,
+				'Status'		=> 2
+			);
+
+			$keluar = $this->db->insert('tb_brg_keluar', $data);
 		}
 	}
 
@@ -889,48 +897,49 @@ class Inventaris extends CI_Controller {
 				<strong>'. __CLASS__ .'</strong>
 				<span>Barang Masuk</span>
 			',
-			'data_brg'    => $this->brg->data_brg(),
+			'data_merk'  => $this->brg->merk(),
+			'data_jenis'    => $this->brg->jenis(),
 			
 		];
-		if(admin()->level != 'Kasir') {
-			$this->layout->load('layout', 'barang/brg_masuk', $conf);
+		$this->layout->load('layout', 'barang/brg_masuk', $conf);
+	}
 
-		} else {
-			$this->load->view('404');
-		}
+
+	
+	function brg_tambah($id) {
+		
+		$conf = [
+			'tabTitle' 	=> 'Barang Masuk | ' . webTitle(),
+			'data_brg'  => $this->brg->data_brg (),
+			'nama_brg'  => $this->brg->nama_kat($id),
+			'data_supplier'  => $this->brg->data_supplier (),
+			'webInfo' => '
+				<strong>'. __CLASS__ .'</strong>
+				<span>Barang Masuk</span>
+			',
+			
+		];
+		$this->layout->load('layout', 'barang/brg_tambah', $conf);
 	}
 
 	function load_data_brgm() {
-		$list = $this->brg->detail_masuk();
+		$list = $this->brg->detail_kat();
 		$data = [];
 		$no = $this->input->post('start');
 		foreach ($list as $item) { 
-			$jml_brg = $this->brg->count_jml_masuk ($item->kode_masuk);
-			$total 	 = $this->brg->total_harga_masuk ($item->kode_masuk);
 			$aksi = '
-				<div class="mt-2">
-					<a href="'.site_url('inventaris/detail_masuk/'.$item->kode_masuk).'" data-target="#modal_detail_brgm" data-toggle="modal" class="badge badge-secondary btn_load_brgm">
+				<div>
+					<a href="'.site_url('inventaris/brg_tambah/'.$item->id_brg).'" class="badge badge-secondary btn_load_brgm">
 						Detail
-					</a>
-					<a href="'.site_url('inventaris/hps_masuk/'.$item->kode_masuk).'" class="badge badge-danger hps" data-text="<strong>'.$item->nama_brg.'</strong> akan dihapus dari daftar">
-						Hapus
 					</a>
 				</div>
 			';          
 			$no++;
 			$row   = [];
 			$row[] = $no;
-			$row[] = $item->kode_masuk .
-				'<div>
-					<small class="text-muted">
-						<span>
-							'. $jml_brg .' Barang
-						</span>
-						<span class="mx-2"> | </span>
-						<span> Total: '.nf($total).'</span>
-					</small>
-				</div>								
-			' . $aksi ;
+			$row[] = $item->nama_brg;
+			$row[] = $item->jenis;
+			$row[] = $item->merk;
 			$data[] = $row;
 		}
 		$output = [
@@ -943,38 +952,32 @@ class Inventaris extends CI_Controller {
 	}
 
 	function load_modal_data_brgm() {
-		$list 	= $this->brg->data_brg('DESC');
+		$list 	= $this->brg->detail_masuk();
 		$data 	= [];
 		$no 	= $this->input->post('start');
 		foreach ($list as $item) { 
-			$satuan = $item->satuan == 'Tidak ada satuan' ? '' : $item->satuan;
+			$aksi = '
+				<div>
+					<a href="'.site_url('inventaris/brg_tambah/'.$item->id_brg).'" class="badge badge-danger btn_load_brgm">
+						Hapus
+					</a>
+				</div>
+			';          
+			$no++;
 			$row   = [];
-			$row[] = '
-				<a href="" 
-				   class="btn btn-secondary _add_brgm"
-				   data-id="'.$item->id_brg.'"
-				   data-nama="'.$item->nama_brg.'"
-				   data-kode="'.$item->kode_brg.'"
-				>
-					<i class="fa fa-plus"></i>
-				</a>
-			';
-			$row[] = '
-					<strong>'.$item->nama_brg.'</strong>
-					<div>
-						<small>
-							<strong>'. $item->kode_brg .'</strong>
-							<span class="mx-2"> | </span>
-							<span>stok: '. $item->stok_tersedia .' '. $satuan .'</span>
-						</small>
-					</div>
-				';
+			$row[] = $no;
+			$row[] = $item->nama_brg;
+			$row[] = $item->merk . ' | '. $item->jenis;
+			$row[] = $item->sn_brg;
+			$row[] = $item->spek;
+			$row[] = $item->kondisi;
+			$row[] = $aksi;
 			$data[] = $row;
 		}
 		$output = [
 			"draw"             => $this->input->post('draw'),
-			"recordsTotal"     => $this->brg->count_all_brg(),
-			"recordsFiltered"  => $this->brg->count_brg(),
+			"recordsTotal"     => $this->brg->count_all_masuk(),
+			"recordsFiltered"  => $this->brg->count_masuk(),
 			"data"             => $data,
 		];
 		echo json_encode($output);
@@ -1000,17 +1003,12 @@ class Inventaris extends CI_Controller {
 						<tr>
 							<td style="width: 150px">Kode Masuk</td>
 							<th style="width: 20px">:</th>
-							<th>'.$detail->kode_masuk.'</th>
+							<th>'.$detail->id_masuk.'</th>
 						</tr>
 						<tr>
 							<td>Tgl Masuk</td>
 							<th>:</th>
 							<th>'.date('d M Y G:i', strtotime($detail->tgl_masuk)).'</th>
-						</tr>
-						<tr>
-							<td>Admin</td>
-							<th>:</th>
-							<th>'.$detail->nama_admin.'</th>
 						</tr>
 					</table>			
             	</div>
@@ -1029,7 +1027,7 @@ class Inventaris extends CI_Controller {
 			';
 				$total = 0;
 				foreach($data as $item) {
-				    $brg = $this->brg->brg($item->kode_brg);
+				    $brg = $this->brg->brg($item->id_brg);
 				    $harga = $brg ? $brg->harga_modal : 0;
 					$subtotal  = $item->stok_masuk * $harga;
 					$total    += $subtotal; 
@@ -1045,9 +1043,6 @@ class Inventaris extends CI_Controller {
 							</td>							
 							<td class="text-right">
 								'.nf($item->harga_modal).'
-							</td>
-							<td class="text-center">
-								'.$item->stok_masuk.'
 							</td>
 							<td class="text-right">
 								'.nf($item->harga_beli).'
