@@ -689,6 +689,21 @@ class Inventaris extends CI_Controller {
 		echo $html;
 	}
 
+	public function barcode($sn){
+		$this->zend->load('Zend/Barcode');
+		$imageResource = Zend_Barcode::factory('code128','image', array('text'=>$sn), array())->draw();
+		$imageName = $sn.'.jpg';
+			// Define the image path based on the environment
+			if ($_SERVER['SERVER_NAME'] == 'localhost') {
+			  // Path for localhost
+				$imagePath = './assets/dhdokumen/snbarcode/';
+			} else {
+				// Path for server
+				$imagePath = 'https://live.akira.id/dev-dhtech/assets/dhdokumen/snbarcode/';
+			}
+		imagejpeg($imageResource, $imagePath.$imageName);
+	}
+
 	function proses_tambah_brg() {
 		$uniqueId = uniqid('', true); // Include more entropy
 		$randomNumericPart = rand(1000, 9999); // Generate a random 4-digit number using rand()
@@ -724,6 +739,8 @@ class Inventaris extends CI_Controller {
 			);
 
 			$masuk = $this->db->insert('tb_brg_masuk', $data);
+
+			$this->barcode($input['sn_brg']);
 
 			$kode_masuk = $this->db->query("select id_masuk from tb_brg_masuk order by id_masuk desc limit 1")->row();
 			$harga = str_replace('.', '', $input['harga']); // Hilangkan tanda titik sebagai pemisah ribuan

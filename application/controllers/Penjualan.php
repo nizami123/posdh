@@ -511,6 +511,15 @@ class Penjualan extends CI_Controller {
 						</div>
 					</div>
 				</div>
+				<div class="form-group">
+					<label> Tipe Penjualan </label>
+					<div class="input-group">
+						<select class="form-control form-control-sm select2" name="tipe_penjualan">
+						<option value="Offline">Offline</option>
+						<option value="Online">Online</option>
+						</select>
+					</div>
+				</div>
 				
 				<div class="mt-4">
 					<button class="btn btn-primary w-100" disabled id="btn_simpan">
@@ -585,7 +594,8 @@ class Penjualan extends CI_Controller {
 				'cara_bayar'	 => $cara_bayar,
 				'id_bank'		 => $input['id_bank'],
 				'id_diskon'		 => $input['id_diskon'],
-				'id_trade'		 => isset($input['id_trade']) ? $input['id_trade'] : ''
+				'id_trade'		 => isset($input['id_trade']) ? $input['id_trade'] : '',
+				'tipe_penjualan' => $input['tipe_penjualan']
 			];
 
 		}
