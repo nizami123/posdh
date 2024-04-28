@@ -83,6 +83,7 @@ class Penjualan extends CI_Controller {
 					</div>
 				';
 			$row[] = nf($item->hrg_jual);
+			$row[] = '<input style="width:100%" type="text" name="diskon" id="diskon_produk">';
 			$data[] = $row;
 		}
 		$output = [
@@ -226,6 +227,7 @@ class Penjualan extends CI_Controller {
 			$row[] = '<strong>'. $item->kode_diskon . '</strong>';
 			$row[] = $item->tipe ;
 			$row[] = nf($item->nilai) ;
+			$row[] = $item->id_keluar ;
 			$data[] = $row;
 		}
 		$output = [
@@ -281,7 +283,18 @@ class Penjualan extends CI_Controller {
 		// print_r($data);die;
 		if($data) {
 			foreach($data as $item) {
-				$harga     = $item->hrg_jual;
+				
+				if ($item->diskon <> ''){
+					$diskon = $this->db->query("SELECT nilai FROM tb_diskon WHERE kode_diskon = '".$item->diskon."'")->result();
+					if (empty($diskon[0]->nilai)){
+						$diskon_nilai = 0;
+					}else{
+						$diskon_nilai =  $diskon[0]->nilai;
+					}
+				}else{
+					$diskon_nilai = 0;
+				}
+				$harga     = $item->hrg_jual - $diskon_nilai;
 				$subharga  = $harga * $item->jml;
 				$jml 	   = $item->jenis_penjualan == 'Grosir' ? $item->min_grosir : $item->jml;
 				$min 	   = $item->jenis_penjualan == 'Grosir' ? $item->min_grosir : 1;
@@ -313,6 +326,19 @@ class Penjualan extends CI_Controller {
 							</p>
 						</td>
 						<td class="text-right">
+							<strong >
+								'.nf($item->hrg_jual).'
+							</strong>
+							<input type="hidden" name="jual[]" value="'.$item->hrg_jual.'">
+						</td>
+						<td class="text-right">
+							<strong >
+								'.nf($diskon_nilai).'
+							</strong>
+							<input type="hidden" name="diskon_nilai[]" value="'.$diskon_nilai.'">
+							<input type="hidden" name="diskon_id[]" value="'.$item->diskon.'">
+						</td>
+						<td class="text-right">
 							<strong class="_harga" 
 									id="_harga_'.$item->sn_brg.'"
 									data-harga="'.$harga.'" 
@@ -326,6 +352,7 @@ class Penjualan extends CI_Controller {
 							</p>
 							<input type="hidden" id="harga_jual_'.$item->sn_brg.'" name="harga_jual[]" value="'.$harga.'">
 						</td>
+						
 					</tr>                            
 				';
 				echo $html;
@@ -334,7 +361,7 @@ class Penjualan extends CI_Controller {
 		} else {
 			$html = '
 				<tr>
-					<th colspan="4">
+					<th colspan="6">
 						<div class="p-5 text-center">
 							<i class="fa fa-shopping-basket fa-4x text-danger"></i>
 							<div class="mt-3">
@@ -467,24 +494,6 @@ class Penjualan extends CI_Controller {
 				</div>
 
 				'.$trade.'
-
-				<div class="form-group">
-					<label for="">Diskon</label>
-					<div class="input-group">
-						<input readonly class="form-control form-control-sm nama_diskon" required>
-						<input type="hidden" class="id_diskon" name="id_diskon" required>
-						<div class="input-group-append">
-							<a class="btn btn-sm bg-white border px-3" 
-									href="#modal_data_diskon" 
-									data-toggle="modal"
-							>
-								<i class="fa fa-search"></i>
-							</a>
-						</div>
-					</div>
-					<input type="hidden" class="form-control form-control-sm jenis_diskon" id="jenis_diskon" name="jenis_diskon" placeholder="0">
-					<input type="hidden" min="0" class="form-control form-control-sm bg-secondary _diskon" id="diskon" name="diskon" placeholder="0">
-				</div>
 				<div class="form-group">
 					<label class="mr-2">Bayar</label>
 					<div class="input-group input-group-sm ui-widget">
@@ -535,10 +544,6 @@ class Penjualan extends CI_Controller {
                     <input disabled class="form-control form-control-sm">
                 </div>
                 <div class="form-group">
-                    <label for="">Diskon</label>
-                    <input disabled class="form-control form-control-sm">
-                </div>
-                <div class="form-group">
                     <label for="">Bayar</label>
                     <input disabled class="form-control form-control-sm">
                 </div>
@@ -569,10 +574,15 @@ class Penjualan extends CI_Controller {
 		$kode  	 = $this->jual->kode();
 		$input 	 = $this->input->post(null, true);
 		$brg   	 = [];
+		$diskon_total = 0;
+		$jual_total = 0;
 		foreach($input['id_keluar'] as $i => $v) {
 			$id_keluar = $this->input->post('id_keluar['.$i.']');
 			$jml 	  = $this->input->post('jml['.$i.']');
 			$harga 	  = $this->input->post('harga_jual['.$i.']');
+			$jual 	  = $this->input->post('jual['.$i.']');
+			$diskon_id 	  = $this->input->post('diskon_id['.$i.']');
+			$diskon_nilai 	  = $this->input->post('diskon_nilai['.$i.']');
 			if ($input['status'] == 'dp') {
 				$cara_bayar = 'DP';
 				$upstok['status']  = 4;
@@ -590,13 +600,18 @@ class Penjualan extends CI_Controller {
 				'kode_penjualan' => $kode,
 				'id_keluar' 	 => $id_keluar,
 				'jml'			 => $jml,
-				'harga_jual'	 => $harga,
+				'harga_jual'	 => $jual,
+				'harga_diskon'	 => $diskon_nilai,
+				'harga_bayar'	 => $harga,
 				'cara_bayar'	 => $cara_bayar,
 				'id_bank'		 => $input['id_bank'],
-				'id_diskon'		 => $input['id_diskon'],
+				'id_diskon'		 => $diskon_id,
 				'id_trade'		 => isset($input['id_trade']) ? $input['id_trade'] : '',
 				'tipe_penjualan' => $input['tipe_penjualan']
 			];
+
+			$diskon_total = $diskon_total + $diskon_nilai;
+			$jual_total = $jual_total + $jual;
 
 		}
 		$is_donasi = isset($input['is_donasi']) ? 1 : 0;
@@ -606,10 +621,11 @@ class Penjualan extends CI_Controller {
 			'total_kembalian'   => $input['total_kembalian'],
 			'total_keranjang'   => $input['total_keranjang'],
 			'bayar'      	 	=> $input['bayar'],
-			'diskon'      	 	=> $input['diskon'] ?  $input['diskon'] : 0,
+			'diskon'      	 	=> $diskon_total,
+			'total_penjualan'	=> $jual_total,
 			'id_plg'      	 	=> $input['id_plg'],
 			'id_ksr'      	 	=> $input['id_ksr'],
-			'jenis_diskon'  	=> $input['jenis_diskon'],
+			'jenis_diskon'  	=> '',
 			'is_donasi'  		=> $is_donasi,
 			'jml_donasi'  		=> isset($input['is_donasi']) ? $input['jml_donasi'] : 0,
 			'tgl_transaksi' 	=> date('Y-m-d G:i:s'),

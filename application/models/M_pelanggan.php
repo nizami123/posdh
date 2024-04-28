@@ -98,6 +98,7 @@ class m_pelanggan extends CI_Model {
 
     private function __data_diskon() {
         $this->db->from($this->tb_diskon . ' ksr');
+        $this->db->join('tb_brg_keluar bk', 'ksr.id_keluar = bk.id_keluar', 'left');
         
         $i = 0;
         foreach ($this->src_diskon as $item) {  

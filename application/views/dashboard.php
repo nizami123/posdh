@@ -1,19 +1,4 @@
 <div class="row">
-	<div class="col-sm-12">
-		<?php if($this->session->flashdata ('success')) : ?>
-			<div class="alert alert-success mb-4">
-				<?= $this->session->flashdata ('success') ?>
-				<button class="close" data-dismiss="alert">&times;</button>
-			</div>
-		<?php endif ?>
-
-		<?php if($this->session->flashdata ('warning')) : ?>
-			<div class="alert alert-warning mb-4">
-				<?= $this->session->flashdata ('warning') ?>
-				<button class="close" data-dismiss="alert">&times;</button>
-			</div>
-		<?php endif ?>
-	</div>
 	<div class="col-lg-12">
 		<div class="row">
 		<div class="col-md-12">

@@ -2098,11 +2098,13 @@
                             e.preventDefault();
                             let kode  = $(this).data('kode');
                             let nama  = $(this).data('nama');
+                            let diskon  = $('#diskon_produk').val();;
                             
                             $.post({
                                 url: '<?= site_url('penjualan/tambah_keranjang') ?>',
                                 data: {
                                     kode: kode,
+                                    diskon: diskon
                                 }
                             }).done(
                                 function(data) {

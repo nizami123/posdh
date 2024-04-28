@@ -25,6 +25,9 @@
                             <th colspan="2">Item</th>
                             <th style="width: 130px">Jml</th>
                             <th style="width: 150px">Subharga</th>
+                            <th style="width: 150px">Diskon</th>
+                            <th style="width: 150px">Subtotal</th>
+
                         </thead>
                         <tbody>
                             <?php  
@@ -119,10 +122,6 @@
                     <input disabled class="form-control form-control-sm">
                 </div>
                 <div class="form-group">
-                    <label for="">Diskon</label>
-                    <input disabled class="form-control form-control-sm">
-                </div>
-                <div class="form-group">
                     <label for="">Bayar</label>
                     <input disabled class="form-control form-control-sm">
                 </div>
@@ -159,6 +158,7 @@
                             <th></th>
                             <th>Barang</th>
                             <th>Harga</th>
+                            <th style="width:20%">Diskon</th>
                         </thead>
                     </table>
                 </div>
@@ -266,6 +266,7 @@
                             <th>Diskon</th>
                             <th>Nominal</th>
                             <th>Nilai</th>
+                            <th>Barang</th>
                         </thead>
                     </table>
                 </div>
