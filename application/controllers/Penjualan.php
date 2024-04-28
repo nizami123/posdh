@@ -285,7 +285,7 @@ class Penjualan extends CI_Controller {
 			foreach($data as $item) {
 				
 				if ($item->diskon <> ''){
-					$diskon = $this->db->query("SELECT nilai FROM tb_diskon WHERE kode_diskon = '".$item->diskon."'")->result();
+					$diskon = $this->db->query("SELECT nilai FROM tb_diskon WHERE kode_diskon = '".$item->diskon."' and kuota > 0")->result();
 					if (empty($diskon[0]->nilai)){
 						$diskon_nilai = 0;
 					}else{
@@ -613,7 +613,12 @@ class Penjualan extends CI_Controller {
 			$diskon_total = $diskon_total + $diskon_nilai;
 			$jual_total = $jual_total + $jual;
 
+			$this->db->query("update tb_diskon set kuota = kuota - 1 , total_diskon = total_diskon - nilai
+			where kode_diskon = '".$diskon_id."'");
+
 		}
+
+
 		$is_donasi = isset($input['is_donasi']) ? 1 : 0;
 		$detail = [
 			'kode_penjualan' 	=> $kode,
@@ -646,22 +651,6 @@ class Penjualan extends CI_Controller {
 		}
 
 		echo $kode; 
-		
-		// $options = array(
-		// 	'cluster' => 'ap1',
-		// 	'useTLS' => true
-		//   );
-		//   $pusher = new Pusher\Pusher(
-		// 	'298818e8899389cf44aa',
-		// 	'8b453cf89e0ad2dea3e6',
-		// 	'1508152',
-		// 	$options
-		//   );
-		
-		//   $data['message'] = 'success';
-		//   $pusher->trigger('my-channel', 'my-event', $data);
-
-		// print_r($brg);
 	}
 
 	function struk($id = null) {

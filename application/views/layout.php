@@ -2021,40 +2021,6 @@
                 ]
             });
 
-            let data_diskon = $('#data_diskon').dataTable({
-                pageLength: 25, 
-                ordering: false,
-                serverSide: true,
-                processing: true, 
-                ajax: {
-                    type: 'post',
-                    url: '<?= site_url('penjualan/load_data_diskon') ?>',
-                    complete: function() {
-                        $('._add_user_diskon').on('click', function(e) {
-                            e.preventDefault();
-                            let nama = $(this).data('nama');
-                            let id   = $(this).data('id');
-                            let tipe   = $(this).data('tipe');
-
-                            $('.id_diskon').val(id);
-                            $('.nama_diskon').val(id);
-
-                            $('#diskon').val(nama);
-                            $('#jenis_diskon').val(tipe);
-                            $('.modal').modal('hide');
-                            hitung_pembayaran();
-                            toast('info', 'diskon ' + nama + ' ditambahkan');
-                        })
-                    }
-                },
-                columnDefs: [
-                    {
-                        className: 'wp-10 text-center',
-                        targets: 0
-                    }
-                ]
-            });
-
             let data_bank = $('#data_bank').dataTable({
                 pageLength: 25, 
                 ordering: false,
