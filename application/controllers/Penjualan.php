@@ -83,7 +83,7 @@ class Penjualan extends CI_Controller {
 						</small>
 					</div>
 				';
-			$row[] = nf($item->hrg_jual);
+			$row[] = nf($item->harga_jual);
 			$row[] = '<input style="width:100%" type="text" name="diskon" id="diskon_produk">';
 			$row[] = nf($item->hrg_cashback);
 			$data[] = $row;
