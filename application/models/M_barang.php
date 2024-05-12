@@ -31,6 +31,7 @@ class m_barang extends CI_Model {
         $this->db->join('tb_barang tb', 'tb.id_brg = tbm.id_brg');
         $this->db->join('tb_toko tt', 'tbk.id_toko = tt.id_toko', 'LEFT');
         $this->db->where('tbk.status', '2');
+        $this->db->where('tbk.hrg_jual > 0');
 
         $i = 0;
         foreach ($this->src_brg as $item) {  
