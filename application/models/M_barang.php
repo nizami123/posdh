@@ -25,7 +25,7 @@ class m_barang extends CI_Model {
     var $src_tambah_opname      = ['tbm.sn_brg', 'nama_brg'];
 
     function __data_brg () {
-        $this->db->select('*,tbk.hrg_jual harga_jual');
+        $this->db->select ('*,tbk.hrg_jual harga_jual, tbk.hrg_cashback harga_cashback');
         $this->db->from('tb_brg_keluar tbk');
         $this->db->join('tb_brg_masuk tbm', 'tbk.id_masuk = tbm.id_masuk');
         $this->db->join('tb_barang tb', 'tb.id_brg = tbm.id_brg');

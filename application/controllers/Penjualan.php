@@ -85,7 +85,7 @@ class Penjualan extends CI_Controller {
 				';
 			$row[] = nf($item->harga_jual);
 			$row[] = '<input style="width:100%" type="text" name="diskon" id="diskon_produk">';
-			$row[] = nf($item->hrg_cashback);
+			$row[] = nf($item->harga_cashback);
 			$data[] = $row;
 		}
 		$output = [
@@ -296,7 +296,7 @@ class Penjualan extends CI_Controller {
 				}else{
 					$diskon_nilai = 0;
 				}
-				$harga     = $item->harga_jual - $diskon_nilai - $item->hrg_cashback;
+				$harga     = $item->harga_jual - $diskon_nilai - $item->harga_cashback;
 				$subharga  = $harga * $item->jml;
 				$jml 	   = $item->jenis_penjualan == 'Grosir' ? $item->min_grosir : $item->jml;
 				$min 	   = $item->jenis_penjualan == 'Grosir' ? $item->min_grosir : 1;
@@ -342,9 +342,9 @@ class Penjualan extends CI_Controller {
 						</td>
 						<td class="text-right">
 							<strong >
-								'.nf($item->hrg_cashback).'
+								'.nf($item->harga_cashback).'
 							</strong>
-							<input type="hidden" name="cashback[]" value="'.$item->hrg_cashback.'">
+							<input type="hidden" name="cashback[]" value="'.$item->harga_cashback.'">
 						</td>
 						<td class="text-right">
 							<strong class="_harga" 
