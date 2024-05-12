@@ -1063,15 +1063,11 @@ class Penjualan extends CI_Controller {
 			$nama_plg = $item->id_plg ? $item->nama_plg : 'Umum';
 			$jml = $this->jual->cek_jml_jual($item->kode_penjualan);
 			$email = '';
-			$retur = '';
 			if ($item->status_penjualan == 0){
 				$status_penjualan = '<span class="label label-warning">Menunggu Konfirmasi</span>';
 				$hapus = '';
 				$lunas = '';
 				$cetak = '';
-				$retur = '<a href="'.site_url('penjualan/retur/'.$item->kode_penjualan).'" class="badge badge-light border">
-							Retur
-						</a>';
 			}else if ($item->status_penjualan == 1){
 				$status_penjualan = '<span class="label label-success">DP Konfirmasi</span>';
 				$lunas = '<a href="' . site_url('penjualan/lunas/' . $item->kode_penjualan) . '" class="badge badge-success border btn-cetak-inv">Lunasi</a>';
@@ -1094,9 +1090,6 @@ class Penjualan extends CI_Controller {
 				Hapus</a> ';
 				$lunas = '';
 				$cetak = '';
-				$retur = '<a href="'.site_url('penjualan/retur/'.$item->kode_penjualan).'" class="badge badge-light border">
-							Retur
-						</a>';
 			}
 			$aksi 	  = '
 				<div class="mt-2">
@@ -1108,7 +1101,9 @@ class Penjualan extends CI_Controller {
 					'.$cetak.'    
 					'.$email.'    
 					<span class="mx-2"> | </span>                                     
-					'.$retur.'
+					<a href="'.site_url('penjualan/retur/'.$item->kode_penjualan).'" class="badge badge-light border">
+						Retur
+					</a>
 				</div>
 			';				
 			
