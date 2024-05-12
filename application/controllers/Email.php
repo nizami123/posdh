@@ -224,6 +224,7 @@ class Email extends CI_Controller {
         try {
             $mail->send();
             return true;
+			redirect('penjualan/riwayat');
         } catch (Exception $e) {
             echo 'Email not sent. Error: ' . $mail->ErrorInfo;
             return false;
