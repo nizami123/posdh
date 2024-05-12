@@ -1101,7 +1101,7 @@ class Penjualan extends CI_Controller {
 					'.$cetak.'    
 					'.$email.'    
 					<span class="mx-2"> | </span>                                     
-					<a href="'.site_url('penjualan/retur/tambah/'.$item->kode_penjualan).'" class="badge badge-light border">
+					<a href="'.site_url('penjualan/retur/'.$item->kode_penjualan).'" class="badge badge-light border">
 						Retur
 					</a>   
 				</div>
@@ -1122,7 +1122,19 @@ class Penjualan extends CI_Controller {
 				</div>
 			';
 			$row[]  = $item->cara_bayar;
-			$row[]  = '
+			if($item->nama_bank == ''){
+				$row[]  = '
+				<strong>Tunai</strong>
+				<div>
+					<small class="text-muted">
+						<span>'.$item->no_rek.'</span>
+						<span class="mx-2"> | </span>
+						<span>'.$item->nama_rek.'</span>
+					</small>
+				</div>
+			';
+			}else{
+				$row[]  = '
 				<strong>'. $item->nama_bank.'</strong>
 				<div>
 					<small class="text-muted">
@@ -1132,6 +1144,8 @@ class Penjualan extends CI_Controller {
 					</small>
 				</div>
 			';
+			}
+			
 			$row[]  = $status_penjualan;
 			$row[]  = $aksi;
 			$data[] = $row;
@@ -1283,29 +1297,8 @@ class Penjualan extends CI_Controller {
 		$this->jual->hps_riwayat($id);
 	}
 
-	function retur($p = null, $id = null) {
-		$conf = [
-			'tabTitle' 	=> 'Retur Penjualan | ' . webTitle(),
-			'webInfo' => '
-				<div class="d-flex justify-content-between align-items-center">
-                    <div>                        
-                        <a href="'.site_url('penjualan').'" class="btn bg-white dashed">
-                            <i class="fa fa-shopping-basket"></i>
-                        </a>
-						<a href="'.site_url('penjualan/riwayat').'" class="btn bg-white dashed">
-                            Riwayat
-                        </a>
-                    </div>
-                </div>
-			',
-			'data_riwayat' => $id ? $this->jual->penjualan($id) : null			
-		];
-		if(admin()->level != 'Admin') {
-			$this->layout->load('layout', 'penjualan/retur', $conf);
-
-		} else {
-			$this->load->view('404');
-		}
+	function retur($id = null) {
+		
 	}
 
 	function load_data_retur() {
