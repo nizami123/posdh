@@ -2069,7 +2069,9 @@
                             e.preventDefault();
                             let kode  = $(this).data('kode');
                             let nama  = $(this).data('nama');
-                            let diskon  = $('#diskon_produk').val();
+                            let diskon  = $('.diskon_pro').val();
+
+                            console.log(diskon);
                             
                             $.post({
                                 url: '<?= site_url('penjualan/tambah_keranjang') ?>',
