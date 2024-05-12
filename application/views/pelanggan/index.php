@@ -51,6 +51,10 @@
                     <div class="form-group col-md-12">
                         <label for="">No Ponsel</label>
                         <input type="text" class="form-control form-control-sm" name="no_ponsel" >
+                    </div>   
+                    <div class="form-group col-md-12">
+                        <label for="">Email</label>
+                        <input type="text" class="form-control form-control-sm" name="email" >
                     </div>                    
                     <div class="form-group col-md-12">
                         <label for="">Alamat</label>

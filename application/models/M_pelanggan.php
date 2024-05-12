@@ -4,6 +4,9 @@ class m_pelanggan extends CI_Model {
     private $tb_plg = 'tb_pelanggan';
     var $src_plg    = ['nama_plg'];
 
+    private $tb_keluar = 'vbarangkeluar';
+    var $src_keluar    = ['sn_brg'];
+
     private $tb_ksr = 'tb_kasir';
     var $src_ksr    = ['nama_ksr'];
 
@@ -29,6 +32,26 @@ class m_pelanggan extends CI_Model {
                     $this->db->or_like($item, $_POST['search']['value']);
                 }
                 if(count($this->src_plg) - 1 == $i) {
+                    $this->db->group_end(); 
+                }
+            }
+            $i++;
+        }
+    }
+
+    private function __data_keluar() {
+        $this->db->from($this->tb_keluar . ' plg');
+        
+        $i = 0;
+        foreach ($this->src_keluar as $item) {  
+            if(@$_POST['search']['value']) { 
+                if($i == 0) { 
+                    $this->db->group_start();
+                    $this->db->like($item, $_POST['search']['value']);
+                } else {
+                    $this->db->or_like($item, $_POST['search']['value']);
+                }
+                if(count($this->src_keluar) - 1 == $i) {
                     $this->db->group_end(); 
                 }
             }
@@ -127,6 +150,16 @@ class m_pelanggan extends CI_Model {
         return $this->db->count_all_results();
     }
 
+    function count_keluar() {
+        $this->__data_keluar();
+        return $this->db->get()->num_rows();
+    }
+
+    function count_all_keluar() {
+        $this->db->from($this->tb_keluar);
+        return $this->db->count_all_results();
+    }
+
     function data_plg() {
         $this->__data_plg();
         $this->db->order_by('id_plg', 'desc');
@@ -220,13 +253,15 @@ class m_pelanggan extends CI_Model {
 
     function tambah_plg($input) {
         $data = [
+            'id_plg'    => $this->generateid(),
             'nama_plg'   => $input['nama_plg'],
             'no_ponsel'  => $input['no_ponsel'],
             'alamat'     => $input['alamat'],
-            'id_admin'   => admin()->id_admin
+            'email'      => $input['email'],
         ];
 
         $this->db->insert($this->tb_plg, $data);
+        return $data['id_plg'];
     }
 
     function ubah_plg($input) {

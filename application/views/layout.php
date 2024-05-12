@@ -206,7 +206,12 @@
                                 $icon = $menu->icon_menu;
                                 $slug = $menu->slug_menu;
                                 $nama = $menu->nama_menu;
-                                $active = $uri1 == $slug ? 'active' : '';
+                                if ($uri2 == ''){
+                                    $active = $uri1 == $slug ? 'active' : '';
+                                }else{
+                                    $active = $uri1.'/'.$uri2 == $slug ? 'active' : '';
+                                }
+                                
                         ?>
                         <li class="<?= $active ?>">
                             <a href="<?= site_url($slug) ?>">
@@ -2208,6 +2213,32 @@
                 ],
                 
             });
+
+            $('#modal_tambah_plg').on('submit', function(e) {
+                e.preventDefault();
+                let formData = $(this).serializeArray(); 
+                let nama, id;
+                formData.forEach(function(item) {
+                    if (item.name === 'nama_plg') {
+                        nama = item.value;
+                    }
+                    if (item.name === 'id_plg') {
+                        id = item.value;
+                    }
+                });
+                $.post({
+                    url: '<?= site_url('pelanggan/proses_tambah_plg') ?>',
+                    data: $(this).serialize(),
+
+                }).done(function() {
+
+                    data_plg.api().ajax.reload(null, true);
+                    $('.modal').trigger('reset').modal('hide');
+                    toast('success', 'Pelanggan baru sudah ditambahkan');
+                    $('.id_plg').val(id);
+                    $('.nama_plg').val(nama);
+                });
+            });
             
             $('#src_kode_brg').focus();
 
@@ -2251,7 +2282,7 @@
                 let val = this.value;
                 if(val != '' && val.length >= 3) {
                     $.post({
-                        url: '<?= site_url('penjualan/tambah_keranjang') ?>',
+                        url: '<?= site_url('penjualan/tambah_keranjang_search') ?>',
                         data: {
                             kode: val,
                         }
@@ -2578,6 +2609,7 @@
                     function() {
                         $('._bayar, ._diskon').on('input',  function() {
                             hitung_pembayaran();
+                            $(this).val(format_rupiah(this.value));
                         });
 
                         $('.jenis_diskon').on('change', function() {
@@ -2623,8 +2655,23 @@
                 return decodeURIComponent(results[2].replace(/\+/g, ' '));
             }
 
+            function format_rupiah(angka) {
+                let number_string = angka.toString().replace(/[^0-9]/g, '');
+                let split	      = number_string.split(',');
+                let sisa 	      = split[0].length % 3;
+                let rupiah 	      = split[0].substr(0, sisa);
+                let ribuan 	      = split[0].substr(sisa).match(/\d{3}/g);
+                    
+                if (ribuan) {
+                    separator = sisa ? '.' : '';
+                    rupiah += separator + ribuan.join('.');
+                }
+                
+                return rupiah
+            }
+
             function hitung_pembayaran() {
-                let bayar            = $('._bayar').val() ? $('._bayar').val() : 0;
+                let bayar            = parseFloat($("._bayar").val().replace(/\D/g, ''));
                 let diskon           = $('._diskon').val() ? $('._diskon').val() : 0;
                 let jenis_diskon     = $('.jenis_diskon').val();
                 let trade           = $('._trade').val() ? $('._trade').val() : 0;
@@ -2939,6 +2986,27 @@
             });
         }
 
+        let data_keluar = $('#data_keluar').dataTable({
+            pageLength: 50,
+            ordering: false,
+            serverSide: true,
+            processing: true,
+            ajax: {
+                type: 'post',
+                url: '<?= site_url('dashboard/load_data_keluar') ?>'
+            },
+            columnDefs: [
+                {
+                    className: 'text-center wc-50',
+                    targets: [0]
+                },
+                {
+                    className: 'w-85',
+                    targets: [1]
+                }
+            ]
+        });
+
         function toast(icon, title) {
             const Toast = Swal.mixin({
                 toast: true,
@@ -3084,11 +3152,11 @@
         });
 
         function format(angka) {
-            let number_string = angka.toString().replace(/[^,\d]/g, '');
+            let number_string = angka.toString().replace(/[^0-9]/g, '');
             let split	      = number_string.split(',');
             let sisa 	      = split[0].length % 3;
             let rupiah 	      = split[0].substr(0, sisa);
-            let ribuan 	      = split[0].substr(sisa).match(/\d{3}/gi);
+            let ribuan 	      = split[0].substr(sisa).match(/\d{3}/g);
                 
             if (ribuan) {
                 separator = sisa ? '.' : '';

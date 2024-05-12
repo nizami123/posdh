@@ -20,6 +20,7 @@ class Penjualan extends CI_Controller {
 	function index () {
 		$conf = [
 			'tabTitle' 	=> 'Penjualan | ' . webTitle (),
+			'idPelanggan' => $this->generateid(),
 			'webInfo' 	=> '
 				<div class="d-flex justify-content-between align-items-center">
 					<div>
@@ -84,6 +85,7 @@ class Penjualan extends CI_Controller {
 				';
 			$row[] = nf($item->hrg_jual);
 			$row[] = '<input style="width:100%" type="text" name="diskon" id="diskon_produk">';
+			$row[] = nf($item->hrg_cashback);
 			$data[] = $row;
 		}
 		$output = [
@@ -294,7 +296,7 @@ class Penjualan extends CI_Controller {
 				}else{
 					$diskon_nilai = 0;
 				}
-				$harga     = $item->hrg_jual - $diskon_nilai;
+				$harga     = $item->hrg_jual - $diskon_nilai - $item->hrg_cashback;
 				$subharga  = $harga * $item->jml;
 				$jml 	   = $item->jenis_penjualan == 'Grosir' ? $item->min_grosir : $item->jml;
 				$min 	   = $item->jenis_penjualan == 'Grosir' ? $item->min_grosir : 1;
@@ -339,6 +341,12 @@ class Penjualan extends CI_Controller {
 							<input type="hidden" name="diskon_id[]" value="'.$item->diskon.'">
 						</td>
 						<td class="text-right">
+							<strong >
+								'.nf($item->hrg_cashback).'
+							</strong>
+							<input type="hidden" name="cashback[]" value="'.$item->hrg_cashback.'">
+						</td>
+						<td class="text-right">
 							<strong class="_harga" 
 									id="_harga_'.$item->sn_brg.'"
 									data-harga="'.$harga.'" 
@@ -361,7 +369,7 @@ class Penjualan extends CI_Controller {
 		} else {
 			$html = '
 				<tr>
-					<th colspan="6">
+					<th colspan="7">
 						<div class="p-5 text-center">
 							<i class="fa fa-shopping-basket fa-4x text-danger"></i>
 							<div class="mt-3">
@@ -379,6 +387,11 @@ class Penjualan extends CI_Controller {
 	function tambah_keranjang() {
 		$input = $this->input->post(null);
 		$this->jual->tambah_keranjang ($input);
+	}
+
+	function tambah_keranjang_search() {
+		$input = $this->input->post(null);
+		$this->jual->tambah_keranjang_search ($input);
 	}
 
 	function update_jml() {
@@ -400,38 +413,23 @@ class Penjualan extends CI_Controller {
 
 	function hps_keranjang($id) {
 		$this->jual->hps_keranjang($id);
-
-		// $options = array(
-		// 	'cluster' => 'ap1',
-		// 	'useTLS' => true
-		//   );
-		//   $pusher = new Pusher\Pusher(
-		// 	'298818e8899389cf44aa',
-		// 	'8b453cf89e0ad2dea3e6',
-		// 	'1508152',
-		// 	$options
-		//   );
-		
-		//   $data['message'] = 'success';
-		//   $pusher->trigger('my-channel', 'my-event', $data);
 	}
+
+	function generateid(){
+        $data['lastID'] = $this->db->query("select id_plg from tb_pelanggan order by id_plg desc limit 1")->result_array();
+        if (!empty($data['lastID'][0]['id_plg'])) {
+          $numericPart = isset($data['lastID'][0]['id_plg']) ? preg_replace('/[^0-9]/', '', $data['lastID'][0]['id_plg']) : '';
+          $incrementedNumericPart = sprintf('%04d', intval($numericPart) + 1);
+          $data['newID'] = 'DHCS-' . $incrementedNumericPart;
+        }else {
+          $data['newID'] = 'DHCS-0001';
+        }
+        return $data['newID'];
+        
+    }
 	
 	function kosongkan_keranjang() {
 		echo $this->jual->kosongkan_keranjang();
-
-		// $options = array(
-		// 	'cluster' => 'ap1',
-		// 	'useTLS' => true
-		//   );
-		//   $pusher = new Pusher\Pusher(
-		// 	'298818e8899389cf44aa',
-		// 	'8b453cf89e0ad2dea3e6',
-		// 	'1508152',
-		// 	$options
-		//   );
-		
-		//   $data['message'] = 'success';
-		//   $pusher->trigger('my-channel', 'my-event', $data);
 	}
 
 	function form_pembayaran() {
@@ -474,6 +472,12 @@ class Penjualan extends CI_Controller {
 							>
 								<i class="fa fa-search"></i>
 							</a>
+							<a class="btn btn-sm bg-white border px-3" 
+									href="#modal_tambah_plg" 
+									data-toggle="modal"
+							>
+								<i class="fa fa-plus"></i>
+							</a>
 						</div>
 					</div>
 				</div>
@@ -502,7 +506,7 @@ class Penjualan extends CI_Controller {
 								Rp
 							</div>
 						</div>
-						<input type="number" class="form-control form-control-sm bg-secondary _bayar" name="bayar">
+						<input type="text"  class="form-control form-control-sm bg-secondary _bayar" name="bayar">
 					</div>					
 				</div>
 				<div class="form-group">
@@ -576,6 +580,7 @@ class Penjualan extends CI_Controller {
 		$brg   	 = [];
 		$diskon_total = 0;
 		$jual_total = 0;
+		$cashback_total = 0;
 		foreach($input['id_keluar'] as $i => $v) {
 			$id_keluar = $this->input->post('id_keluar['.$i.']');
 			$jml 	  = $this->input->post('jml['.$i.']');
@@ -583,6 +588,7 @@ class Penjualan extends CI_Controller {
 			$jual 	  = $this->input->post('jual['.$i.']');
 			$diskon_id 	  = $this->input->post('diskon_id['.$i.']');
 			$diskon_nilai 	  = $this->input->post('diskon_nilai['.$i.']');
+			$cashback 	  = $this->input->post('cashback['.$i.']');
 			if ($input['status'] == 'dp') {
 				$cara_bayar = 'DP';
 				$upstok['status']  = 4;
@@ -603,6 +609,7 @@ class Penjualan extends CI_Controller {
 				'harga_jual'	 => $jual,
 				'harga_diskon'	 => $diskon_nilai,
 				'harga_bayar'	 => $harga,
+				'harga_cashback' => $cashback,
 				'cara_bayar'	 => $cara_bayar,
 				'id_bank'		 => $input['id_bank'],
 				'id_diskon'		 => $diskon_id,
@@ -612,6 +619,7 @@ class Penjualan extends CI_Controller {
 
 			$diskon_total = $diskon_total + $diskon_nilai;
 			$jual_total = $jual_total + $jual;
+			$cashback_total = $cashback_total + $cashback;
 
 			$this->db->query("update tb_diskon set kuota = kuota - 1 , total_diskon = total_diskon - nilai
 			where kode_diskon = '".$diskon_id."'");
@@ -625,8 +633,9 @@ class Penjualan extends CI_Controller {
 			'id_admin' 		 	=> admin()->id_admin,
 			'total_kembalian'   => $input['total_kembalian'],
 			'total_keranjang'   => $input['total_keranjang'],
-			'bayar'      	 	=> $input['bayar'],
+			'bayar'      	 	=> intval(preg_replace("/[^0-9]/", "", $input['bayar'])),
 			'diskon'      	 	=> $diskon_total,
+			'cashback'			=> $cashback_total,
 			'total_penjualan'	=> $jual_total,
 			'id_plg'      	 	=> $input['id_plg'],
 			'id_ksr'      	 	=> $input['id_ksr'],
@@ -735,7 +744,7 @@ class Penjualan extends CI_Controller {
 					<strong>'.$id.'</strong>
 					<p style="margin:0;padding:0">
 					    <span style="float:left">
-						    Kasir: '.$detail->nama_admin.'  
+						    Kasir: '.$detail->nama_ksr.'  
 					    </span>
 					    <span style="float:right">
 						    '.tgl(date('d M Y G:i', strtotime($detail->tgl_transaksi))).'
@@ -798,8 +807,8 @@ class Penjualan extends CI_Controller {
 						</tr>
 						
 						<tr>
-							<th style="text-align:left;">Donasi</th>
-							<th style="text-align:right;">'.nf($detail->jml_donasi).'</th>
+							<th style="text-align:left;">Cashback</th>
+							<th style="text-align:right;">'.nf($detail->harga_cashback).'</th>
 							<th></th>
 							<th></th>
 						</tr>
@@ -1043,12 +1052,7 @@ class Penjualan extends CI_Controller {
 			'tabTitle' 	=> 'Riwayat Penjualan | ' . webTitle(),
 			'webInfo' 	=> ''
 		];
-		if(admin()->level != 'Admin') {
-			$this->layout->load('layout', 'penjualan/riwayat', $conf);
-
-		} else {
-			$this->load->view('404');
-		}
+		$this->layout->load('layout', 'penjualan/riwayat', $conf);
 	}
 
 	function load_data_riwayat() {
@@ -1058,6 +1062,7 @@ class Penjualan extends CI_Controller {
 		foreach ($list as $item) { 
 			$nama_plg = $item->id_plg ? $item->nama_plg : 'Umum';
 			$jml = $this->jual->cek_jml_jual($item->kode_penjualan);
+			$email = '';
 			if ($item->status_penjualan == 0){
 				$status_penjualan = '<span class="label label-warning">Menunggu Konfirmasi</span>';
 				$hapus = '';
@@ -1065,13 +1070,19 @@ class Penjualan extends CI_Controller {
 				$cetak = '';
 			}else if ($item->status_penjualan == 1){
 				$status_penjualan = '<span class="label label-success">DP Konfirmasi</span>';
-				$lunas = '<a href="' . site_url('penjualan/lunas/' . $item->kode_penjualan) . '" class="badge badge-success border btn-cetak-inv">Lunasi</a>';;
+				$lunas = '<a href="' . site_url('penjualan/lunas/' . $item->kode_penjualan) . '" class="badge badge-success border btn-cetak-inv">Lunasi</a>';
 				$hapus = '';
+				if (strlen($item->email_pel) > 0){
+					$email = '<a href="' . site_url('penjualan/lunas/' . $item->kode_penjualan) . '" class="badge badge-success border btn-cetak-inv">Email</a>';
+				}
 				$cetak = '<a href="' . site_url('penjualan/struk/' . $item->kode_penjualan) . '" target="_blank" class="badge badge-light border btn-cetak-inv">Cetak struk</a>';
 			}else if ($item->status_penjualan == 2){
 				$status_penjualan = '<span class="label label-success">Sudah Dikonfirmasi</span>';
 				$hapus = '';
 				$lunas = '';
+				if (strlen($item->email_pel) > 0){
+					$email = '<a href="' . site_url('email/send_email/'. $item->kode_penjualan) . '" class="badge badge-success border btn-cetak-inv">Email</a>';
+				}
 				$cetak = '<a href="' . site_url('penjualan/struk/' . $item->kode_penjualan) . '" target="_blank" class="badge badge-light border btn-cetak-inv">Cetak struk</a>';
 			}else{
 				$status_penjualan = '<span class="label label-danger">Ditolak</span>';
@@ -1087,7 +1098,8 @@ class Penjualan extends CI_Controller {
 					<a href="#modal_detail_riwayat" data-toggle="modal" data-id="'.$item->kode_penjualan.'" class="badge badge-secondary btn_detail_riwayat">
 						Detail
 					</a>                                        
-					'.$cetak.'       
+					'.$cetak.'    
+					'.$email.'    
 					<span class="mx-2"> | </span>                                     
 					<a href="'.site_url('penjualan/retur/tambah/'.$item->kode_penjualan).'" class="badge badge-light border">
 						Retur

@@ -26,6 +26,7 @@
                             <th style="width: 130px">Jml</th>
                             <th style="width: 150px">Subharga</th>
                             <th style="width: 150px">Diskon</th>
+                            <th style="width: 150px">Cashback</th>
                             <th style="width: 150px">Subtotal</th>
 
                         </thead>
@@ -159,6 +160,7 @@
                             <th>Barang</th>
                             <th>Harga</th>
                             <th style="width:20%">Diskon</th>
+                            <th>Cashback</th>
                         </thead>
                     </table>
                 </div>
@@ -166,6 +168,46 @@
         </div>
     </div>
 </div>
+
+<form method="post" class="modal fade" id="modal_tambah_plg">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div>
+                    <h5 class="mb-0 text-primary">Pelanggan</h5>
+                    <small class="text-muted">Tambah Data Pelanggan Baru</small>
+                </div>
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                        <input type="hidden" class="form-control form-control-sm" name="id_plg" value="<?=$idPelanggan?>" required>
+                    <div class="form-group col-md-12">
+                        <label for="">Nama Pelanggan <span class="text-danger">*</span> </label>
+                        <input type="text" class="form-control form-control-sm" name="nama_plg" required>
+                    </div>                    
+                    <div class="form-group col-md-12">
+                        <label for="">No Ponsel</label>
+                        <input type="text" class="form-control form-control-sm" name="no_ponsel" >
+                    </div>           
+                    <div class="form-group col-md-12">
+                        <label for="">Email</label>
+                        <input type="text" class="form-control form-control-sm" name="email" >
+                    </div>           
+                    <div class="form-group col-md-12">
+                        <label for="">Alamat</label>
+                        <input type="text" class="form-control form-control-sm" name="alamat">
+                    </div>                      
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary">
+                    Simpan
+                </button>
+            </div>
+        </div>
+    </div>
+</form>
 
 <div class="modal fade" id="modal_data_plg">
     <div class="modal-dialog modal-dialog-scrollable modal-lg">
@@ -177,6 +219,7 @@
                     </h5>
                     <small>Data pelanggan</small>
                 </div>
+                
                 <button class="close" data-dismiss="modal">&times;</button>
             </div>
             <div class="modal-body">

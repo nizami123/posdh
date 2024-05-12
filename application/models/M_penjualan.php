@@ -14,7 +14,7 @@ class m_penjualan extends CI_Model {
     var $src_retur      = ['nama_brg'];
 
     private function __data_riwayat() {
-        $this->db->select('*, tp.status status_penjualan');
+        $this->db->select('*, tp.status status_penjualan, tpp.email email_pel');
         $this->db->from('tb_detail_penjualan tdp');
         $this->db->join('tb_penjualan tp', 'tdp.kode_penjualan = tp.kode_penjualan');
         $this->db->join('tb_brg_keluar tbk', 'tp.id_keluar = tbk.id_keluar');
@@ -170,6 +170,35 @@ class m_penjualan extends CI_Model {
         $this->db->update('tb_brg_keluar', $upstok, ['id_keluar' => $kode]);
     }
 
+    function tambah_keranjang_search ($input) {
+        $kode    = $input['kode'];
+        $id_toko = $this->session->userdata('sesi_toko');
+        $admin   = $this->session->userdata('sesi_id_admin');
+        
+        $idKeluar = $this->db->query("select id_keluar from tb_brg_keluar tbk 
+        join tb_brg_masuk tbm on tbk.id_masuk = tbm.id_masuk 
+        where tbm.sn_brg = '".$kode."'")->row();
+
+        $where = [
+            'id_keluar' => $idKeluar->id_keluar, 
+            'id_toko'  => $id_toko,
+            'kasir'    => $admin
+        ];
+        
+        $insert = [
+            'id_keluar'       => $idKeluar->id_keluar,
+            'jml'             => 1,
+            'id_toko'         => $id_toko,
+            'kasir'           => $admin,    
+            'diskon'          => 0
+        ];
+        
+        $cek    = $this->db->get_where($this->keranjang, $where)->row();
+        $this->db->insert($this->keranjang, $insert);
+        $upstok['status']  = 3;
+        $this->db->update('tb_brg_keluar', $upstok, ['id_keluar' => $idKeluar->id_keluar]);
+    }
+
     function submit_keranjang($data) {
         $where = [
             'id_toko' => $this->session->userdata('sesi_toko'),
@@ -232,6 +261,25 @@ class m_penjualan extends CI_Model {
         return $this->db->get()->result();
     }
 
+    function data_riwayat_today($limit = null) {
+        $id_toko  = $this->session->userdata('sesi_toko');
+        $id_admin = $this->session->userdata('sesi_id_admin');
+        $level    =  $this->session->userdata('sesi_level');
+
+        $this->__data_riwayat();
+        $this->db->where_in('tp.status', [1,2]);
+        $this->db->where('tbk.id_toko', $id_toko);
+        $this->db->where('DATE(tgl_transaksi)', date('Y-m-d'));
+        $this->db->order_by('tgl_transaksi', 'desc');
+        $this->db->where('tdp.id_admin', $id_admin);
+
+        if($limit) {
+            $this->db->limit($limit);
+        }
+
+        return $this->db->get()->result();
+    }
+
     function detail($id) {
         $this->__data_riwayat();
         $this->db->group_by('tp.kode_penjualan');
@@ -263,6 +311,7 @@ class m_penjualan extends CI_Model {
         $id_admin = $this->session->userdata('sesi_id_admin');
 
         $this->__data_riwayat();
+        $this->db->where_in('tp.status', [1,2]);
         $this->db->where('DATE(tgl_transaksi)', date('Y-m-d'));
         $this->db->where('tbk.id_toko', $id_toko);
         $this->db->where('tdp.id_admin', $id_admin);

@@ -102,9 +102,32 @@ class Pelanggan extends CI_Controller {
         echo $html;
     } 
 
+	
+    function generateid(){
+        $data['lastID'] = $this->db->query("select id_plg from tb_pelanggan order by id_plg desc limit 1")->result_array();
+        if (!empty($data['lastID'][0]['id_plg'])) {
+          $numericPart = isset($data['lastID'][0]['id_plg']) ? preg_replace('/[^0-9]/', '', $data['lastID'][0]['id_plg']) : '';
+          $incrementedNumericPart = sprintf('%04d', intval($numericPart) + 1);
+          $data['newID'] = 'DHCS-' . $incrementedNumericPart;
+        }else {
+          $data['newID'] = 'DHCS-0001';
+        }
+        return $data['newID'];
+        
+    }
+
 	function proses_tambah_plg() {
 		$input = $this->input->post(null, true);
-		$this->plg->tambah_plg($input);
+		$data = [
+            'id_plg'    => $input['id_plg'],
+            'nama_plg'   => $input['nama_plg'],
+            'no_ponsel'  => $input['no_ponsel'],
+            'alamat'     => $input['alamat'],
+            'email'      => $input['email'],
+        ];
+
+        $this->db->insert('tb_pelanggan', $data);
+        return $data['id_plg'];
 	}
 
 	function proses_ubah_plg() {

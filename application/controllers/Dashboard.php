@@ -14,6 +14,7 @@ class Dashboard extends CI_Controller {
 				'm_penjualan'   => 'jual',
 				'm_laporan' 	=> 'lap',
 				'm_toko' 		=> 'toko',
+				'm_pelanggan'	=> 'plg',
 			]
 		);
 	}
@@ -25,7 +26,7 @@ class Dashboard extends CI_Controller {
 			'pemasukan_today' => $this->pemasukan_today(),
 			'uang_kasir'      => $this->uang_kasir('Saldo'),
 			'status'	      => $this->uang_kasir('status'),
-			'data_jual'  	  => $this->jual->data_riwayat (10),
+			'data_jual'  	  => $this->jual->data_riwayat_today (10),
 			'total_jual'  	  => $this->jual->jml_penjualan(),
 			'webInfo' 	      => '
 				<strong>Dashboard</strong>
@@ -34,6 +35,41 @@ class Dashboard extends CI_Controller {
 		];
 
 		$this->layout->load('layout', 'dashboard', $conf);
+	}
+
+	function load_data_keluar() {
+		$list = $this->db->query("select * from vbarangkeluar")->result();
+		$data = [];
+		$no = $this->input->post('start');
+		foreach ($list as $item) { 
+			$no++;
+			$row   = [];
+			$row[] = $no;
+			$row[] = '
+					<strong>'.$item->nama_brg.'</strong>
+					<div>
+						<small>
+							<strong>'. $item->merk .'</strong>
+							<span class="mx-2"> | </span>
+							<strong>'. $item->jenis .'</strong>
+							<span class="mx-2"> | </span>
+							<strong>'. $item->sn_brg .'</strong>
+						</small>
+					</div>
+				';
+			$row[] = nf($item->hrg_jual);
+			$row[] = nf($item->hrg_cashback);
+			$row[] = $item->nama_toko;
+			$row[] = $item->kondisi;
+			$data[] = $row;
+		}
+		$output = [
+			"draw"             => $this->input->post('draw'),
+			"recordsTotal"     => $this->plg->count_all_keluar(),
+			"recordsFiltered"  => $this->plg->count_keluar(),
+			"data"             => $data,
+		];
+		echo json_encode($output);
 	}
 
 	function pemasukan_today() {

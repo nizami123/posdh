@@ -385,7 +385,9 @@ class m_laporan extends CI_Model {
 
     function pemasukan_today() {
         $toko = $this->session->userdata('sesi_toko');
-        $q    = $this->db->query("SELECT * FROM $this->tb_detail WHERE id_toko = '$toko' AND DATE(tgl_transaksi) = '".date('Y-m-d')."'")->result();
+        $q    = $this->db->query("SELECT * FROM $this->tb_detail tdp
+        join tb_penjualan tp on tdp.kode_penjualan = tp.kode_penjualan 
+        WHERE id_toko = '$toko' AND DATE(tgl_transaksi) = '".date('Y-m-d')."' and status in (1,2)")->result();
 
         return $q;
     }

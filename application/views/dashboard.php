@@ -94,6 +94,36 @@
 				</a>
 			</div>
 			
+				<div class="col-sm-12">
+					<div class="card">
+						<div class="card-header pt-4 d-flex justify-content-between align-items-start">
+							<div>
+								<h5 class="mb-0 text-primary">Produk DH Store</h5>
+								<small>Data Produk</small>
+							</div>
+						</div>
+						<div class="card-body">
+							<div class="table-responsive">
+								<table class="table table-bordered w-100" id="data_keluar">
+									<thead class="bg-light">
+										<tr>
+											<th>No</th>
+											<th>Nama Barang</th>
+											<th>Harga</th>
+											<th>Cashback</th>
+											<th>Nama Toko</th>
+											<th>Kondisi</th>
+										</tr>
+									</thead>
+									<tbody>
+
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+
 			<?php if(admin()->level != 'Admin' ) : ?>
 				<div class="col-md-12">
 					<div class="card pt-2">
