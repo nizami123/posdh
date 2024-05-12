@@ -38,7 +38,7 @@ class Dashboard extends CI_Controller {
 	}
 
 	function load_data_keluar() {
-		$list = $this->db->query("select * from vbarangkeluar where status=2")->result();
+		$list = $this->db->query("select * from vbarangkeluar where status=2 and hrg_jual > 0")->result();
 		$data = [];
 		$no = $this->input->post('start');
 		foreach ($list as $item) { 
