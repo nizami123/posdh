@@ -296,7 +296,7 @@ class Penjualan extends CI_Controller {
 				}else{
 					$diskon_nilai = 0;
 				}
-				$harga     = $item->hrg_jual - $diskon_nilai - $item->hrg_cashback;
+				$harga     = $item->harga_jual - $diskon_nilai - $item->hrg_cashback;
 				$subharga  = $harga * $item->jml;
 				$jml 	   = $item->jenis_penjualan == 'Grosir' ? $item->min_grosir : $item->jml;
 				$min 	   = $item->jenis_penjualan == 'Grosir' ? $item->min_grosir : 1;
@@ -329,9 +329,9 @@ class Penjualan extends CI_Controller {
 						</td>
 						<td class="text-right">
 							<strong >
-								'.nf($item->hrg_jual).'
+								'.nf($item->harga_jual).'
 							</strong>
-							<input type="hidden" name="jual[]" value="'.$item->hrg_jual.'">
+							<input type="hidden" name="jual[]" value="'.$item->harga_jual.'">
 						</td>
 						<td class="text-right">
 							<strong >
