@@ -89,6 +89,7 @@ class m_penjualan extends CI_Model {
     function data_keranjang() {
         $id_toko = $this->session->userdata('sesi_toko');
         $admin   = $this->session->userdata('sesi_id_admin');
+        $this->db->select ('*,tbk.hrg_jual harga_jual');
         $this->db->from ($this->keranjang . ' cart');
         $this->db->join ('tb_brg_keluar tbk', 'cart.id_keluar = tbk.id_keluar');
         $this->db->join ('tb_brg_masuk tbm', 'tbk.id_masuk = tbm.id_masuk');
