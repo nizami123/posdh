@@ -329,7 +329,7 @@ class Penjualan extends CI_Controller {
 						</td>
 						<td class="text-right">
 							<strong >
-								'.nf($item->harga_jual).'
+								'.nf($item->hrg_jual).'
 							</strong>
 							<input type="hidden" name="jual[]" value="'.$item->harga_jual.'">
 						</td>
