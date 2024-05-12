@@ -2077,7 +2077,8 @@
                                 url: '<?= site_url('penjualan/tambah_keranjang') ?>',
                                 data: {
                                     kode: kode,
-                                    diskon: diskon
+                                    diskon: diskon,
+                                    nama :nama
                                 }
                             }).done(
                                 function(data) {

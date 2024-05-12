@@ -57,7 +57,7 @@ class Dashboard extends CI_Controller {
 						</small>
 					</div>
 				';
-			$row[] = nf($item->harga_jual);
+			$row[] = nf($item->hrg_jual);
 			$row[] = nf($item->hrg_cashback);
 			$row[] = $item->nama_toko;
 			$row[] = $item->kondisi;
