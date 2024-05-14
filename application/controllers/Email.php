@@ -155,39 +155,51 @@ class Email extends CI_Controller {
 					</tbody>
 					<tfoot>
 						<tr>
-							<th style="text-align:left;">Total Belanja</th>
+							<th style="text-align:left;">Harga</th>
 							<th style="text-align:left;padding-left: 10px;padding-right: 10px;">'.$tjml.'</th>
 							<th></th>
-							<th style="text-align:right;">'.nf($detail->total_keranjang).'</th>
-						</tr>
-						
-						<tr>
-							<th style="text-align:left;">Bayar</th>
-							<th style="text-align:right;">'.nf($detail->bayar).'</th>
-							<th></th>
-							<th></th>
+							<th style="text-align:right;">'.nf($detail->harga_jual).'</th>
 						</tr>
 						
 						<tr>
 							<th style="text-align:left;">Cashback</th>
+							<th></th>
+							<th></th>
 							<th style="text-align:right;">'.nf($detail->harga_cashback).'</th>
-							<th></th>
-							<th></th>
+							
 						</tr>
 						<tr>
 							<th style="text-align:left;">Diskon</th>
+							<th></th>
+							<th></th>
 							<th style="text-align:right;">'.nf($detail->diskon).'</th>
+							
+						</tr>
+						
+						<tr>
+							<th style="text-align:left;">Total</th>
 							<th></th>
 							<th></th>
+							<th style="text-align:right;">'.nf($detail->total_keranjang	).'</th>
+							
+						</tr>
+
+						<tr>
+							<th style="text-align:left;">Bayar</th>
+							<th></th>
+							<th></th>
+							<th style="text-align:right;">'.nf($detail->bayar).'</th>
+							
 						</tr>
 						';
 
 						$html .= '
 						<tr>
 							<th style="text-align:left;">Kembalian</th>
+							<th></th>
+							<th></th>
 							<th style="text-align:right;">'.nf($detail->total_kembalian - $detail->jml_donasi).'</th>
-							<th></th>
-							<th></th>
+							
 						</tr>
 					</tfoot>
 				</table>

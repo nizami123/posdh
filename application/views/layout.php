@@ -2178,6 +2178,17 @@
                                 }
                             );
                         });
+
+                        $('.btn_retur').on('click', function(e) {
+                            let id   = $(this).data('id');
+                            $.get(
+                                '<?= site_url('penjualan/load_retur/') ?>' + id,
+                                function(data) {
+                                    $('#modal_retur .modal-content').html(data);
+                                }
+                            );
+                        });
+
                     }      
                 },
                 columnDefs: [

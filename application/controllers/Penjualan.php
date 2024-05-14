@@ -30,9 +30,6 @@ class Penjualan extends CI_Controller {
                         <a href="'.site_url('penjualan?status=dp').'" class="btn ' . (isset($_GET['status']) && $_GET['status'] == 'dp' ? 'dashed bg-black' : 'dashed bg-white') . '">
                             DP
                         </a>
-						<a href="'.site_url('penjualan?status=trade').'" class="btn ' . (isset($_GET['status']) && $_GET['status'] == 'trade' ? 'dashed bg-black' : 'dashed bg-white') . '">
-                            Trade In
-                        </a>
                         <a href="'.site_url('penjualan/riwayat').'" class="btn bg-white dashed">
                             Riwayat
                         </a>
@@ -793,54 +790,51 @@ class Penjualan extends CI_Controller {
 					</tbody>
 					<tfoot>
 						<tr>
-							<th style="text-align:left;">Total Belanja</th>
+							<th style="text-align:left;">Harga</th>
 							<th style="text-align:left;padding-left: 10px;padding-right: 10px;">'.$tjml.'</th>
 							<th></th>
-							<th style="text-align:right;">'.nf($detail->total_keranjang).'</th>
-						</tr>
-						
-						<tr>
-							<th style="text-align:left;">Bayar</th>
-							<th style="text-align:right;">'.nf($detail->bayar).'</th>
-							<th></th>
-							<th></th>
+							<th style="text-align:right;">'.nf($detail->harga_jual).'</th>
 						</tr>
 						
 						<tr>
 							<th style="text-align:left;">Cashback</th>
+							<th></th>
+							<th></th>
 							<th style="text-align:right;">'.nf($detail->harga_cashback).'</th>
-							<th></th>
-							<th></th>
+							
 						</tr>
 						<tr>
 							<th style="text-align:left;">Diskon</th>
+							<th></th>
+							<th></th>
 							<th style="text-align:right;">'.nf($detail->diskon).'</th>
+							
+						</tr>
+						
+						<tr>
+							<th style="text-align:left;">Total</th>
 							<th></th>
 							<th></th>
+							<th style="text-align:right;">'.nf($detail->total_keranjang	).'</th>
+							
+						</tr>
+
+						<tr>
+							<th style="text-align:left;">Bayar</th>
+							<th></th>
+							<th></th>
+							<th style="text-align:right;">'.nf($detail->bayar).'</th>
+							
 						</tr>
 						';
-
-						if($hemat > 0) {
-							$html .= '
-								<tr>
-									<th style="text-align:left;">
-										Hemat
-									</th>
-									<th style="text-align:right;">
-										'.nf($hemat).'
-									</th>
-									<th></th>
-							        <th></th>
-								</tr>
-							';
-						}
 
 						$html .= '
 						<tr>
 							<th style="text-align:left;">Kembalian</th>
+							<th></th>
+							<th></th>
 							<th style="text-align:right;">'.nf($detail->total_kembalian - $detail->jml_donasi).'</th>
-							<th></th>
-							<th></th>
+							
 						</tr>
 					</tfoot>
 				</table>
@@ -1063,15 +1057,22 @@ class Penjualan extends CI_Controller {
 			$nama_plg = $item->id_plg ? $item->nama_plg : 'Umum';
 			$jml = $this->jual->cek_jml_jual($item->kode_penjualan);
 			$email = '';
+			$retur = '';
 			if ($item->status_penjualan == 0){
 				$status_penjualan = '<span class="label label-warning">Menunggu Konfirmasi</span>';
 				$hapus = '';
+				$retur = '<a href="'.site_url('penjualan/retur/'.$item->kode_penjualan).'" class="badge badge-light border">
+						Retur
+					</a>';
 				$lunas = '';
 				$cetak = '';
 			}else if ($item->status_penjualan == 1){
 				$status_penjualan = '<span class="label label-success">DP Konfirmasi</span>';
 				$lunas = '<a href="' . site_url('penjualan/lunas/' . $item->kode_penjualan) . '" class="badge badge-success border btn-cetak-inv">Lunasi</a>';
 				$hapus = '';
+				$retur = '<a href="#modal_retur" data-toggle="modal" data-id="'.$item->kode_penjualan.'" class="badge badge-secondary btn_retur">
+							Retur
+						</a>';
 				if (strlen($item->email_pel) > 0){
 					$email = '<a href="' . site_url('penjualan/lunas/' . $item->kode_penjualan) . '" class="badge badge-success border btn-cetak-inv">Email</a>';
 				}
@@ -1080,12 +1081,15 @@ class Penjualan extends CI_Controller {
 				$status_penjualan = '<span class="label label-success">Sudah Dikonfirmasi</span>';
 				$hapus = '';
 				$lunas = '';
+				$retur = '<a href="#modal_retur" data-toggle="modal" data-id="'.$item->kode_penjualan.'" class="badge badge-secondary btn_retur">
+							Retur
+						</a>';
 				if (strlen($item->email_pel) > 0){
 					$email = '<a href="' . site_url('email/send_email/'. $item->kode_penjualan) . '" class="badge badge-success border btn-cetak-inv">Email</a>';
 				}
 				$cetak = '<a href="' . site_url('penjualan/struk/' . $item->kode_penjualan) . '" target="_blank" class="badge badge-light border btn-cetak-inv">Cetak struk</a>';
 			}else{
-				$status_penjualan = '<span class="label label-danger">Ditolak</span>';
+				$status_penjualan = '<span class="label label-danger">Diretur</span>';
 				$hapus = '<a href="'.site_url('penjualan/hps_riwayat/'.$item->kode_penjualan).'" data-text="Riwayat belanja <strong>'.$item->kode_penjualan.'</strong> akan dihapus dari daftar" class="badge badge-danger hps">
 				Hapus</a> ';
 				$lunas = '';
@@ -1100,10 +1104,9 @@ class Penjualan extends CI_Controller {
 					</a>                                        
 					'.$cetak.'    
 					'.$email.'    
-					<span class="mx-2"> | </span>                                     
-					<a href="'.site_url('penjualan/retur/'.$item->kode_penjualan).'" class="badge badge-light border">
-						Retur
-					</a>
+					<span class="mx-2"> | </span>           
+					'.$retur.'                         
+					
 				</div>
 			';				
 			
@@ -1297,7 +1300,22 @@ class Penjualan extends CI_Controller {
 		$this->jual->hps_riwayat($id);
 	}
 
+	public function load_retur($id) {		
+		$data['id_keluar'] = $id;
+		$this->load->view('retur', $data);
+	}
+
 	function retur($id = null) {
+		$post = $this->input->post();
+
+		if (isset($post['kode'])){
+			$id = $post['kode'];
+			$saldo = $post['retur'];
+		}else{
+			$id = $id;
+			$saldo = 0;
+		}
+
 		$retur = $this->db->query("select * from tb_detail_penjualan tdp
 		left join tb_penjualan tp on tp.kode_penjualan = tdp.kode_penjualan
 		where tdp.kode_penjualan = '".$id."'")->result();
@@ -1310,7 +1328,13 @@ class Penjualan extends CI_Controller {
 			$this->db->update('tb_brg_keluar', $data);
 		}
 
-		$this->db->delete('tb_detail_penjualan', ['kode_penjualan' => $id]);
+		$data = array(
+			'status' => 5,
+			'retur'	 => $saldo
+		);
+		$this->db->where('kode_penjualan', $id);
+		$this->db->update('tb_penjualan', $data);
+
 		redirect('penjualan/riwayat');
 	}
 

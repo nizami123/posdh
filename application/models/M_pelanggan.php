@@ -41,6 +41,8 @@ class m_pelanggan extends CI_Model {
 
     private function __data_keluar() {
         $this->db->from($this->tb_keluar . ' plg');
+        $this->db->where('status', 2);
+        $this->db->where('hrg_jual > 0');
         
         $i = 0;
         foreach ($this->src_keluar as $item) {  
@@ -163,6 +165,15 @@ class m_pelanggan extends CI_Model {
     function data_plg() {
         $this->__data_plg();
         $this->db->order_by('id_plg', 'desc');
+        if(@$_POST['length'] != -1) {
+            $this->db->limit(@$_POST['length'], @$_POST['start']);
+        }
+        return $this->db->get()->result();
+    }
+
+    function data_keluar() {
+        $this->__data_keluar();
+        $this->db->order_by('tgl_keluar', 'desc');
         if(@$_POST['length'] != -1) {
             $this->db->limit(@$_POST['length'], @$_POST['start']);
         }
