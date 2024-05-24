@@ -2384,22 +2384,19 @@
                                 Swal.fire({
                                     icon: 'success',
                                     title: 'Disimpan',
-                                    text: 'Semua item sudah disimpan. Apakah anda ingin cetak struk belanja?',
-                                    showCancelButton: true,
-                                    confirmButtonText: 'Cetak',
-                                    cancelButtonText: 'Tidak',
+                                    text: 'Semua item sudah berhasil disimpan',
                                     customClass: {
-                                        confirmButton: 'btn btn-primary mr-3',
-                                        cancelButton: 'btn btn-secondary'
+                                        confirmButton: 'btn btn-primary'
                                     },
                                     buttonsStyling: false,
                                 }).then(
                                     res => {
                                         if(res.isConfirmed) {
-                                            window.open('<?= site_url('penjualan/struk/') ?>' + data, '', 'width: 21mm');
+                                            window.location.href = '<?= site_url('penjualan/riwayat/') ?>';
                                         }
                                     }
                                 )
+
                             });
                         }
                     }

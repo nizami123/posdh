@@ -17,7 +17,6 @@
                                 <th>Tanggal</th>
                                 <th>Nama Pelanggan</th>
                                 <th>Cara Bayar</th>
-                                <th>Bank</th>
                                 <th>Status</th>
                                 <th>Aksi</th>
                             </tr>

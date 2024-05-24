@@ -455,42 +455,57 @@ class Penjualan extends CI_Controller {
 			$trade = '';
 		}
 
+		$pelanggan = $this->plg->data_plg();
+
+		$optionsPel = '';
+		if (!empty($pelanggan)) {
+			foreach ($pelanggan as $plg) {
+				$optionsPel .= '<option value="' . $plg->id_plg . '">' . $plg->nama_plg . '</option>';
+			}
+		}
+
+		$kasir = $this->plg->data_ksr();
+
+		$optionsKsr = '';
+		if (!empty($kasir)) {
+			foreach ($kasir as $ksr) {
+				$optionsKsr .= '<option value="' . $ksr->id_ksr . '">' . $ksr->nama_ksr . '</option>';
+			}
+		}
+
+		$bank = $this->plg->data_bank();
+
+		$optionsBank = '';
+		if (!empty($bank)) {
+			foreach ($bank as $bank) {
+				$optionsBank .= '<option value="' . $bank->id_bank . '">' . $bank->nama_bank . '</option>';
+			}
+		}
+		
+
 		if($cek) {
 			$html = '
 				<div class="form-group">
 					<label> Pelanggan </label>
 					<div class="input-group">
-						<input readonly class="form-control form-control-sm nama_plg" value="Umum">
-						<input type="hidden" value="Umum" class="id_plg" name="id_plg">
-						<div class="input-group-append">
-							<a class="btn btn-sm bg-white border px-3" 
-									href="#modal_data_plg" 
-									data-toggle="modal"
-							>
-								<i class="fa fa-search"></i>
-							</a>
-							<a class="btn btn-sm bg-white border px-3" 
-									href="#modal_tambah_plg" 
-									data-toggle="modal"
-							>
-								<i class="fa fa-plus"></i>
-							</a>
-						</div>
+						<select class="form-control form-control-sm id_plg" name="id_plg">
+							<option value="Umum">Umum</option>
+							' . $optionsPel . '
+						</select>
+						<a class="btn btn-sm bg-white border px-3" 
+								href="#modal_tambah_plg" 
+								data-toggle="modal"
+						>
+							<i class="fa fa-plus"></i>
+						</a>
 					</div>
 				</div>
 				<div class="form-group">
 					<label> Kasir </label>
 					<div class="input-group">
-						<input readonly class="form-control form-control-sm nama_ksr" required>
-						<input type="hidden" class="id_ksr" name="id_ksr" required>
-						<div class="input-group-append">
-							<a class="btn btn-sm bg-white border px-3" 
-									href="#modal_data_ksr" 
-									data-toggle="modal"
-							>
-								<i class="fa fa-search"></i>
-							</a>
-						</div>
+						<select class="form-control form-control-sm id_ksr" name="id_ksr">
+							' . $optionsKsr . '
+						</select>
 					</div>
 				</div>
 
@@ -507,19 +522,30 @@ class Penjualan extends CI_Controller {
 					</div>					
 				</div>
 				<div class="form-group">
-					<label> Cara Bayar </label>
-					<div class="input-group">
-						<input readonly class="form-control form-control-sm nama_bank" value="Tunai">
-						<input type="hidden" value="Tunai" class="id_bank" name="id_bank">
-						<div class="input-group-append">
-							<a class="btn btn-sm bg-white border px-3" 
-									href="#modal_data_bank" 
-									data-toggle="modal"
-							>
-								<i class="fa fa-search"></i>
-							</a>
+					<div class="input-group input-group-sm ui-widget">
+						<div class="input-group-prepend">
+							<div class="input-group-text bg-white px-4">
+								Tunai
+							</div>
 						</div>
-					</div>
+						<input type="text"  class="form-control form-control-sm bg-secondary _bayar" name="bayarTunai">
+					</div>	
+					<div class="input-group input-group-sm ui-widget">
+						<div class="input-group-prepend">
+								<select class="form-control form-control-sm id_bank" name="id_bank">
+								' . $optionsBank . '
+								</select>
+						</div>
+						<input type="text"  class="form-control form-control-sm bg-secondary _bayar" name="bayarBank">
+					</div>	
+					<div class="input-group input-group-sm ui-widget">
+						<div class="input-group-prepend">
+							<div class="input-group-text bg-white px-4">
+								Kredit
+							</div>
+						</div>
+						<input type="text"  class="form-control form-control-sm bg-secondary _bayar" name="bayarKredit">
+					</div>	
 				</div>
 				<div class="form-group">
 					<label> Tipe Penjualan </label>
@@ -607,8 +633,6 @@ class Penjualan extends CI_Controller {
 				'harga_diskon'	 => $diskon_nilai,
 				'harga_bayar'	 => $harga,
 				'harga_cashback' => $cashback,
-				'cara_bayar'	 => $cara_bayar,
-				'id_bank'		 => $input['id_bank'],
 				'id_diskon'		 => $diskon_id,
 				'id_trade'		 => isset($input['id_trade']) ? $input['id_trade'] : '',
 				'tipe_penjualan' => $input['tipe_penjualan']
@@ -636,7 +660,12 @@ class Penjualan extends CI_Controller {
 			'total_penjualan'	=> $jual_total,
 			'id_plg'      	 	=> $input['id_plg'],
 			'id_ksr'      	 	=> $input['id_ksr'],
+			'cara_bayar'	 	=> $cara_bayar,
 			'jenis_diskon'  	=> '',
+			'id_bank'		 => $input['id_bank'],
+			'tunai'				=> intval(preg_replace("/[^0-9]/", "", $input['bayarTunai'])),
+			'kredit'			=> intval(preg_replace("/[^0-9]/", "", $input['bayarKredit'])),
+			'bank'				=> intval(preg_replace("/[^0-9]/", "", $input['bayarBank'])),
 			'is_donasi'  		=> $is_donasi,
 			'jml_donasi'  		=> isset($input['is_donasi']) ? $input['jml_donasi'] : 0,
 			'tgl_transaksi' 	=> date('Y-m-d G:i:s'),
@@ -663,6 +692,7 @@ class Penjualan extends CI_Controller {
 		$detail 	= $this->jual->detail($id);
 		$data_jual  = $this->jual->penjualan($id);
 		$width 		= conf()->jenis_kertas_struk == 'HVS' ? '100%' : conf()->ukuran_kertas . 'mm';
+		$pelanggan  = empty($detail->nama_plg) ? $detail->nama_plg : 'Umum';
 
 		$html = '
 		<html>
@@ -742,6 +772,9 @@ class Penjualan extends CI_Controller {
 					<p style="margin:0;padding:0">
 					    <span style="float:left">
 						    Kasir: '.$detail->nama_ksr.'  
+					    </span><br>
+						<span style="float:left">
+						    Pelanggan: '.$pelanggan.'  
 					    </span>
 					    <span style="float:right">
 						    '.tgl(date('d M Y G:i', strtotime($detail->tgl_transaksi))).'
@@ -774,7 +807,7 @@ class Penjualan extends CI_Controller {
 									<small>'.$jual->sn_brg.'</small>
 								</td>
 								<td style="text-align:left;padding-left: 10px;padding-right: 10px;">
-									'.$jual->jml.'
+									'.$jual->jml.' Pcs
 								</td>
 								<td style="text-align:right">
 									'.nf($jual->harga_jual).'
@@ -790,10 +823,11 @@ class Penjualan extends CI_Controller {
 					</tbody>
 					<tfoot>
 						<tr>
-							<th style="text-align:left;">Harga</th>
-							<th style="text-align:left;padding-left: 10px;padding-right: 10px;">'.$tjml.'</th>
+							<th style="text-align:left;">Total</th>
+							<th style="text-align:left;padding-left: 10px;padding-right: 10px;"></th>
 							<th></th>
-							<th style="text-align:right;">'.nf($detail->harga_jual).'</th>
+							<th style="text-align:right;">'.nf($detail->total_keranjang).'</th>
+							<span style="clear:both;float:none"></span>
 						</tr>
 						
 						<tr>
@@ -810,20 +844,29 @@ class Penjualan extends CI_Controller {
 							<th style="text-align:right;">'.nf($detail->diskon).'</th>
 							
 						</tr>
+
 						
 						<tr>
-							<th style="text-align:left;">Total</th>
+							<th style="text-align:left;">Tunai</th>
 							<th></th>
 							<th></th>
-							<th style="text-align:right;">'.nf($detail->total_keranjang	).'</th>
+							<th style="text-align:right;">'.nf($detail->tunai).'</th>
 							
 						</tr>
 
 						<tr>
-							<th style="text-align:left;">Bayar</th>
+							<th style="text-align:left;">Kartu Kredit</th>
 							<th></th>
 							<th></th>
-							<th style="text-align:right;">'.nf($detail->bayar).'</th>
+							<th style="text-align:right;">'.nf($detail->kredit).'</th>
+							
+						</tr>
+
+						<tr>
+							<th style="text-align:left;">Kartu Debit</th>
+							<th></th>
+							<th></th>
+							<th style="text-align:right;">'.nf($detail->bank).'</th>
 							
 						</tr>
 						';
@@ -1124,28 +1167,13 @@ class Penjualan extends CI_Controller {
 					</small>
 				</div>
 			';
-			$row[]  = $item->cara_bayar;
-			if($item->nama_bank == ''){
+			if($item->tunai > 0 && $item->bank == 0 && $item->kredit == 0){
 				$row[]  = '
 				<strong>Tunai</strong>
-				<div>
-					<small class="text-muted">
-						<span>'.$item->no_rek.'</span>
-						<span class="mx-2"> | </span>
-						<span>'.$item->nama_rek.'</span>
-					</small>
-				</div>
 			';
 			}else{
 				$row[]  = '
-				<strong>'. $item->nama_bank.'</strong>
-				<div>
-					<small class="text-muted">
-						<span>'.$item->no_rek.'</span>
-						<span class="mx-2"> | </span>
-						<span>'.$item->nama_rek.'</span>
-					</small>
-				</div>
+				<strong>Split Bill</strong>
 			';
 			}
 			

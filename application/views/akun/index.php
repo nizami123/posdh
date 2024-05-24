@@ -1,5 +1,5 @@
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-12">
         <?php 
             $foto = admin()->foto ? 'upload/karyawan/'.admin()->foto : 'upload/no-img.png';
             if($this->session->flashdata('success')) : 
@@ -15,7 +15,7 @@
             <button class="close" data-dismiss="alert">&times;</button>
         </div>
         <?php endif ?>
-        <div class="card mb-3">
+        <div class="card mb-12">
             <div class="card-body">
                 <small>
                     Anda adalah: 

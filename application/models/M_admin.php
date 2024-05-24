@@ -97,11 +97,25 @@ class m_admin extends CI_Model {
             'foto'          => $input['u_foto'],
         ];
 
-        if($input['u_pass']) {
+        $datakasir = [            
+            'nama_ksr'    => $input['u_nama'],
+            'email'       => $input['u_email'],
+        ];
+
+        $dataUser = [            
+            'nama_lengkap'    => $input['u_nama'],
+            'email'           => $input['u_email'],
+        ];
+
+        if(isset($input['u_pass'])) {
             $data['password'] = $input['u_pass'];
+            $dataUser['password'] = $input['u_pass'];
         }
 
         $this->db->update($this->admin, $data, $where);
+        $this->db->update('tb_user', $dataUser, ['id_user' => $input['u_id']]);
+        $this->db->update('tb_kasir', $datakasir, ['id_ksr' => $input['u_id']]);
+        
     }
 
     function hapus($id) {

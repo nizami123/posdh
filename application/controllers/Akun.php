@@ -76,7 +76,7 @@ class Akun extends CI_Controller {
 
     function ubah_sandi() {
 		$conf = [
-			'tabTitle' 	=> 'Ubaah sandi | ' . webTitle(),
+			'tabTitle' 	=> 'Ubah sandi | ' . webTitle(),
 			'webInfo' => '
 				<strong>
 					Akun

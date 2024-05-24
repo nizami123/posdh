@@ -14,7 +14,33 @@ class m_penjualan extends CI_Model {
     var $src_retur      = ['nama_brg'];
 
     private function __data_riwayat() {
-        $this->db->select('*, tp.status status_penjualan, tpp.email email_pel');
+        $this->db->select('*, tdp.status status_penjualan, tpp.email email_pel');
+        $this->db->from('tb_detail_penjualan tdp');
+        $this->db->join('tb_admin ta', 'tdp.id_admin = ta.id_admin', 'LEFT');
+        $this->db->join('tb_toko tt', 'ta.id_toko = tt.id_toko', 'LEFT');
+        $this->db->join('tb_pelanggan tpp', 'tdp.id_plg = tpp.id_plg', 'LEFT');
+        $this->db->join('tb_kasir tk', 'tdp.id_ksr = tk.id_ksr', 'LEFT');
+        $this->db->join('tb_bank tbn', 'tdp.id_bank = tbn.id_bank', 'LEFT');
+
+        $i = 0;
+        foreach ($this->src_riwayat as $item) {  
+            if(@$_POST['search']['value']) { 
+                if($i == 0) { 
+                    $this->db->group_start();
+                    $this->db->like($item, $_POST['search']['value']);
+                } else {
+                    $this->db->or_like($item, $_POST['search']['value']);
+                }
+                if(count($this->src_riwayat) - 1 == $i) {
+                    $this->db->group_end(); 
+                }
+            }
+            $i++;
+        }
+    }
+
+    private function __data_detail() {
+        $this->db->select('*, tdp.status status_penjualan, tpp.email email_pel');
         $this->db->from('tb_detail_penjualan tdp');
         $this->db->join('tb_penjualan tp', 'tdp.kode_penjualan = tp.kode_penjualan');
         $this->db->join('tb_brg_keluar tbk', 'tp.id_keluar = tbk.id_keluar');
@@ -24,7 +50,7 @@ class m_penjualan extends CI_Model {
         $this->db->join('tb_admin ta', 'tdp.id_admin = ta.id_admin', 'LEFT');
         $this->db->join('tb_pelanggan tpp', 'tdp.id_plg = tpp.id_plg', 'LEFT');
         $this->db->join('tb_kasir tk', 'tdp.id_ksr = tk.id_ksr', 'LEFT');
-        $this->db->join('tb_bank tbn', 'tp.id_bank = tbn.id_bank', 'LEFT');
+        $this->db->join('tb_bank tbn', 'tdp.id_bank = tbn.id_bank', 'LEFT');
 
         $i = 0;
         foreach ($this->src_riwayat as $item) {  
@@ -223,7 +249,7 @@ class m_penjualan extends CI_Model {
         $level    =  $this->session->userdata('sesi_level');
 
         $this->__data_riwayat();
-        $this->db->where('tdp.id_toko', $id_toko);
+        $this->db->where('ta.id_toko', $id_toko);
         $this->db->where('tdp.id_admin', $id_admin);
 
         return $this->db->get()->num_rows();
@@ -236,7 +262,7 @@ class m_penjualan extends CI_Model {
 
         $this->__data_riwayat();
         $this->db->group_by('tdp.kode_penjualan');
-        $this->db->where('tdp.id_toko', $id_toko);
+        $this->db->where('ta.id_toko', $id_toko);
 
         if($level == 'Kasir') {
             $this->db->where('tdp.id_admin', $id_admin);
@@ -251,7 +277,7 @@ class m_penjualan extends CI_Model {
         $level    =  $this->session->userdata('sesi_level');
 
         $this->__data_riwayat();
-        $this->db->where('tbk.id_toko', $id_toko);
+        $this->db->where('ta.id_toko', $id_toko);
         $this->db->order_by('tgl_transaksi', 'desc');
         $this->db->where('tdp.id_admin', $id_admin);
 
@@ -268,8 +294,8 @@ class m_penjualan extends CI_Model {
         $level    =  $this->session->userdata('sesi_level');
 
         $this->__data_riwayat();
-        $this->db->where_in('tp.status', [1,2]);
-        $this->db->where('tbk.id_toko', $id_toko);
+        $this->db->where_in('tdp.status', [1,2]);
+        $this->db->where('tt.id_toko', $id_toko);
         $this->db->where('DATE(tgl_transaksi)', date('Y-m-d'));
         $this->db->order_by('tgl_transaksi', 'desc');
         $this->db->where('tdp.id_admin', $id_admin);
@@ -282,7 +308,7 @@ class m_penjualan extends CI_Model {
     }
 
     function detail($id) {
-        $this->__data_riwayat();
+        $this->__data_detail();
         $this->db->group_by('tp.kode_penjualan');
         $this->db->where('tp.kode_penjualan', $id);
 
@@ -291,10 +317,10 @@ class m_penjualan extends CI_Model {
 
     function penjualan($id) {
         $id_toko = $this->session->userdata('sesi_toko');
-        $this->__data_riwayat();
+        $this->__data_detail();
         $this->db->where('tp.kode_penjualan', $id);
         $this->db->where('tp.jml > ',  0);
-        $this->db->where('tbk.id_toko', $id_toko);
+        $this->db->where('tt.id_toko', $id_toko);
         return $this->db->get()->result();
     }
 
@@ -312,9 +338,9 @@ class m_penjualan extends CI_Model {
         $id_admin = $this->session->userdata('sesi_id_admin');
 
         $this->__data_riwayat();
-        $this->db->where_in('tp.status', [1,2]);
+        $this->db->where_in('tdp.status', [1,2]);
         $this->db->where('DATE(tgl_transaksi)', date('Y-m-d'));
-        $this->db->where('tbk.id_toko', $id_toko);
+        $this->db->where('tt.id_toko', $id_toko);
         $this->db->where('tdp.id_admin', $id_admin);
         return $this->db->get()->num_rows();
     }

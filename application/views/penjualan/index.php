@@ -68,23 +68,6 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="mt-4">
-                    <small>
-                        <strong>Tombol Aksi</strong>
-                    </small>
-                    <div class="mt-1">
-                        <a href="" class="badge badge-danger empty_cart">
-                            Kosongkan Keranjang
-                        </a>
-                                                
-                        <?php if(admin()->level == 'Owner') : ?>
-                            <span class="mx-2"> | </span>
-                            <a href="#modal_data_toko" data-toggle="modal" class="badge badge-light border">
-                                <i class="fa fa-store mr-1"></i> Pindah Toko
-                            </a>
-                        <?php endif ?>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
