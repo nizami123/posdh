@@ -683,12 +683,18 @@ class Penjualan extends CI_Controller {
 
 
 		$is_donasi = isset($input['is_donasi']) ? 1 : 0;
+		$bayarB = isset($input['bayarB']) ? intval(preg_replace("/[^0-9]/", "", $input['bayarB'])) : 0;
+		$bayarT = isset($input['bayarT']) ? intval(preg_replace("/[^0-9]/", "", $input['bayarT'])) : 0;
+		$bayarK = isset($input['bayarK']) ? intval(preg_replace("/[^0-9]/", "", $input['bayarK'])) : 0;
+
+		$bayar = $bayarB + $bayarT + $bayarK;
+
 		$detail = [
 			'kode_penjualan' 	=> $kode,
 			'id_admin' 		 	=> admin()->id_admin,
 			'total_kembalian'   => $input['total_kembalian'],
 			'total_keranjang'   => $input['total_keranjang'],
-			'bayar'      	 	=> intval(preg_replace("/[^0-9]/", "", $input['bayar'])),
+			'bayar'      	 	=> $bayar,
 			'diskon'      	 	=> $diskon_total,
 			'cashback'			=> $cashback_total,
 			'total_penjualan'	=> $jual_total,
