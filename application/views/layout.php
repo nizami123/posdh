@@ -2317,6 +2317,26 @@
                     );
                 }
             });
+
+            $('#diskon_id134').on('input', function() {
+                let val = this.value;
+                if(val != '' && val.length >= 3) {
+                    $.post({
+                        url: '<?= site_url('penjualan/tambah_keranjang_search') ?>',
+                        data: {
+                            kode: val,
+                        }
+                    }).done(
+                        function(data) {
+                            if(data == '') {
+                                data_keranjang();
+                                $('.total_kembalian').text(0);
+                                $('.total_kembalian_inp').val(0);
+                            }
+                        }
+                    );
+                }
+            });
             
             $('.empty_cart').on('click', function(e) {
                 e.preventDefault();
@@ -2353,6 +2373,19 @@
                     }
                 )
             });
+
+            $('#btn_keranjang').on('click', function(e) {
+                e.preventDefault();
+
+                $.post({
+                    url: '<?= site_url('penjualan/submit_keranjang') ?>',
+                    data: $('#cart_form').serialize()
+                }).done(function(data) {
+                    window.location.href = '<?= site_url('penjualan/') ?>';
+                });
+            });
+
+          
 
             $('#cart_form').on('submit', function(e) {
                 e.preventDefault();
@@ -2618,7 +2651,10 @@
                     '<?= site_url('penjualan/form_pembayaran') ?>',
                     { status: status },
                     function() {
-                        $('._bayar, ._diskon').on('input',  function() {
+                        $('#bayarK').hide();
+                        $('#bayarB').hide();
+                        $('#bayarT').hide();
+                        $('#bayar,#bayarTunai,#bayarKredit,#bayarBank, ._diskon').on('input',  function() {
                             hitung_pembayaran();
                             $(this).val(format_rupiah(this.value));
                         });
@@ -2652,6 +2688,24 @@
                                $('.inp_donasi').addClass('d-none');
                             }
                         });
+
+                        $('#id_tipe').change(function() {
+                            var selectedOption = $(this).val();
+                            // Menampilkan elemen yang sesuai dengan pilihan yang dipilih
+                            if (selectedOption === 'Tunai') {
+                                $('#bayarT').show();
+                                $('#bayarK').hide();
+                                $('#bayarB').hide();
+                            } else if (selectedOption === 'Transfer') {
+                                $('#bayarB').show();
+                                $('#bayarK').hide();
+                                $('#bayarT').hide();
+                            } else {
+                                $('#bayarK').show();
+                                $('#bayarB').show();
+                                $('#bayarT').show();
+                            }
+                        });
                     }
                 );
             }
@@ -2682,7 +2736,9 @@
             }
 
             function hitung_pembayaran() {
-                let bayar            = parseFloat($("._bayar").val().replace(/\D/g, ''));
+                let bayarB            = parseFloat($("#bayarBank").val().replace(/\D/g, ''));
+                let bayarT            = parseFloat($("#bayarTunai").val().replace(/\D/g, ''));
+                let bayarK            = parseFloat($("#bayarKredit").val().replace(/\D/g, ''));
                 let diskon           = $('._diskon').val() ? $('._diskon').val() : 0;
                 let jenis_diskon     = $('.jenis_diskon').val();
                 let trade           = $('._trade').val() ? $('._trade').val() : 0;
@@ -2691,6 +2747,8 @@
                 let total_inp        = $('.total_cart_inp').val();
                 let hitung_diskon;
                 let hitung_kembalian;
+
+                bayar = parseInt(bayarB) || 0 + parseInt(bayarT) || 0 + parseInt(bayarK) || 0;
 
                 total = parseInt(total) - parseInt(trade);
                 if(jenis_diskon == 'Nominal') {

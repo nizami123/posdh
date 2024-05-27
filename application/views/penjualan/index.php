@@ -66,6 +66,14 @@
                                     </tr>
                             <?php endif; ?>
                         </tbody>
+                        <tfoot>
+                        <th colspan="7" style="text-align: right;">
+                            <a href="dashboard" class="btn btn-secondary" style="float: right; margin-right: 10px;">Kembali</a>
+                            <button class="btn btn-primary" id="btn_keranjang" style="float: right; margin-right: 10px;">Simpan</button>
+                        </th>
+
+                        </tfoot>
+                        
                     </table>
                 </div>
             </div>
@@ -142,7 +150,6 @@
                             <th></th>
                             <th>Barang</th>
                             <th>Harga</th>
-                            <th style="width:20%">Diskon</th>
                             <th>Cashback</th>
                         </thead>
                     </table>

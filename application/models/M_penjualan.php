@@ -235,6 +235,48 @@ class m_penjualan extends CI_Model {
         $this->db->delete($this->keranjang, $where);
     }
 
+    function update_keranjang($data) {
+        $this->db->trans_start(); // Start transaction
+        // print_r($data);die;
+        foreach ($data as $batch) {
+            $where = [
+                'id_toko' => $this->session->userdata('sesi_toko'),
+                'kasir'   => $this->session->userdata('sesi_id_admin'),
+                'id_keluar' => $batch['id_keluar'], // Assuming id_keluar is same for all records in each batch
+            ];
+
+            print_r($batch['harga_diskon']);
+            if ($batch['harga_diskon'] == 0){
+                $diskon = $this->db->query("SELECT nilai FROM tb_diskon WHERE kode_diskon = '".$batch['id_diskon']."' and kuota > 0")->result();
+                if (empty($diskon[0]->nilai)){
+                    $diskon_nilai = 0;
+                }else{
+                    $diskon_nilai =  $diskon[0]->nilai;
+                }
+            }else{
+                $diskon_nilai = $batch['harga_diskon'];
+            }
+
+            $keranjang = [
+                'id_keluar' => $batch['id_keluar'],
+                'kasir'   => $this->session->userdata('sesi_id_admin'),
+                'jml' => $batch['jml'],
+                'jenis_penjualan' => 'Eceran',
+                'diskon' => $batch['id_diskon'],
+                'id_toko' => $this->session->userdata('sesi_toko'),
+                'cashback' => $batch['harga_cashback'],
+                'diskon_nilai' => $diskon_nilai
+            ];
+            $this->db->delete($this->keranjang, $where);
+            $this->db->insert($this->keranjang, $keranjang);
+            
+        }
+
+        $this->db->trans_complete(); // Complete transaction
+
+        return $this->db->trans_status(); 
+    }
+
     function submit_detail($data) {
         $this->db->insert($this->detail, $data);
     }
