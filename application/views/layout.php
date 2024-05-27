@@ -2748,7 +2748,7 @@
                 let hitung_diskon;
                 let hitung_kembalian;
 
-                bayar = parseInt(bayarB) || 0 + parseInt(bayarT) || 0 + parseInt(bayarK) || 0;
+                bayar = (parseInt(bayarB) || 0) + (parseInt(bayarT) || 0) + (parseInt(bayarK) || 0);
 
                 total = parseInt(total) - parseInt(trade);
                 if(jenis_diskon == 'Nominal') {
