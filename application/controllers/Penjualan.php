@@ -331,7 +331,9 @@ class Penjualan extends CI_Controller {
 							
 						</td>
 						<td class="text-right">
-							<input type="text"  class="form-control form-control-sm bg-secondary" name="cashback[]" value="'.$item->cashback.'">
+						<strong >
+						'.nf($item->harga_cashback).'
+						</strong >
 						</td>
 						<td class="text-right">
 							<strong class="_harga" 

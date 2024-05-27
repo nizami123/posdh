@@ -173,7 +173,6 @@ class m_penjualan extends CI_Model {
 
     function tambah_keranjang ($input) {
         $kode    = $input['kode'];
-        $diskon    = $input['diskon'];
         $id_toko = $this->session->userdata('sesi_toko');
         $admin   = $this->session->userdata('sesi_id_admin');
         
