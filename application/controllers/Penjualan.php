@@ -610,11 +610,7 @@ class Penjualan extends CI_Controller {
 			}elseif ($input['status'] == 'trade') {
 				$cara_bayar = 'Trade In';
 			} else {
-				if ($input['id_bank'] > 0) {
-					$cara_bayar = 'Transfer';
-				} else {
-					$cara_bayar = 'Tunai';
-				}
+				$cara_bayar = $input['id_tipe'];
 			}
 			$brg[] = [
 				'kode_penjualan' => $kode,
@@ -661,11 +657,7 @@ class Penjualan extends CI_Controller {
 			}elseif ($input['status'] == 'trade') {
 				$cara_bayar = 'Trade In';
 			} else {
-				if ($input['id_bank'] > 0) {
-					$cara_bayar = 'Transfer';
-				} else {
-					$cara_bayar = 'Tunai';
-				}
+				$cara_bayar = $input['id_tipe'];
 			}
 			$brg[] = [
 				'kode_penjualan' => $kode,
