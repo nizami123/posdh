@@ -77,7 +77,7 @@ class Dashboard extends CI_Controller {
 		$total = 0;
 
 		foreach($data as $item) {
-			$total += $item->bayar;
+			$total += $item->total_keranjang;
 		}
 
 		return $total;
