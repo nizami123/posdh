@@ -5,7 +5,7 @@ class m_pelanggan extends CI_Model {
     var $src_plg    = ['nama_plg'];
 
     private $tb_keluar = 'vbarangkeluar';
-    var $src_keluar    = ['sn_brg'];
+    var $src_keluar    = ['sn_brg','nama_brg'];
 
     private $tb_ksr = 'tb_kasir';
     var $src_ksr    = ['nama_ksr'];

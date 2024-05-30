@@ -803,8 +803,7 @@ class Penjualan extends CI_Controller {
 		<body>
 			<div class="print_area">
 				<header>
-					<img src="'.base_url().'/upload/dhlogoig.jpg" style="width:60px;height: 60px;" alt="Store Logo"> 
-					<h1>'.admin()->nama_toko.'</h1>
+					<img src="'.base_url().'/upload/logo.jpg" style="width:140px;height: 60px;" alt="Store Logo"> 
 					<p>'.admin()->alamat.' '.admin()->kecamatan.' '.admin()->kabupaten.' '.admin()->provinsi.'</p>
 					<p> Kode Pos '.admin()->kode_pos.'</p>
 				</header>
