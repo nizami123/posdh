@@ -753,7 +753,7 @@ class Penjualan extends CI_Controller {
     				font-size: 10px;
     			}
     			.print_area {
-					width: 148mm; /* Adjusted for A5 width */
+					width: 80mm; /* Adjusted for A5 width */
 					margin: 0 auto; /* Center the content */
 				}
     			h1 {
