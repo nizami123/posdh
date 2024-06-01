@@ -7,7 +7,7 @@ class Penjualan extends CI_Controller {
 		belum_login();
 		waktu_local();
 
-		$this -> load -> model (
+		$this->load->model (
 			[
 				'm_penjualan' => 'jual',
 				'm_pelanggan' => 'plg',
@@ -20,11 +20,15 @@ class Penjualan extends CI_Controller {
 	function index () {
 		$conf = [
 			'tabTitle' 	=> 'Penjualan | ' . webTitle (),
+			'idPelanggan' => $this->generateid(),
 			'webInfo' 	=> '
 				<div class="d-flex justify-content-between align-items-center">
 					<div>
-                        <a href="'.site_url('penjualan/retur').'" class="btn dashed bg-white">
-                            Retur
+						<a href="' . site_url('penjualan') . '" class="btn ' . ((!isset($_GET['status']) || empty($_GET['status'])) ? 'dashed bg-black' : 'dashed bg-white') . '">
+							Transaksi
+						</a>
+                        <a href="'.site_url('penjualan?status=dp').'" class="btn ' . (isset($_GET['status']) && $_GET['status'] == 'dp' ? 'dashed bg-black' : 'dashed bg-white') . '">
+                            DP
                         </a>
                         <a href="'.site_url('penjualan/riwayat').'" class="btn bg-white dashed">
                             Riwayat
@@ -41,28 +45,25 @@ class Penjualan extends CI_Controller {
 			'
 		];
 
-		$this -> layout -> load('layout', 'penjualan/index', $conf);
+		$this->layout->load('layout', 'penjualan/index', $conf);
 	}
 
 	function load_kode() {
-		echo '<i class="fa fa-receipt mr-2"></i>' . $this -> jual -> kode();
+		echo '<i class="fa fa-receipt mr-2"></i>' . $this->jual->kode();
 	}
 
 	function load_data_brg() {
 		$list 	= $this->brg->data_brg('DESC', 'stok-1');
 		$data 	= [];
 		$no 	= $this->input->post('start');
+		// print_r($list);die;
 		foreach ($list as $item) { 
-			$grosir = $item->is_grosir == 1 ? '<strong class="text-primary"><i class="fa fa-check-circle"></i> Grosir</strong>' 
-											: '<strong class="text-danger"><i class="fa fa-times-circle"></i> Grosir</strong>'; 
-						       
 			$row   = [];
 			$row[] = '
 				<a href="" 
 				   class="btn btn-secondary _add_cart"
-				   data-id="'.$item->id_brg.'"
 				   data-nama="'.$item->nama_brg.'"
-				   data-kode="'.$item->kode_brg.'"
+				   data-kode="'.$item->id_keluar.'"
 				>
 					<i class="fa fa-cart-plus"></i>
 				</a>
@@ -71,12 +72,16 @@ class Penjualan extends CI_Controller {
 					<strong>'.$item->nama_brg.'</strong>
 					<div>
 						<small>
-							'. $grosir .'
+							<strong>'. $item->merk .'</strong>
 							<span class="mx-2"> | </span>
-							<strong>'. $item -> kode_brg .'</strong>
+							<strong>'. $item->jenis .'</strong>
+							<span class="mx-2"> | </span>
+							<strong>'. $item->sn_brg .'</strong>
 						</small>
 					</div>
 				';
+			$row[] = nf($item->harga_jual);
+			$row[] = nf($item->harga_cashback);
 			$data[] = $row;
 		}
 		$output = [
@@ -115,14 +120,131 @@ class Penjualan extends CI_Controller {
 		echo json_encode($output);
 	}
 
+	function load_data_ksr() {
+		$list = $this->plg->data_ksr();
+		$data = [];
+		$no = $this->input->post('start');
+		foreach ($list as $item) {         
+			$row   = [];
+			$row[] = '
+				<a href="" 
+				   data-id="'.$item->id_ksr.'" 
+				   data-nama="'.$item->nama_ksr.'" 
+				   class="btn btn-secondary _add_user_ksr"
+				>
+					<i class="fa fa-user-plus"></i>
+				</a>
+			';
+			$row[] = '<strong>'. $item->nama_ksr . '</strong>';
+			$data[] = $row;
+		}
+		$output = [
+			"draw"             => $this->input->post('draw'),
+			"recordsTotal"     => $this->plg->count_all_ksr(),
+			"recordsFiltered"  => $this->plg->count_ksr(),
+			"data"             => $data,
+		];
+		echo json_encode($output);
+	}
+
+	function load_data_trade() {
+		$list = $this->plg->data_trade();
+		$data = [];
+		$no = $this->input->post('start');
+		foreach ($list as $item) {         
+			$row   = [];
+			$row[] = '
+				<a href="" 
+				   data-id="'.$item->id_trade.'" 
+				   data-nama="'.$item->nama_trade.'" 
+				   data-harga="'.$item->harga.'" 
+				   class="btn btn-secondary _add_user_trade"
+				>
+					<i class="fa fa-user-plus"></i>
+				</a>
+			';
+			$row[] = '<strong>'. $item->nama_trade . '</strong>';
+			$row[] = nf($item->harga) ;
+			$data[] = $row;
+		}
+		$output = [
+			"draw"             => $this->input->post('draw'),
+			"recordsTotal"     => $this->plg->count_all_trade(),
+			"recordsFiltered"  => $this->plg->count_trade(),
+			"data"             => $data,
+		];
+		echo json_encode($output);
+	}
+
+
+	function load_data_bank() {
+		$list = $this->plg->data_bank();
+		$data = [];
+		$no = $this->input->post('start');
+		foreach ($list as $item) {         
+			$row   = [];
+			$row[] = '
+				<a href="" 
+				   data-id="'.$item->id_bank.'" 
+				   data-nama="'.$item->nama_bank.'" 
+				   class="btn btn-secondary _add_user_bank"
+				>
+					<i class="fa fa-user-plus"></i>
+				</a>
+			';
+			$row[] = '<strong>'. $item->nama_bank . '</strong>';
+			$row[] = $item->no_rek ;
+			$row[] = $item->nama_rek ;
+			$data[] = $row;
+		}
+		$output = [
+			"draw"             => $this->input->post('draw'),
+			"recordsTotal"     => $this->plg->count_all_bank(),
+			"recordsFiltered"  => $this->plg->count_bank(),
+			"data"             => $data,
+		];
+		echo json_encode($output);
+	}
+
+	function load_data_diskon() {
+		$list = $this->plg->data_diskon();
+		$data = [];
+		$no = $this->input->post('start');
+		foreach ($list as $item) {         
+			$row   = [];
+			$row[] = '
+				<a href="" 
+				   data-id="'.$item->kode_diskon.'" 
+				   data-nama="'.$item->nilai.'" 
+				   data-tipe="'.$item->tipe.'" 
+				   class="btn btn-secondary _add_user_diskon"
+				>
+					<i class="fa fa-user-plus"></i>
+				</a>
+			';
+			$row[] = '<strong>'. $item->kode_diskon . '</strong>';
+			$row[] = $item->tipe ;
+			$row[] = nf($item->nilai) ;
+			$row[] = $item->id_keluar ;
+			$data[] = $row;
+		}
+		$output = [
+			"draw"             => $this->input->post('draw'),
+			"recordsTotal"     => $this->plg->count_all_diskon(),
+			"recordsFiltered"  => $this->plg->count_diskon(),
+			"data"             => $data,
+		];
+		echo json_encode($output);
+	}
+
 	function load_data_toko() {
 		$list = $this->toko->data_toko();
 		$data = [];
 		$no = $this->input->post('start');
 		foreach ($list as $item) {  
-			$toko  = $item -> id_toko  == admin() -> id_toko ? '<span class="mx-2"> | </span><span> <i class="fa fa-dot-circle text-success"></i> Toko aktif
+			$toko  = $item->id_toko  == admin()->id_toko ? '<span class="mx-2"> | </span><span> <i class="fa fa-dot-circle text-success"></i> Toko aktif
 			</span>' : '';   
-			$btn =  $item -> id_toko  == admin() -> id_toko ? '<button class="btn btn-success"><i class="fa fa-store"></i></button>' : '
+			$btn =  $item->id_toko  == admin()->id_toko ? '<button class="btn btn-success"><i class="fa fa-store"></i></button>' : '
 				<a href="'.site_url('penjualan/pindah_toko/'.$item->id_toko).'" 
 				data-nama="'.$item->nama_toko.'" 
 				class="btn btn-secondary pindah_toko"
@@ -155,28 +277,22 @@ class Penjualan extends CI_Controller {
 	}
 
 	function data_keranjang() {
-		$data = $this -> jual -> data_keranjang();
-
+		$data = $this->jual->data_keranjang();
+		// print_r($data);die;
 		if($data) {
 			foreach($data as $item) {
-				$harga     = $item -> harga_eceran;
-				$subharga  = $harga * $item -> jml;
-				$jml 	   = $item -> jenis_penjualan == 'Grosir' ? $item -> min_grosir : $item -> jml;
-				$min 	   = $item -> jenis_penjualan == 'Grosir' ? $item -> min_grosir : 1;
-				$grosir    = $item -> is_grosir == 1 ? '
-						<small>
-							<strong class="text-primary">
-								<i class="fa fa-check-circle"></i> Grosir
-							</strong>
-						</small>
-					' : '
-						<small>
-							<strong class="text-danger">
-								<i class="fa fa-times-circle"></i> Grosir
-							</strong>
-						</small>				
-				';
+				$harga     = $item->harga_jual - $item->diskon_nilai - $item->harga_cashback;
+				$subharga  = $harga * $item->jml;
+				$jml 	   = $item->jenis_penjualan == 'Grosir' ? $item->min_grosir : $item->jml;
+				$min 	   = $item->jenis_penjualan == 'Grosir' ? $item->min_grosir : 1;
 				
+				
+				if ($item->diskon_nilai > 0){
+					$diskon_text = '<strong>'.nf($item->diskon_nilai).' </strong>
+					<input type="hidden"  class="form-control form-control-sm bg-secondary" name="diskon_id[]">';
+				}else{
+					$diskon_text = '<input type="text"  class="form-control form-control-sm bg-secondary" name="diskon_id[]">';
+				}
 				$html = '
 					<tr>
 						<td style="width: 50px" class="text-center">
@@ -189,26 +305,40 @@ class Penjualan extends CI_Controller {
 						<td>
 							<p class="mb-0">
 								<strong>
-									'.$item -> nama_brg.' 
+									'.$item->nama_brg.' 
 								</strong> 
-								<input type="hidden" name="kode_brg[]" value="'.$item->kode_brg.'">
+								<input type="hidden" name="id_keluar[]" value="'.$item->id_keluar.'">
 							</p>
-							<small>'.$item -> kode_brg.'</small>					
+							<small>'.$item->sn_brg.'</small>					
 						</td>
-						<td>
-							<input type="number" 
-								   class="form-control form-control-sm text-center _jml" 
-								   value="'.$jml.'" 
-								   data-id="'.$item -> id_keranjang.'"
-								   data-kode="'.$item -> kode_brg.'"
-								   min="1"
-								   max="'.$item -> stok_tersedia.'"
-								   name="jml[]"
-							>
+						<td class="text-right">
+							<p class="mb-0">
+								<strong>
+									'.$item->jml.' 
+								</strong> 
+								<input type="hidden" name="jml[]" value="1">
+							</p>
+						</td>
+						<td class="text-right">
+							<strong >
+								'.nf($item->harga_jual).'
+							</strong>
+							<input type="hidden" name="jual[]" value="'.$item->harga_jual.'">
+						</td>
+						<td class="text-right">
+							'.$diskon_text.'
+							<input type="hidden"  name="diskon_nilai[]" value="'.$item->diskon_nilai.'">
+							
+						</td>
+						<td class="text-right">
+							<strong >
+								'.nf($item->harga_cashback).'
+							</strong>
+							<input type="hidden" class="form-control form-control-sm bg-secondary"  name="cashback[]" value="'.$item->harga_cashback.'">
 						</td>
 						<td class="text-right">
 							<strong class="_harga" 
-									id="_harga_'.$item -> kode_brg.'"
+									id="_harga_'.$item->sn_brg.'"
 									data-harga="'.$harga.'" 
 									data-min="1" 
 									data-subharga="'.$subharga.'" 
@@ -216,19 +346,21 @@ class Penjualan extends CI_Controller {
 								'.nf($subharga).'
 							</strong>
 							<p class="mb-0">
-								<small class="text-muted" id="harga_eceran_'.$item -> kode_brg.'" style="text-decoration:line-through"></small>
+								<small class="text-muted" id="harga_eceran_'.$item->sn_brg.'" style="text-decoration:line-through"></small>
 							</p>
-							<input type="hidden" id="harga_jual_'.$item -> kode_brg.'" name="harga_jual[]" value="'.$harga.'">
+							<input type="hidden" id="harga_jual_'.$item->sn_brg.'" name="harga_jual[]" value="'.$harga.'">
 						</td>
-					</tr>                            
+						
+					</tr>                       
 				';
+
 				echo $html;
 			}
 
 		} else {
 			$html = '
 				<tr>
-					<th colspan="4">
+					<th colspan="7">
 						<div class="p-5 text-center">
 							<i class="fa fa-shopping-basket fa-4x text-danger"></i>
 							<div class="mt-3">
@@ -244,142 +376,178 @@ class Penjualan extends CI_Controller {
 	}
 
 	function tambah_keranjang() {
-		$input = $this -> input -> post(null);
-		print_r($this -> jual -> tambah_keranjang ($input));
+		$input = $this->input->post(null);
+		$this->jual->tambah_keranjang ($input);
+	}
 
-		// $options = array(
-		// 	'cluster' => 'ap1',
-		// 	'useTLS' => true
-		//   );
-		//   $pusher = new Pusher\Pusher(
-		// 	'298818e8899389cf44aa',
-		// 	'8b453cf89e0ad2dea3e6',
-		// 	'1508152',
-		// 	$options
-		//   );
-		
-		//   $data['message'] = 'success';
-		//   $pusher->trigger('my-channel', 'my-event', $data);
+	function tambah_keranjang_search() {
+		$input = $this->input->post(null);
+		$this->jual->tambah_keranjang_search ($input);
 	}
 
 	function update_jml() {
-		$input = $this -> input -> post (null);
-		$this -> jual -> update_jml($input);
+		$input = $this->input->post (null);
+		$this->jual->update_jml($input);
 		
 		
 	}
 
 	function update_jml_cart() {
-		$input = $this -> input -> post (null);
-		$cart   = $this -> db -> get_where('tb_keranjang', ['id_keranjang' =>  $_POST['id']]) -> row();
-		$brg  = $this -> db -> get_where('tb_barang', ['kode_brg' =>  $cart -> kode_brg]) -> row();
-		$upstok['stok_tersedia'] = $brg -> stok_tersedia - $_POST['jml'];
+		$input = $this->input->post (null);
+		$cart   = $this->db->get_where('tb_keranjang', ['id_keranjang' =>  $_POST['id']])->row();
+		$brg  = $this->db->get_where('tb_barang', ['kode_brg' =>  $cart->kode_brg])->row();
+		$upstok['stok_tersedia'] = $brg->stok_tersedia - $_POST['jml'];
 		
-		$this -> db -> update('tb_barang', $upstok, ['kode_brg' => $cart->kode_brg]);
-		$this -> db -> update('tb_keranjang', ['jml' => $_POST['jml']], ['id_keranjang' => $_POST['id']]);
+		$this->db->update('tb_barang', $upstok, ['kode_brg' => $cart->kode_brg]);
+		$this->db->update('tb_keranjang', ['jml' => $_POST['jml']], ['id_keranjang' => $_POST['id']]);
 	}
 
 	function hps_keranjang($id) {
-		$this -> jual -> hps_keranjang($id);
-
-		// $options = array(
-		// 	'cluster' => 'ap1',
-		// 	'useTLS' => true
-		//   );
-		//   $pusher = new Pusher\Pusher(
-		// 	'298818e8899389cf44aa',
-		// 	'8b453cf89e0ad2dea3e6',
-		// 	'1508152',
-		// 	$options
-		//   );
-		
-		//   $data['message'] = 'success';
-		//   $pusher->trigger('my-channel', 'my-event', $data);
+		$this->jual->hps_keranjang($id);
 	}
+
+	function generateid(){
+        $data['lastID'] = $this->db->query("select id_plg from tb_pelanggan order by id_plg desc limit 1")->result_array();
+        if (!empty($data['lastID'][0]['id_plg'])) {
+          $numericPart = isset($data['lastID'][0]['id_plg']) ? preg_replace('/[^0-9]/', '', $data['lastID'][0]['id_plg']) : '';
+          $incrementedNumericPart = sprintf('%04d', intval($numericPart) + 1);
+          $data['newID'] = 'DHCS-' . $incrementedNumericPart;
+        }else {
+          $data['newID'] = 'DHCS-0001';
+        }
+        return $data['newID'];
+        
+    }
 	
 	function kosongkan_keranjang() {
-		echo $this -> jual -> kosongkan_keranjang();
-
-		// $options = array(
-		// 	'cluster' => 'ap1',
-		// 	'useTLS' => true
-		//   );
-		//   $pusher = new Pusher\Pusher(
-		// 	'298818e8899389cf44aa',
-		// 	'8b453cf89e0ad2dea3e6',
-		// 	'1508152',
-		// 	$options
-		//   );
-		
-		//   $data['message'] = 'success';
-		//   $pusher->trigger('my-channel', 'my-event', $data);
+		echo $this->jual->kosongkan_keranjang();
 	}
 
 	function form_pembayaran() {
-		$cek = $this -> jual -> data_keranjang();
+		$cek = $this->jual->data_keranjang();
+
+		if ($this->input->post('status') == 'trade'){
+
+		$trade = '	<div class="form-group">
+			<label> Trade Barang </label>
+			<div class="input-group">
+				<input readonly class="form-control form-control-sm nama_trade" required>
+				<input type="hidden" class="id_trade" name="id_trade" required>
+				<div class="input-group-append">
+					<a class="btn btn-sm bg-white border px-3" 
+							href="#modal_data_trade" 
+							data-toggle="modal"
+					>
+						<i class="fa fa-search"></i>
+					</a>
+				</div>
+			</div>
+			<input type="hidden" class="form-control form-control-sm jenis_trade" id="jenis_trade" name="jenis_trade" placeholder="0">
+			<input type="hidden" min="0" class="form-control form-control-sm bg-secondary _trade" id="trade" name="trade" placeholder="0">
+		</div>';
+		}else{
+			$trade = '';
+		}
+
+		$pelanggan = $this->plg->data_plg();
+
+		$optionsPel = '';
+		if (!empty($pelanggan)) {
+			foreach ($pelanggan as $plg) {
+				$optionsPel .= '<option value="' . $plg->id_plg . '">' . $plg->nama_plg . '</option>';
+			}
+		}
+
+		$kasir = $this->plg->data_ksr();
+
+		$optionsKsr = '';
+		if (!empty($kasir)) {
+			foreach ($kasir as $ksr) {
+				$optionsKsr .= '<option value="' . $ksr->id_ksr . '">' . $ksr->nama_ksr . '</option>';
+			}
+		}
+
+		$bank = $this->plg->data_bank();
+
+		$optionsBank = '';
+		if (!empty($bank)) {
+			foreach ($bank as $bank) {
+				$optionsBank .= '<option value="' . $bank->id_bank . '">' . $bank->nama_bank . '</option>';
+			}
+		}
+		
 
 		if($cek) {
 			$html = '
 				<div class="form-group">
 					<label> Pelanggan </label>
 					<div class="input-group">
-						<input readonly class="form-control form-control-sm nama_plg" value="Umum">
-						<input type="hidden" value="Umum" class="id_plg" name="id_plg">
-						<div class="input-group-append">
-							<a class="btn btn-sm bg-white border px-3" 
-									href="#modal_data_plg" 
-									data-toggle="modal"
-							>
-								<i class="fa fa-search"></i>
-							</a>
-						</div>
+						<select class="form-control form-control-sm id_plg" name="id_plg">
+							<option value="Umum">Umum</option>
+							' . $optionsPel . '
+						</select>
+						<a class="btn btn-sm bg-white border px-3" 
+								href="#modal_tambah_plg" 
+								data-toggle="modal"
+						>
+							<i class="fa fa-plus"></i>
+						</a>
 					</div>
 				</div>
 				<div class="form-group">
-					<label for="">Diskon</label>
+					<label> Kasir </label>
 					<div class="input-group">
-						<div class="input-group-prepend">
-							<select class="form-control form-control-sm jenis_diskon" name="jenis_diskon">
-								<option value="uang">Rp </option>
-								<option value="persen">% </option>
-							</select>
-						</div>
-						<input type="number" min="0" class="form-control form-control-sm bg-secondary _diskon" name="diskon" placeholder="0">
+						<select class="form-control form-control-sm id_ksr" name="id_ksr">
+							' . $optionsKsr . '
+						</select>
 					</div>
-				</div>
-				<div class="form-group">
-					<label class="mr-2">Bayar</label>
-					<div class="input-group input-group-sm ui-widget">
-						<div class="input-group-prepend">
-							<div class="input-group-text bg-white px-3">
-								Rp
-							</div>
-						</div>
-						<input type="number" class="form-control form-control-sm bg-secondary _bayar" name="bayar">
-					</div>
-					<div>
-					    <span class="auto-input badge badge-light border mr-1 mt-2" data-value="20000">20Rb</span>
-    				    <span class="auto-input badge badge-light border mr-1 mt-2" data-value="50000">50Rb</span>
-    				    <span class="auto-input badge badge-light border mr-1 mt-2" data-value="75000">75Rb</span>
-    				    <span class="auto-input badge badge-light border mt-2" data-value="100000">100Rb</span>
-					</div>
-					
 				</div>
 
+				'.$trade.'
 				<div class="form-group">
-					<div class="">
-						<label for="is_donasi">Donasi</label>
-						<input type="checkbox" id="is_donasi" name="is_donasi">
-					</div>
-					<div class="inp_donasi d-none">
-						<div class="input-group input-group-sm">
-							<div class="input-group-prepend">
-								<div class="input-group-text bg-white px-3">
-									Rp
-								</div>
+					<label class="mr-2">Tipe Penjualan</label>
+					<div class="input-group input-group-sm ui-widget">
+						<select class="form-control form-control-sm id_tipe" name="id_tipe" id="id_tipe">
+							<option value="" disabled selected>-- Pilih Tipe--</option>
+							<option value="Tunai">Tunai</option>
+							<option value="Transfer">Transfer</option>
+							<option value="Split Bill">Split Bill</option>
+						</select>
+					</div>					
+				</div>
+				<div class="form-group">
+					<div class="input-group input-group-sm ui-widget" id="bayarT">
+						<div class="input-group-prepend">
+							<div class="input-group-text bg-white px-4">
+								Tunai
 							</div>
-							<input type="number" min="0" class="form-control form-control-sm bg-secondary" name="jml_donasi" placeholder="0">
 						</div>
+						<input type="text"  class="form-control form-control-sm bg-secondary _bayar" name="bayarTunai" id="bayarTunai">
+					</div>	
+					<div class="input-group input-group-sm ui-widget" id="bayarB">
+						<div class="input-group-prepend">
+								<select class="form-control form-control-sm id_bank" name="id_bank">
+								' . $optionsBank . '
+								</select>
+						</div>
+						<input type="text"  class="form-control form-control-sm bg-secondary _bayar" name="bayarBank" id="bayarBank">
+					</div>	
+					<div class="input-group input-group-sm ui-widget" id="bayarK">
+						<div class="input-group-prepend">
+							<div class="input-group-text bg-white px-4">
+								Kredit
+							</div>
+						</div>
+						<input type="text"  class="form-control form-control-sm bg-secondary _bayar" name="bayarKredit" id="bayarKredit">
+					</div>	
+				</div>
+				<div class="form-group">
+					<label> Tipe Penjualan </label>
+					<div class="input-group">
+						<select class="form-control form-control-sm select2" name="tipe_penjualan">
+						<option value="Offline">Offline</option>
+						<option value="Online">Online</option>
+						</select>
 					</div>
 				</div>
 				
@@ -394,10 +562,6 @@ class Penjualan extends CI_Controller {
 			$html = '
 				<div class="form-group">
                     <label> Pelanggan </label>
-                    <input disabled class="form-control form-control-sm">
-                </div>
-                <div class="form-group">
-                    <label for="">Diskon</label>
                     <input disabled class="form-control form-control-sm">
                 </div>
                 <div class="form-group">
@@ -417,46 +581,134 @@ class Penjualan extends CI_Controller {
 
 	function pindah_toko ($id = null) {
         if($id) {
-            $this -> toko -> pindah ($id);
+            $this->toko->pindah ($id);
             $sesi = [
                 'sesi_toko'     => $id,
                 'sesi_waktu'    => date('Y-m-d G:i:s'),
             ];
-            $this -> session -> set_userdata ($sesi);
+            $this->session->set_userdata ($sesi);
         }
     }
 
-	function submit_cart() {
-		$id_toko = admin() -> id_toko;
-		$kode  	 = $this -> jual -> kode();
-		$input 	 = $this -> input -> post(null, true);
+	function submit_keranjang() {
+		$id_toko = admin()->id_toko;
+		$kode  	 = $this->jual->kode();
+		$input 	 = $this->input->post(null, true);
 		$brg   	 = [];
-
-		foreach($input['kode_brg'] as $i => $v) {
-			$kode_brg = $this -> input -> post('kode_brg['.$i.']');
-			$jml 	  = $this -> input -> post('jml['.$i.']');
-			$harga 	  = $this -> input -> post('harga_jual['.$i.']');
-
+		$diskon_total = 0;
+		$jual_total = 0;
+		$cashback_total = 0;
+		foreach($input['id_keluar'] as $i => $v) {
+			$id_keluar = $this->input->post('id_keluar['.$i.']');
+			$jml 	  = $this->input->post('jml['.$i.']');
+			$harga 	  = $this->input->post('harga_jual['.$i.']');
+			$jual 	  = $this->input->post('jual['.$i.']');
+			$diskon_id 	  = $this->input->post('diskon_id['.$i.']');
+			$diskon_nilai 	  = $this->input->post('diskon_nilai['.$i.']');
+			$cashback 	  = $this->input->post('cashback['.$i.']');
+			if ($input['status'] == 'dp') {
+				$cara_bayar = 'DP';
+				$upstok['status']  = 4;
+        		$this->db->update('tb_brg_keluar', $upstok, ['id_keluar' => $id_keluar]);
+			}elseif ($input['status'] == 'trade') {
+				$cara_bayar = 'Trade In';
+			} else {
+				$cara_bayar = $input['id_tipe'];
+			}
 			$brg[] = [
 				'kode_penjualan' => $kode,
-				'kode_brg' 		 => $kode_brg,
+				'id_keluar' 	 => $id_keluar,
 				'jml'			 => $jml,
-				'harga_jual'	 => $harga
+				'harga_jual'	 => $jual,
+				'harga_diskon'	 => $diskon_nilai,
+				'harga_bayar'	 => $harga,
+				'harga_cashback' => $cashback,
+				'id_diskon'		 => $diskon_id,
+				'id_trade'		 => isset($input['id_trade']) ? $input['id_trade'] : '',
+				'tipe_penjualan' => $input['tipe_penjualan']
 			];
 
-// 			$this-> jual -> update_stok($v, $jml);
+			$diskon_total = $diskon_total + $diskon_nilai;
+			$jual_total = $jual_total + $jual;
+			$cashback_total = $cashback_total + $cashback;
+		}
+
+		$this->jual->update_keranjang($brg);
+		echo $kode; 
+	}
+
+	function submit_cart() {
+		$id_toko = admin()->id_toko;
+		$kode  	 = $this->jual->kode();
+		$input 	 = $this->input->post(null, true);
+		$brg   	 = [];
+		$diskon_total = 0;
+		$jual_total = 0;
+		$cashback_total = 0;
+		foreach($input['id_keluar'] as $i => $v) {
+			$id_keluar = $this->input->post('id_keluar['.$i.']');
+			$jml 	  = $this->input->post('jml['.$i.']');
+			$harga 	  = $this->input->post('harga_jual['.$i.']');
+			$jual 	  = $this->input->post('jual['.$i.']');
+			$diskon_id 	  = $this->input->post('diskon_id['.$i.']');
+			$diskon_nilai 	  = $this->input->post('diskon_nilai['.$i.']');
+			$cashback 	  = $this->input->post('cashback['.$i.']');
+			if ($input['status'] == 'dp') {
+				$cara_bayar = 'DP';
+				$upstok['status']  = 4;
+        		$this->db->update('tb_brg_keluar', $upstok, ['id_keluar' => $id_keluar]);
+			}elseif ($input['status'] == 'trade') {
+				$cara_bayar = 'Trade In';
+			} else {
+				$cara_bayar = $input['id_tipe'];
+			}
+			$brg[] = [
+				'kode_penjualan' => $kode,
+				'id_keluar' 	 => $id_keluar,
+				'jml'			 => $jml,
+				'harga_jual'	 => $jual,
+				'harga_diskon'	 => $diskon_nilai,
+				'harga_bayar'	 => $harga,
+				'harga_cashback' => $cashback,
+				'id_diskon'		 => $diskon_id,
+				'id_trade'		 => isset($input['id_trade']) ? $input['id_trade'] : '',
+				'tipe_penjualan' => $input['tipe_penjualan']
+			];
+
+			$diskon_total = $diskon_total + $diskon_nilai;
+			$jual_total = $jual_total + $jual;
+			$cashback_total = $cashback_total + $cashback;
+
+			$this->db->query("update tb_diskon set kuota = kuota - 1 , total_diskon = total_diskon - nilai
+			where kode_diskon = '".$diskon_id."'");
 
 		}
+
+
 		$is_donasi = isset($input['is_donasi']) ? 1 : 0;
+		$bayarB = isset($input['bayarB']) ? intval(preg_replace("/[^0-9]/", "", $input['bayarB'])) : 0;
+		$bayarT = isset($input['bayarT']) ? intval(preg_replace("/[^0-9]/", "", $input['bayarT'])) : 0;
+		$bayarK = isset($input['bayarK']) ? intval(preg_replace("/[^0-9]/", "", $input['bayarK'])) : 0;
+
+		$bayar = $bayarB + $bayarT + $bayarK;
+
 		$detail = [
 			'kode_penjualan' 	=> $kode,
 			'id_admin' 		 	=> admin()->id_admin,
 			'total_kembalian'   => $input['total_kembalian'],
 			'total_keranjang'   => $input['total_keranjang'],
-			'bayar'      	 	=> $input['bayar'],
-			'diskon'      	 	=> $input['diskon'] ?  $input['diskon'] : 0,
+			'bayar'      	 	=> $bayar,
+			'diskon'      	 	=> $diskon_total,
+			'cashback'			=> $cashback_total,
+			'total_penjualan'	=> $jual_total,
 			'id_plg'      	 	=> $input['id_plg'],
-			'jenis_diskon'  	=> $input['jenis_diskon'],
+			'id_ksr'      	 	=> $input['id_ksr'],
+			'cara_bayar'	 	=> $cara_bayar,
+			'jenis_diskon'  	=> '',
+			'id_bank'		 => $input['id_bank'],
+			'tunai'				=> intval(preg_replace("/[^0-9]/", "", $input['bayarTunai'])),
+			'kredit'			=> intval(preg_replace("/[^0-9]/", "", $input['bayarKredit'])),
+			'bank'				=> intval(preg_replace("/[^0-9]/", "", $input['bayarBank'])),
 			'is_donasi'  		=> $is_donasi,
 			'jml_donasi'  		=> isset($input['is_donasi']) ? $input['jml_donasi'] : 0,
 			'tgl_transaksi' 	=> date('Y-m-d G:i:s'),
@@ -473,146 +725,134 @@ class Penjualan extends CI_Controller {
 				'tgl_donasi' => date('Y-m-d G:i:s'),
 				'jml' => $_POST['jml_donasi']
 			];
-			$this -> db -> insert('tb_donasi', $data_donasi);
+			$this->db->insert('tb_donasi', $data_donasi);
 		}
 
 		echo $kode; 
-		
-		// $options = array(
-		// 	'cluster' => 'ap1',
-		// 	'useTLS' => true
-		//   );
-		//   $pusher = new Pusher\Pusher(
-		// 	'298818e8899389cf44aa',
-		// 	'8b453cf89e0ad2dea3e6',
-		// 	'1508152',
-		// 	$options
-		//   );
-		
-		//   $data['message'] = 'success';
-		//   $pusher->trigger('my-channel', 'my-event', $data);
-
-		// print_r($brg);
 	}
 
 	function struk($id = null) {
 		$detail 	= $this->jual->detail($id);
 		$data_jual  = $this->jual->penjualan($id);
+		$width 		= conf()->jenis_kertas_struk == 'HVS' ? '100%' : conf()->ukuran_kertas . 'mm';
+		$pelanggan  = empty($detail->nama_plg) ? $detail->nama_plg : 'Umum';
 
 		$html = '
-		<!DOCTYPE html>
 		<html>
 		<head>
 			<meta name="viewport" content="width=device-width, initial-scale=1.0">
 			<title>Struk Belanja</title>
 			<style>
-				@font-face {
-					font-family: receipt;
-					src: url("../../assets/vendor/font/fake-receipt/fake-receipt.ttf");
-					font-display: block;
-				}
-				* {
-					font-family: receipt;
-					font-size: 10px;
-				}
-				.print_area {
-					width: 148mm; /* Adjusted for A5 width */
-					margin: 0 auto; /* Center the content */
-				}
-				h1 {
-					padding: 0;
-					margin: 0;
-					font-size: 20px;
-					font-weight: normal;
-				}
-				header p {
-					margin: 0;
-				}
-				header {
-					margin-bottom: 10px;
-					margin-top: 0px;
-					text-align: center;
-				}
-				table {
-					border-collapse: collapse;
-					border-top: 1px dashed #000;
-					width: 100% !important;
-				}                        
-				table td {
-					padding-top: 7px;
-					vertical-align: top; 
-				}
-				.belanjaan {
-					margin-top: 20px;
-					width: 100% !important;
-				}
-				.belanjaan td {
-					padding-bottom: 3px;
-				}
-				
-				.belanjaan tfoot {
-					border-top: 1px dashed #000;
-					border-bottom: 1px dashed #000;
-				}
-				.belanjaan  tr:first-child th {
-					padding-top: 15px;
-					padding-bottom: 7px;
-				}
-				.belanjaan  tr:not(:first-child) th {
-					padding-top: 3px;
-					padding-bottom: 4px;
-				}
-				.belanjaan  tr:nth-child(2) th {
-					padding-top: 20px;
-				}
+    			@font-face {
+    				font-family: receipt;
+    				src: url("../../assets/vendor/font/fake-receipt/fake-receipt.ttf");
+    				font-display: block;
+    			}
+    			* {
+    				font-family: receipt;
+    				font-size: 10px;
+    			}
+    			.print_area {
+    				width: 80mm;
+    			}
+    			h1 {
+    				padding: 0;
+    				margin: 0;
+    				font-size: 20px;
+    				font-weigth: normal;
+    			}
+    			header p {
+    				margin: 0;
+    			}
+    			header {
+    				margin-bottom: 10px;
+    				margin-top: 0px;
+    				text-align: center;
+    			}
+    			table {
+    				border-collapse: collapse;
+    				border-top: 1px dashed #000;
+    				width: 100% !important;
+    			}						
+    			table td {
+    				padding-top: 7px;
+    				vertical-align: top; 
+    			}
+    			.belanjaan {
+    				margin-top: 20px;
+    				width: 100% !important;
+    			}
+    			.belanjaan td {
+    				padding-bottom: 3px;
+    			}
+    			
+    			.belanjaan tfoot {
+    				border-top: 1px dashed #000;
+    				border-bottom: 1px dashed #000;
+    			}
+    			.belanjaan  tr:first-child th {
+    				padding-top: 15px;
+    				padding-bottom: 4px;
+    			}
+    			.belanjaan  tr:not(:first-child) th {
+    				padding-top: 3px;
+    				padding-bottom: 4px;
+    			}
 			</style>
 		</head>
 		<body>
 			<div class="print_area">
 				<header>
-					<h1>'.admin()->nama_toko.'</h1>
-					<p>'.admin()->alamat.'</p>
+					<img src="'.base_url().'/upload/logo.jpg" style="width:140px;height: 60px;" alt="Store Logo"> 
+					<p>'.admin()->alamat.' '.admin()->kecamatan.' '.admin()->kabupaten.' '.admin()->provinsi.'</p>
+					<p> Kode Pos '.admin()->kode_pos.'</p>
 				</header>
 				<div class="nota">
 					<strong>'.$id.'</strong>
 					<p style="margin:0;padding:0">
+					    <span style="float:left">
+						    Kasir: '.$detail->nama_ksr.'  
+					    </span><br>
 						<span style="float:left">
-							Kasir: '.$detail->nama_admin.'  
-						</span>
-						<span style="float:right">
-							'.tgl(date('d M Y G:i', strtotime($detail->tgl_transaksi))).'
-						</span>
-						<span style="clear:both;float:none"></span>
+						    Pelanggan: '.$pelanggan.'  
+					    </span>
+					    <span style="float:right">
+						    '.tgl(date('d M Y G:i', strtotime($detail->tgl_transaksi))).'
+					    </span>
+					    <span style="clear:both;float:none"></span>
 					</p>
 				</div>
 				<table class="belanjaan">
 					<tbody>
 					';
 					
+					$total_jual = 0;
 					$total_reg  = 0;
 					$total_cart  = 0;
-					$tjml        = 0;
+					$tjml  		= 0;
 					foreach($data_jual as $jual) {
-						$harga_reg   = $jual -> harga_jual == $jual -> harga_eceran ? '' : $jual -> harga_eceran;
-						$harga       = $jual -> harga_jual;
-						$reg         = $harga_reg == '' ? '' : nf($harga_reg);
-						$sub_reg     = $harga_reg == '' ? '' : nf($jual->jml * $harga_reg);
-						$sub         = (int) $jual->jml * $harga;
-						$tjml        += $jual->jml;
-						$total_cart  += (int) $sub;
-						$total_reg   += (int) $jual -> jml * $jual -> harga_eceran;
-						$hemat       = (int) ($total_reg - $total_cart) + $detail -> diskon;
+						$harga_reg 	 = $jual->harga_jual;
+						$harga 		 = $jual->harga_jual;
+						$reg 	 	 = $harga_reg == '' ? '' : nf($harga_reg);
+						$sub_reg 	 = $harga_reg == '' ? '' : nf($jual->jml * $harga_reg);
+						$sub 		 = (int) $jual->jml * $harga;
+						$tjml 		 += $jual->jml;
+						$total_cart	+= (int) $sub;
+						$total_reg	+= (int) $jual->jml;
+						$total_jual	+= (int) $jual->harga_jual;
+						$hemat		 = (int) ($total_reg - $total_cart) + $detail->diskon;
 
 						$html .= '
 							<tr>
 								<td>
-									'.$jual -> nama_brg.'
+									'.$jual->nama_brg.' <br>
+									<small>'.$jual->sn_brg.'</small>
 								</td>
 								<td style="text-align:left;padding-left: 10px;padding-right: 10px;">
-									'.$jual -> jml.'
+									'.$jual->jml.' Pcs
 								</td>
 								<td style="text-align:right">
-									'.nf($jual -> harga_jual).'
+									'.nf($jual->harga_jual).'
 								</td>
 								<td style="text-align:right; padding-left: 20px">
 									'.nf($sub).'
@@ -625,54 +865,71 @@ class Penjualan extends CI_Controller {
 					</tbody>
 					<tfoot>
 						<tr>
-							<th style="text-align:left;">Total Belanja</th>
-							<th style="text-align:left;padding-left: 10px;padding-right: 10px;">'.$tjml.'</th>
+							<th style="text-align:left;">Sub Total</th>
+							<th style="text-align:left;padding-left: 10px;padding-right: 10px;"></th>
 							<th></th>
-							<th style="text-align:right;">'.nf($detail->total_keranjang).'</th>
+							<th style="text-align:right;">'.nf($total_jual).'</th>
+							<span style="clear:both;float:none"></span>
 						</tr>
-						
 						<tr>
-							<th style="text-align:left;">Bayar</th>
-							<th style="text-align:right;">'.nf($detail->bayar).'</th>
+							<th style="text-align:left;">Cashback</th>
 							<th></th>
 							<th></th>
-						</tr>
-						
-						<tr>
-							<th style="text-align:left;">Donasi</th>
-							<th style="text-align:right;">'.nf($detail->jml_donasi).'</th>
-							<th></th>
-							<th></th>
+							<th style="text-align:right;">'.nf($detail->harga_cashback).'</th>
+							
 						</tr>
 						<tr>
 							<th style="text-align:left;">Diskon</th>
+							<th></th>
+							<th></th>
 							<th style="text-align:right;">'.nf($detail->diskon).'</th>
+							
+						</tr>
+
+						<tr>
+							<th style="text-align:left; padding-top: 15px;
+							padding-bottom: 4px; ">Total</th>
 							<th></th>
 							<th></th>
+							<th style="text-align:right;padding-top: 15px;
+							padding-bottom: 4px;">'.nf($detail->total_keranjang).'</th>
+							
+						</tr>
+
+
+						
+						<tr>
+							<th style="text-align:left;">Tunai</th>
+							<th></th>
+							<th></th>
+							<th style="text-align:right;">'.nf($detail->tunai).'</th>
+							
+						</tr>
+
+						<tr>
+							<th style="text-align:left;">Kartu Kredit</th>
+							<th></th>
+							<th></th>
+							<th style="text-align:right;">'.nf($detail->kredit).'</th>
+							
+						</tr>
+
+						<tr>
+							<th style="text-align:left;">Kartu Debit</th>
+							<th></th>
+							<th></th>
+							<th style="text-align:right;">'.nf($detail->bank).'</th>
+							
 						</tr>
 						';
-
-						if($hemat > 0) {
-							$html .= '
-								<tr>
-									<th style="text-align:left;">
-										Hemat
-									</th>
-									<th style="text-align:right;">
-										'.nf($hemat).'
-									</th>
-									<th></th>
-									<th></th>
-								</tr>
-							';
-						}
 
 						$html .= '
 						<tr>
 							<th style="text-align:left;">Kembalian</th>
+							<th></th>
+							<th></th>
 							<th style="text-align:right;">'.nf($detail->total_kembalian - $detail->jml_donasi).'</th>
-							<th></th>
-							<th></th>
+							
 						</tr>
 					</tfoot>
 				</table>
@@ -687,7 +944,6 @@ class Penjualan extends CI_Controller {
 
 		echo $html;
 		echo '<script>print()</script>';
-
 	}
 
 	function struk2($id = null) {
@@ -787,14 +1043,14 @@ class Penjualan extends CI_Controller {
 							$total_reg  = 0;
 							$total_cart  = 0;
 							foreach($data_jual as $jual) {
-								$harga_reg 	 = $jual -> harga_jual == $jual -> harga_eceran ? '' : $jual -> harga_eceran;
-								$harga 		 = $jual -> harga_jual;
+								$harga_reg 	 = $jual->harga_jual == $jual->harga_eceran ? '' : $jual->harga_eceran;
+								$harga 		 = $jual->harga_jual;
 								$reg 	 	 = $harga_reg == '' ? '' : nf($harga_reg);
 								$sub_reg 	 = $harga_reg == '' ? '' : nf($jual->jml * $harga_reg);
 								$sub 		 = (int) $jual->jml * $harga;
 								$total_cart	+= (int) $sub;
-								$total_reg	+= (int) $jual -> jml * $jual -> harga_eceran;
-								$hemat		 = (int) ($total_reg - $total_cart) + $detail -> diskon;
+								$total_reg	+= (int) $jual->jml * $jual->harga_eceran;
+								$hemat		 = (int) ($total_reg - $total_cart) + $detail->diskon;
 	
 								$html .= '
 									<tr>
@@ -883,68 +1139,98 @@ class Penjualan extends CI_Controller {
 	function riwayat() {
 		$conf = [
 			'tabTitle' 	=> 'Riwayat Penjualan | ' . webTitle(),
-			'webInfo' 	=> '
-				<div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <a href="'.site_url('penjualan').'" class="btn bg-white dashed">
-                            <i class="fa fa-shopping-basket"></i>
-                        </a>
-                        <a href="'.site_url('penjualan/retur').'" class="btn bg-white dashed">
-                            Retur
-                        </a>
-                    </div>
-                </div>
-				
-			'
-			
+			'webInfo' 	=> ''
 		];
-		if(admin()->level != 'Admin') {
-			$this->layout->load('layout', 'penjualan/riwayat', $conf);
-
-		} else {
-			$this->load->view('404');
-		}
+		$this->layout->load('layout', 'penjualan/riwayat', $conf);
 	}
 
 	function load_data_riwayat() {
-		$list = $this -> jual -> data_riwayat(null);
+		$list = $this->jual->data_riwayat(null);
 		$data = [];
 		$no = $this->input->post('start');
-		foreach ($list as $item) { 	
-			$nama_plg = $item -> id_plg ? $item -> nama_plg : 'Umum';
-			$jml = $this -> jual -> cek_jml_jual($item -> kode_penjualan);
+		foreach ($list as $item) { 
+			$nama_plg = $item->id_plg ? $item->nama_plg : 'Umum';
+			$jml = $this->jual->cek_jml_jual($item->kode_penjualan);
+			$email = '';
+			$retur = '';
+			if ($item->status_penjualan == 0){
+				$status_penjualan = '<span class="label label-warning">Menunggu Konfirmasi</span>';
+				$hapus = '';
+				$retur = '<a href="'.site_url('penjualan/retur/'.$item->kode_penjualan).'" class="badge badge-light border">
+						Retur
+					</a>';
+				$lunas = '';
+				$cetak = '';
+			}else if ($item->status_penjualan == 1){
+				$status_penjualan = '<span class="label label-success">DP Konfirmasi</span>';
+				$lunas = '<a href="' . site_url('penjualan/lunas/' . $item->kode_penjualan) . '" class="badge badge-success border btn-cetak-inv">Lunasi</a>';
+				$hapus = '';
+				$retur = '<a href="#modal_retur" data-toggle="modal" data-id="'.$item->kode_penjualan.'" class="badge badge-secondary btn_retur">
+							Retur
+						</a>';
+				if (strlen($item->email_pel) > 0){
+					$email = '<a href="' . site_url('penjualan/lunas/' . $item->kode_penjualan) . '" class="badge badge-success border btn-cetak-inv">Email</a>';
+				}
+				$cetak = '<a href="' . site_url('penjualan/struk/' . $item->kode_penjualan) . '" target="_blank" class="badge badge-light border btn-cetak-inv">Cetak struk</a>';
+			}else if ($item->status_penjualan == 2){
+				$status_penjualan = '<span class="label label-success">Sudah Dikonfirmasi</span>';
+				$hapus = '';
+				$lunas = '';
+				$retur = '<a href="#modal_retur" data-toggle="modal" data-id="'.$item->kode_penjualan.'" class="badge badge-secondary btn_retur">
+							Retur
+						</a>';
+				if (strlen($item->email_pel) > 0){
+					$email = '<a href="' . site_url('email/send_email/'. $item->kode_penjualan) . '" class="badge badge-success border btn-cetak-inv">Email</a>';
+				}
+				$cetak = '<a href="' . site_url('penjualan/struk/' . $item->kode_penjualan) . '" target="_blank" class="badge badge-light border btn-cetak-inv">Cetak struk</a>';
+			}else{
+				$status_penjualan = '<span class="label label-danger">Diretur</span>';
+				$hapus = '<a href="'.site_url('penjualan/hps_riwayat/'.$item->kode_penjualan).'" data-text="Riwayat belanja <strong>'.$item->kode_penjualan.'</strong> akan dihapus dari daftar" class="badge badge-danger hps">
+				Hapus</a> ';
+				$lunas = '';
+				$cetak = '';
+			}
 			$aksi 	  = '
 				<div class="mt-2">
-					<a href="'.site_url('penjualan/hps_riwayat/'.$item->kode_penjualan).'" data-text="Riwayat belanja <strong>'.$item->kode_penjualan.'</strong> akan dihapus dari daftar" class="badge badge-danger hps">
-						Hapus
-					</a> 
+					'.$lunas.'
+					'.$hapus.'
 					<a href="#modal_detail_riwayat" data-toggle="modal" data-id="'.$item->kode_penjualan.'" class="badge badge-secondary btn_detail_riwayat">
 						Detail
 					</a>                                        
-					<a href="javascript:void(0)"  data-id="'.$item->kode_penjualan.'" class="badge badge-light border btn-cetak-inv">
-						Cetak struk
-					</a>                                        
-					  
-					<span class="mx-2"> | </span>                                     
-					<a href="'.site_url('penjualan/retur/tambah/'.$item->kode_penjualan).'" class="badge badge-light border">
-						Retur
-					</a>   
+					'.$cetak.'    
+					'.$email.'    
+					<span class="mx-2"> | </span>           
+					'.$retur.'                         
+					
 				</div>
 			';				
 			
 			$no++;
 			$row    = [];
 			$row[]  = $no;
+			$row[]  = $item->tgl_transaksi;
 			$row[]  = '
 				<strong>'. $nama_plg.'</strong>
 				<div>
 					<small class="text-muted">
-						<span>'.$item -> kode_penjualan.'</span>
+						<span>'.$item->kode_penjualan.'</span>
 						<span class="mx-2"> | </span>
 						<span>'.$jml.' Barang</span>
 					</small>
 				</div>
-			' . $aksi;
+			';
+			if($item->tunai > 0 && $item->bank == 0 && $item->kredit == 0){
+				$row[]  = '
+				<strong>Tunai</strong>
+			';
+			}else{
+				$row[]  = '
+				<strong>Split Bill</strong>
+			';
+			}
+			
+			$row[]  = $status_penjualan;
+			$row[]  = $aksi;
 			$data[] = $row;
 		}
 		$output = [
@@ -991,7 +1277,7 @@ class Penjualan extends CI_Controller {
 							<tr>
 								<td>Kasir</td>
 								<td>:</td>
-								<th>'.$detail->nama_admin.'</th>
+								<th>'.$detail->nama_ksr.'</th>
 							</tr>
 						</table>
 					</div>
@@ -1010,7 +1296,7 @@ class Penjualan extends CI_Controller {
 		';
 					foreach($jual as $no => $item) {
 						$no++;
-						$harga = $item -> harga_jual;
+						$harga = $item->harga_jual;
 						$subharga = $harga * $item->jml;
 						$html .= '
 							<tr>
@@ -1027,7 +1313,29 @@ class Penjualan extends CI_Controller {
 							</tr>
 						';
 					}
-							
+
+		if ($jual[0]->cara_bayar == 'DP'){
+			$table = '<tr>
+				<th class="text-right" colspan="3">Sisa Belum Dibayar</th>
+				<th class="text-right text-primary">'.nf($detail->total_keranjang - $detail->diskon - $detail->bayar).'</th>
+			</tr>';
+		}else{
+			$table = '<tr>
+				<th class="text-right" colspan="3">Kembalian</th>
+				<th class="text-right text-primary">'.nf($detail->total_kembalian).'</th>
+			</tr>';
+		}
+
+		
+		if ($jual[0]->cara_bayar == 'Trade In'){
+			$harga = $this->db->query("select * from tb_brg_keluar where id_keluar = ".$jual[0]->id_trade)->row();
+			$trade = '<tr>
+				<th class="text-right" colspan="3">Harga Barang</th>
+				<th class="text-right text-primary">'.nf($harga->hrg_hpp).'</th>
+			</tr>';
+		}else{
+			$trade = '';
+		}
 		$html .= '
 						</tbody>  
 						<tfoot>
@@ -1035,6 +1343,7 @@ class Penjualan extends CI_Controller {
 								<th class="text-right" colspan="3">Total Belanja</th>
 								<th class="text-right">'.nf($detail->total_keranjang).'</th>
 							</tr>
+							'.$trade.'
 							<tr>
 								<th class="text-right" colspan="3">Diskon</th>
 								<th class="text-right text-danger">'.nf($detail->diskon).'</th>
@@ -1043,14 +1352,7 @@ class Penjualan extends CI_Controller {
 								<th class="text-right" colspan="3">Bayar</th>
 								<th class="text-right">'.nf($detail->bayar).'</th>
 							</tr>
-							<tr>
-								<th class="text-right" colspan="3">Donasi</th>
-								<th class="text-right">'.nf($detail->jml_donasi).'</th>
-							</tr>
-							<tr>
-								<th class="text-right" colspan="3">Kembalian</th>
-								<th class="text-right text-primary">'.nf($detail->total_kembalian - $detail->jml_donasi).'</th>
-							</tr>
+							'.$table.'
 						</tfoot>                      
 					</table>
 				</div>
@@ -1075,32 +1377,45 @@ class Penjualan extends CI_Controller {
 	}
 
 	function hps_riwayat($id = null) {
-		$this -> jual -> hps_riwayat($id);
+		$this->jual->hps_riwayat($id);
 	}
 
-	function retur($p = null, $id = null) {
-		$conf = [
-			'tabTitle' 	=> 'Retur Penjualan | ' . webTitle(),
-			'webInfo' => '
-				<div class="d-flex justify-content-between align-items-center">
-                    <div>                        
-                        <a href="'.site_url('penjualan').'" class="btn bg-white dashed">
-                            <i class="fa fa-shopping-basket"></i>
-                        </a>
-						<a href="'.site_url('penjualan/riwayat').'" class="btn bg-white dashed">
-                            Riwayat
-                        </a>
-                    </div>
-                </div>
-			',
-			'data_riwayat' => $id ? $this->jual->penjualan($id) : null			
-		];
-		if(admin()->level != 'Admin') {
-			$this->layout->load('layout', 'penjualan/retur', $conf);
+	public function load_retur($id) {		
+		$data['id_keluar'] = $id;
+		$this->load->view('retur', $data);
+	}
 
-		} else {
-			$this->load->view('404');
+	function retur($id = null) {
+		$post = $this->input->post();
+
+		if (isset($post['kode'])){
+			$id = $post['kode'];
+			$saldo = $post['retur'];
+		}else{
+			$id = $id;
+			$saldo = 0;
 		}
+
+		$retur = $this->db->query("select * from tb_detail_penjualan tdp
+		left join tb_penjualan tp on tp.kode_penjualan = tdp.kode_penjualan
+		where tdp.kode_penjualan = '".$id."'")->result();
+
+		foreach ($retur as $retur){
+			$data = array(
+				'status' => 2
+			);
+			$this->db->where('id_keluar', $retur->id_keluar);
+			$this->db->update('tb_brg_keluar', $data);
+		}
+
+		$data = array(
+			'status' => 5,
+			'retur'	 => $saldo
+		);
+		$this->db->where('kode_penjualan', $id);
+		$this->db->update('tb_penjualan', $data);
+
+		redirect('penjualan/riwayat');
 	}
 
 	function load_data_retur() {
@@ -1178,8 +1493,8 @@ class Penjualan extends CI_Controller {
 				
 			}
 
-			$this -> jual -> update_detail_bayar($kode, $total);
-			$this -> jual -> submit_retur($brg);
+			$this->jual->update_detail_bayar($kode, $total);
+			$this->jual->submit_retur($brg);
 			
 		} else {
 			echo 'empty';
