@@ -738,193 +738,213 @@ class Penjualan extends CI_Controller {
 		$pelanggan  = empty($detail->nama_plg) ? $detail->nama_plg : 'Umum';
 
 		$html = '
-		<!DOCTYPE html>
-<html>
-<head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Struk Belanja</title>
-    <style>
-        @font-face {
-            font-family: receipt;
-            src: url("../../assets/vendor/font/fake-receipt/fake-receipt.ttf");
-            font-display: block;
-        }
-        * {
-            font-family: receipt;
-            font-size: 10px;
-        }
-        .print_area {
-            width: 148mm; /* Adjusted for A5 width */
-            margin: 0 auto; /* Center the content */
-        }
-        h1 {
-            padding: 0;
-            margin: 0;
-            font-size: 20px;
-            font-weight: normal;
-        }
-        header p {
-            margin: 0;
-        }
-        header {
-            margin-bottom: 10px;
-            margin-top: 0px;
-            text-align: center;
-        }
-        table {
-            border-collapse: collapse;
-            border-top: 1px dashed #000;
-            width: 100% !important;
-        }                        
-        table td {
-            padding-top: 7px;
-            vertical-align: top; 
-        }
-        .belanjaan {
-            margin-top: 20px;
-            width: 100% !important;
-        }
-        .belanjaan td {
-            padding-bottom: 3px;
-        }
-        
-        .belanjaan tfoot {
-            border-top: 1px dashed #000;
-            border-bottom: 1px dashed #000;
-        }
-        .belanjaan  tr:first-child th {
-            padding-top: 15px;
-            padding-bottom: 7px;
-        }
-        .belanjaan  tr:not(:first-child) th {
-            padding-top: 3px;
-            padding-bottom: 4px;
-        }
-        .belanjaan  tr:nth-child(2) th {
-            padding-top: 20px;
-        }
-    </style>
-</head>
-<body>
-    <div class="print_area">
-        <header>
-            <h1>'.admin()->nama_toko.'</h1>
-            <p>'.admin()->alamat.'</p>
-        </header>
-        <div class="nota">
-            <strong>'.$id.'</strong>
-            <p style="margin:0;padding:0">
-                <span style="float:left">
-                    Kasir: '.$detail->nama_admin.'  
-                </span>
-                <span style="float:right">
-                    '.tgl(date('d M Y G:i', strtotime($detail->tgl_transaksi))).'
-                </span>
-                <span style="clear:both;float:none"></span>
-            </p>
-        </div>
-        <table class="belanjaan">
-            <tbody>
-            ';
-            
-            $total_reg  = 0;
-            $total_cart  = 0;
-            $tjml        = 0;
-            foreach($data_jual as $jual) {
-                $harga_reg   = $jual -> harga_jual == $jual -> harga_eceran ? '' : $jual -> harga_eceran;
-                $harga       = $jual -> harga_jual;
-                $reg         = $harga_reg == '' ? '' : nf($harga_reg);
-                $sub_reg     = $harga_reg == '' ? '' : nf($jual->jml * $harga_reg);
-                $sub         = (int) $jual->jml * $harga;
-                $tjml        += $jual->jml;
-                $total_cart  += (int) $sub;
-                $total_reg   += (int) $jual -> jml * $jual -> harga_eceran;
-                $hemat       = (int) ($total_reg - $total_cart) + $detail -> diskon;
+		<html>
+		<head>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0">
+			<title>Struk Belanja</title>
+			<style>
+    			@font-face {
+    				font-family: receipt;
+    				src: url("../../assets/vendor/font/fake-receipt/fake-receipt.ttf");
+    				font-display: block;
+    			}
+    			* {
+    				font-family: receipt;
+    				font-size: 10px;
+    			}
+    			.print_area {
+					width: 148mm; /* Adjusted for A5 width */
+					margin: 0 auto; /* Center the content */
+				}
+    			h1 {
+    				padding: 0;
+    				margin: 0;
+    				font-size: 20px;
+    				font-weigth: normal;
+    			}
+    			header p {
+    				margin: 0;
+    			}
+    			header {
+    				margin-bottom: 10px;
+    				margin-top: 0px;
+    				text-align: center;
+    			}
+    			table {
+    				border-collapse: collapse;
+    				border-top: 1px dashed #000;
+    				width: 100% !important;
+    			}						
+    			table td {
+    				padding-top: 7px;
+    				vertical-align: top; 
+    			}
+    			.belanjaan {
+    				margin-top: 20px;
+    				width: 100% !important;
+    			}
+    			.belanjaan td {
+    				padding-bottom: 3px;
+    			}
+    			
+    			.belanjaan tfoot {
+    				border-top: 1px dashed #000;
+    				border-bottom: 1px dashed #000;
+    			}
+    			.belanjaan  tr:first-child th {
+    				padding-top: 15px;
+    				padding-bottom: 4px;
+    			}
+    			.belanjaan  tr:not(:first-child) th {
+    				padding-top: 3px;
+    				padding-bottom: 4px;
+    			}
+			</style>
+		</head>
+		<body>
+			<div class="print_area">
+				<header>
+					<img src="'.base_url().'/upload/logo.jpg" style="width:140px;height: 60px;" alt="Store Logo"> 
+					<p>'.admin()->alamat.' '.admin()->kecamatan.' '.admin()->kabupaten.' '.admin()->provinsi.'</p>
+					<p> Kode Pos '.admin()->kode_pos.'</p>
+				</header>
+				<div class="nota">
+					<strong>'.$id.'</strong>
+					<p style="margin:0;padding:0">
+					    <span style="float:left">
+						    Kasir: '.$detail->nama_ksr.'  
+					    </span><br>
+						<span style="float:left">
+						    Pelanggan: '.$pelanggan.'  
+					    </span>
+					    <span style="float:right">
+						    '.tgl(date('d M Y G:i', strtotime($detail->tgl_transaksi))).'
+					    </span>
+					    <span style="clear:both;float:none"></span>
+					</p>
+				</div>
+				<table class="belanjaan">
+					<tbody>
+					';
+					
+					$total_jual = 0;
+					$total_reg  = 0;
+					$total_cart  = 0;
+					$tjml  		= 0;
+					foreach($data_jual as $jual) {
+						$harga_reg 	 = $jual->harga_jual;
+						$harga 		 = $jual->harga_jual;
+						$reg 	 	 = $harga_reg == '' ? '' : nf($harga_reg);
+						$sub_reg 	 = $harga_reg == '' ? '' : nf($jual->jml * $harga_reg);
+						$sub 		 = (int) $jual->jml * $harga;
+						$tjml 		 += $jual->jml;
+						$total_cart	+= (int) $sub;
+						$total_reg	+= (int) $jual->jml;
+						$total_jual	+= (int) $jual->harga_jual;
+						$hemat		 = (int) ($total_reg - $total_cart) + $detail->diskon;
 
-                $html .= '
-                    <tr>
-                        <td>
-                            '.$jual -> nama_brg.'
-                        </td>
-                        <td style="text-align:left;padding-left: 10px;padding-right: 10px;">
-                            '.$jual -> jml.'
-                        </td>
-                        <td style="text-align:right">
-                            '.nf($jual -> harga_jual).'
-                        </td>
-                        <td style="text-align:right; padding-left: 20px">
-                            '.nf($sub).'
-                        </td>
-                    </tr>
-                    ';
-                }
+						$html .= '
+							<tr>
+								<td>
+									'.$jual->nama_brg.' <br>
+									<small>'.$jual->sn_brg.'</small>
+								</td>
+								<td style="text-align:left;padding-left: 10px;padding-right: 10px;">
+									'.$jual->jml.' Pcs
+								</td>
+								<td style="text-align:right">
+									'.nf($jual->harga_jual).'
+								</td>
+								<td style="text-align:right; padding-left: 20px">
+									'.nf($sub).'
+								</td>
+							</tr>
+							';
+						}
 
-                $html .= '
-            </tbody>
-            <tfoot>
-                <tr>
-                    <th style="text-align:left;">Total Belanja</th>
-                    <th style="text-align:left;padding-left: 10px;padding-right: 10px;">'.$tjml.'</th>
-                    <th></th>
-                    <th style="text-align:right;">'.nf($detail->total_keranjang).'</th>
-                </tr>
-                
-                <tr>
-                    <th style="text-align:left;">Bayar</th>
-                    <th style="text-align:right;">'.nf($detail->bayar).'</th>
-                    <th></th>
-                    <th></th>
-                </tr>
-                
-                <tr>
-                    <th style="text-align:left;">Donasi</th>
-                    <th style="text-align:right;">'.nf($detail->jml_donasi).'</th>
-                    <th></th>
-                    <th></th>
-                </tr>
-                <tr>
-                    <th style="text-align:left;">Diskon</th>
-                    <th style="text-align:right;">'.nf($detail->diskon).'</th>
-                    <th></th>
-                    <th></th>
-                </tr>
-                ';
+						$html .= '
+					</tbody>
+					<tfoot>
+						<tr>
+							<th style="text-align:left;">Sub Total</th>
+							<th style="text-align:left;padding-left: 10px;padding-right: 10px;"></th>
+							<th></th>
+							<th style="text-align:right;">'.nf($total_jual).'</th>
+							<span style="clear:both;float:none"></span>
+						</tr>
+						<tr>
+							<th style="text-align:left;">Cashback</th>
+							<th></th>
+							<th></th>
+							<th style="text-align:right;">'.nf($detail->harga_cashback).'</th>
+							
+						</tr>
+						<tr>
+							<th style="text-align:left;">Diskon</th>
+							<th></th>
+							<th></th>
+							<th style="text-align:right;">'.nf($detail->diskon).'</th>
+							
+						</tr>
 
-                if($hemat > 0) {
-                    $html .= '
-                        <tr>
-                            <th style="text-align:left;">
-                                Hemat
-                            </th>
-                            <th style="text-align:right;">
-                                '.nf($hemat).'
-                            </th>
-                            <th></th>
-                            <th></th>
-                        </tr>
-                    ';
-                }
+						<tr>
+							<th style="text-align:left; padding-top: 15px;
+							padding-bottom: 4px; ">Total</th>
+							<th></th>
+							<th></th>
+							<th style="text-align:right;padding-top: 15px;
+							padding-bottom: 4px;">'.nf($detail->total_keranjang).'</th>
+							
+						</tr>
 
-                $html .= '
-                <tr>
-                    <th style="text-align:left;">Kembalian</th>
-                    <th style="text-align:right;">'.nf($detail->total_kembalian - $detail->jml_donasi).'</th>
-                    <th></th>
-                    <th></th>
-                </tr>
-            </tfoot>
-        </table>
 
-        <div style="text-align:center;padding-top:20px;margin-bottom:0px;">
-            Terima kasih sudah berkunjung
-        </div>
-    </div>
-</body>
-</html>
-';
+						
+						<tr>
+							<th style="text-align:left;">Tunai</th>
+							<th></th>
+							<th></th>
+							<th style="text-align:right;">'.nf($detail->tunai).'</th>
+							
+						</tr>
 
-echo $html;
-echo '<script>print()</script>';
+						<tr>
+							<th style="text-align:left;">Kartu Kredit</th>
+							<th></th>
+							<th></th>
+							<th style="text-align:right;">'.nf($detail->kredit).'</th>
+							
+						</tr>
+
+						<tr>
+							<th style="text-align:left;">Kartu Debit</th>
+							<th></th>
+							<th></th>
+							<th style="text-align:right;">'.nf($detail->bank).'</th>
+							
+						</tr>
+						';
+
+						$html .= '
+						<tr>
+							<th style="text-align:left;">Kembalian</th>
+							<th></th>
+							<th></th>
+							<th style="text-align:right;">'.nf($detail->total_kembalian - $detail->jml_donasi).'</th>
+							
+						</tr>
+					</tfoot>
+				</table>
+
+				<div style="text-align:center;padding-top:20px;margin-bottom:0px;">
+					Terima kasih sudah berkunjung
+				</div>
+			</div>
+		</body>
+		</html>
+		';
+
+		echo $html;
+		echo '<script>print()</script>';
 	}
 
 	function struk2($id = null) {
