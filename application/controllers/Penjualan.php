@@ -751,6 +751,10 @@ class Penjualan extends CI_Controller {
     			* {
     				font-family: receipt;
     				font-size: 16px;
+					margin-left: 0;
+					margin-right:0;
+					margin-top: 0;
+					margin-bottom :0;
     			}
     			.print_area {
 					width: 80mm; /* Adjusted for A5 width */
