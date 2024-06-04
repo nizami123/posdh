@@ -2245,12 +2245,12 @@
                     data: $(this).serialize(),
 
                 }).done(function() {
-
                     data_plg.api().ajax.reload(null, true);
+                    let option = new Option(nama, id);
+                    $('select[name="id_plg"]').append(option);
                     $('.modal').trigger('reset').modal('hide');
                     toast('success', 'Pelanggan baru sudah ditambahkan');
-                    $('.id_plg').val(id);
-                    $('.nama_plg').val(nama);
+                    // tambahkan d
                 });
             });
             
