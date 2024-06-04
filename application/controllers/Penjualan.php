@@ -1224,16 +1224,8 @@ class Penjualan extends CI_Controller {
 					</small>
 				</div>
 			';
-			if($item->tunai > 0 && $item->bank == 0 && $item->kredit == 0){
-				$row[]  = '
-				<strong>Tunai</strong>
-			';
-			}else{
-				$row[]  = '
-				<strong>Split Bill</strong>
-			';
-			}
 			
+			$row[]  = $item->cara_bayar;
 			$row[]  = $status_penjualan;
 			$row[]  = $aksi;
 			$data[] = $row;
