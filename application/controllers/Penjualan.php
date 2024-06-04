@@ -733,9 +733,10 @@ class Penjualan extends CI_Controller {
 
 	function struk($id = null) {
 		$detail 	= $this->jual->detail($id);
+		// print_r();die;
 		$data_jual  = $this->jual->penjualan($id);
 		$width 		= conf()->jenis_kertas_struk == 'HVS' ? '100%' : conf()->ukuran_kertas . 'mm';
-		$pelanggan  = empty($detail->nama_plg) ? $detail->nama_plg : 'Umum';
+		$pelanggan  = strlen($detail->nama_plg) > 0 ? $detail->nama_plg : 'Umum';
 
 		$html = '
 		<html>
@@ -1224,7 +1225,7 @@ class Penjualan extends CI_Controller {
 					</small>
 				</div>
 			';
-			
+
 			$row[]  = $item->cara_bayar;
 			$row[]  = $status_penjualan;
 			$row[]  = $aksi;
