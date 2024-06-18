@@ -482,7 +482,7 @@ class Penjualan extends CI_Controller {
 				<div class="form-group">
 					<label> Pelanggan </label>
 					<div class="input-group">
-						<select class="form-control form-control-sm id_plg" name="id_plg">
+						<select class="form-control form-control-sm id_plg" name="id_plg" id="pelanggan_cek">
 							<option value="Umum">Umum</option>
 							' . $optionsPel . '
 						</select>
@@ -733,7 +733,6 @@ class Penjualan extends CI_Controller {
 
 	function struk($id = null) {
 		$detail 	= $this->jual->detail($id);
-		// print_r();die;
 		$data_jual  = $this->jual->penjualan($id);
 		$width 		= conf()->jenis_kertas_struk == 'HVS' ? '100%' : conf()->ukuran_kertas . 'mm';
 		$pelanggan  = strlen($detail->nama_plg) > 0 ? $detail->nama_plg : 'Umum';
@@ -857,9 +856,6 @@ class Penjualan extends CI_Controller {
 								<td style="text-align:left;padding-left: 10px;padding-right: 10px;">
 									'.$jual->jml.' Pcs
 								</td>
-								<td style="text-align:right">
-									'.nf($jual->harga_jual).'
-								</td>
 								<td style="text-align:right; padding-left: 20px">
 									'.nf($sub).'
 								</td>
@@ -873,20 +869,20 @@ class Penjualan extends CI_Controller {
 						<tr>
 							<th style="text-align:left;">Sub Total</th>
 							<th style="text-align:left;padding-left: 10px;padding-right: 10px;"></th>
-							<th></th>
+							
 							<th style="text-align:right;">'.nf($total_jual).'</th>
 							<span style="clear:both;float:none"></span>
 						</tr>
 						<tr>
 							<th style="text-align:left;">Cashback</th>
 							<th></th>
-							<th></th>
+							
 							<th style="text-align:right;">'.nf($detail->harga_cashback).'</th>
 							
 						</tr>
 						<tr>
 							<th style="text-align:left;">Diskon</th>
-							<th></th>
+							
 							<th></th>
 							<th style="text-align:right;">'.nf($detail->diskon).'</th>
 							
@@ -895,7 +891,7 @@ class Penjualan extends CI_Controller {
 						<tr>
 							<th style="text-align:left; padding-top: 15px;
 							padding-bottom: 4px; ">Total</th>
-							<th></th>
+							
 							<th></th>
 							<th style="text-align:right;padding-top: 15px;
 							padding-bottom: 4px;">'.nf($detail->total_keranjang).'</th>
@@ -906,7 +902,7 @@ class Penjualan extends CI_Controller {
 						
 						<tr>
 							<th style="text-align:left;">Tunai</th>
-							<th></th>
+							
 							<th></th>
 							<th style="text-align:right;">'.nf($detail->tunai).'</th>
 							
@@ -914,7 +910,7 @@ class Penjualan extends CI_Controller {
 
 						<tr>
 							<th style="text-align:left;">Kartu Kredit</th>
-							<th></th>
+						
 							<th></th>
 							<th style="text-align:right;">'.nf($detail->kredit).'</th>
 							
@@ -922,7 +918,7 @@ class Penjualan extends CI_Controller {
 
 						<tr>
 							<th style="text-align:left;">Kartu Debit</th>
-							<th></th>
+							
 							<th></th>
 							<th style="text-align:right;">'.nf($detail->bank).'</th>
 							
@@ -932,14 +928,17 @@ class Penjualan extends CI_Controller {
 						$html .= '
 						<tr>
 							<th style="text-align:left;">Kembalian</th>
-							<th></th>
+						
 							<th></th>
 							<th style="text-align:right;">'.nf($detail->total_kembalian - $detail->jml_donasi).'</th>
 							
 						</tr>
 					</tfoot>
 				</table>
-
+				<div style="text-align:center;padding-top:20px;margin-bottom:0px; display: flex; justify-content: center; align-items: center;	">
+					<img src="'.base_url().'/upload/qr.jpg" alt="Description of the image" width="100" height="100" style="margin-right: 10px;">
+					<span>SCAN INI UNTUK TAU TENTANG DH STORE</span>
+				</div>
 				<div style="text-align:center;padding-top:20px;margin-bottom:0px;">
 					Terima kasih sudah berkunjung
 				</div>

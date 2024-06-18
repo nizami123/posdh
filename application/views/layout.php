@@ -2247,7 +2247,7 @@
                 }).done(function() {
                     data_plg.api().ajax.reload(null, true);
                     let option = new Option(nama, id);
-                    $('select[name="id_plg"]').append(option);
+                    $('select[name="id_plg"]').append(option).val(id);
                     $('.modal').trigger('reset').modal('hide');
                     toast('success', 'Pelanggan baru sudah ditambahkan');
                     // tambahkan d
@@ -3049,11 +3049,16 @@
 
     <script>
         select2();
+        $('#pelanggan_cek').select2({
+            theme: 'bootstrap4'
+        });    
+
         function select2() {
             $('.select2').select2({
                 theme: 'bootstrap4'
             });
         }
+        
 
         let data_keluar = $('#data_keluar').dataTable({
             pageLength: 50,

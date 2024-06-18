@@ -162,8 +162,8 @@ class Barang extends CI_Controller {
 						</div>
                     </div>       
                     <div class="form-group col-sm-12">
-                        <label for="">Nama Toko</label>
-                        <select name="u_toko"  class="form-control form-control-sm select2">
+                        <label for="">Nama Tokos</label>
+                        <select name="u_toko"  class="form-control form-control-sm">
 		';
                             foreach($data_toko as $toko) {
 								if($toko->id_toko == $data->id_toko) {

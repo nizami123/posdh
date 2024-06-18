@@ -171,7 +171,7 @@
             </div>
             <div class="modal-body">
                 <div class="row">
-                        <input type="hidden" class="form-control form-control-sm" name="id_plg" value="<?=$idPelanggan?>" required>
+                    <input type="hidden" class="form-control form-control-sm" name="id_plg" value="<?=$idPelanggan?>" required>
                     <div class="form-group col-md-12">
                         <label for="">Nama Pelanggan <span class="text-danger">*</span> </label>
                         <input type="text" class="form-control form-control-sm" name="nama_plg" required>
@@ -466,3 +466,9 @@
         </div>
     </div>
 </div>
+
+<script>
+     $('#pelanggan_cek').select2({
+            theme: 'bootstrap4'
+        });    
+</script>
