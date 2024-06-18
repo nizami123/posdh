@@ -479,6 +479,11 @@ class Penjualan extends CI_Controller {
 
 		if($cek) {
 			$html = '
+				<script>
+					$("#pelanggan_cek").select2({
+            			theme: "bootstrap4"
+        			});
+				</script>
 				<div class="form-group">
 					<label> Pelanggan </label>
 					<div class="input-group">
