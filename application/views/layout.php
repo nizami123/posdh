@@ -3061,7 +3061,7 @@
         
 
         let data_keluar = $('#data_keluar').dataTable({
-            pageLength: 50,
+            pageLength: 25,
             ordering: false,
             serverSide: true,
             processing: true,

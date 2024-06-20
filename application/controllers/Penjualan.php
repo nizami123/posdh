@@ -752,17 +752,18 @@ class Penjualan extends CI_Controller {
     				font-family: receipt;
     				src: url("../../assets/vendor/font/fake-receipt/fake-receipt.ttf");
     				font-display: block;
+					font-size: 14px;
     			}
     			* {
     				font-family: receipt;
-    				font-size: 16px;
+    				font-size: 14px;
 					margin-left: 0;
 					margin-right:0;
 					margin-top: 0;
 					margin-bottom :0;
     			}
     			.print_area {
-					width: 80mm; /* Adjusted for A5 width */
+					width: 100mm; /* Adjusted for A5 width */
 					margin: 0 auto; /* Center the content */
 				}
     			h1 {
@@ -814,21 +815,21 @@ class Penjualan extends CI_Controller {
 			<div class="print_area">
 				<header>
 					<img src="'.base_url().'/upload/logo.jpg" style="width:140px;height: 60px;" alt="Store Logo"> 
-					<p>'.admin()->alamat.' '.admin()->kecamatan.' '.admin()->kabupaten.' '.admin()->provinsi.'</p>
-					<p> Kode Pos '.admin()->kode_pos.'</p>
+					<p style="padding-bottom: 5px;"> '.admin()->nama_toko.'</p>
+					<p style="border-bottom: 1px dashed #000">'.admin()->alamat.' '.admin()->kecamatan.' '.admin()->kabupaten.' '.admin()->provinsi.' '.admin()->kode_pos.'</p>
 				</header>
 				<div class="nota">
 					<strong>'.$id.'</strong>
 					<p style="margin:0;padding:0">
 					    <span style="float:left">
-						    Kasir: '.$detail->nama_ksr.'  
+						    Chasier: '.$detail->nama_ksr.'  
 					    </span><br>
 						<span style="float:left">
-						    Pelanggan: '.$pelanggan.'  
-					    </span>
-					    <span style="float:right">
+						    Customer: '.$pelanggan.'  
+					    </span><br>
+					    <p style="text-align:center; padding-top: 5px;">
 						    '.tgl(date('d M Y G:i', strtotime($detail->tgl_transaksi))).'
-					    </span>
+					    </p>
 					    <span style="clear:both;float:none"></span>
 					</p>
 				</div>
@@ -854,7 +855,7 @@ class Penjualan extends CI_Controller {
 
 						$html .= '
 							<tr>
-								<td>
+								<td style="width:50%">
 									'.$jual->nama_brg.' <br>
 									<small>'.$jual->sn_brg.'</small>
 								</td>
