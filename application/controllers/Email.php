@@ -216,15 +216,15 @@ class Email extends CI_Controller {
 
         // Konfigurasi SMTP
         $mail->isSMTP();
-        $mail->Host = 'mail.akira.id';
+        $mail->Host = 'mail.dhstore.id';
         $mail->SMTPAuth = true;
-        $mail->Username = 'nizam@akira.id';
-        $mail->Password = 'Lamongan123';
+        $mail->Username = 'official@dhstore.id';
+        $mail->Password = 'Galagio7788';
         $mail->SMTPSecure = 'ssl';
         $mail->Port = 465;
 
         // Atur alamat pengirim, penerima, subjek, dan isi pesan
-        $mail->setFrom('nizam@akira.id', 'DH Store');
+        $mail->setFrom('official@dhstore.id', 'DH Store');
         $mail->addAddress($detail->email_pel);
         $subject = 'INVOICE PENJUALAN';
         $message = $html;
