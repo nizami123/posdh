@@ -218,13 +218,13 @@ class Email extends CI_Controller {
         $mail->isSMTP();
         $mail->Host = 'mail.dhstore.id';
         $mail->SMTPAuth = true;
-        $mail->Username = 'official@dhstore.id';
-        $mail->Password = 'Galagio7788';
+        $mail->Username = 'care@dhstore.id';
+        $mail->Password = '@Mico7788!';
         $mail->SMTPSecure = 'ssl';
         $mail->Port = 465;
 
         // Atur alamat pengirim, penerima, subjek, dan isi pesan
-        $mail->setFrom('official@dhstore.id', 'DH Store');
+        $mail->setFrom('care@dhstore.id', 'DH Store');
         $mail->addAddress($detail->email_pel);
         $subject = 'INVOICE PENJUALAN';
         $message = $html;
