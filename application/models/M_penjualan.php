@@ -9,6 +9,7 @@ class m_penjualan extends CI_Model {
     private $admin      = 'tb_admin';
     private $pelanggan  = 'tb_pelanggan';
     private $retur      = 'tb_data_retur';
+    private $kasir      = 'tb_kasir';
 
     var $src_riwayat    = ['tdp.kode_penjualan', 'tpp.nama_plg', 'tpp.id_plg'];
     var $src_retur      = ['nama_brg'];
@@ -21,6 +22,7 @@ class m_penjualan extends CI_Model {
         $this->db->join('tb_pelanggan tpp', 'tdp.id_plg = tpp.id_plg', 'LEFT');
         $this->db->join('tb_kasir tk', 'tdp.id_ksr = tk.id_ksr', 'LEFT');
         $this->db->join('tb_bank tbn', 'tdp.id_bank = tbn.id_bank', 'LEFT');
+        $this->db->join($this->kasir . ' ksr', 'detail.id_kasir = ksr.id_kasir', 'LEFT');
 
         $i = 0;
         foreach ($this->src_riwayat as $item) {  
