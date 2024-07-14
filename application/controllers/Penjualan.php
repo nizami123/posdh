@@ -1196,15 +1196,13 @@ class Penjualan extends CI_Controller {
 				$cetak = '<a href="' . site_url('penjualan/struk/' . $item->kode_penjualan) . '" target="_blank" class="badge badge-light border btn-cetak-inv">Cetak struk</a>';
 			}else{
 				$status_penjualan = '<span class="label label-danger">Diretur</span>';
-				$hapus = '<a href="'.site_url('penjualan/hps_riwayat/'.$item->kode_penjualan).'" data-text="Riwayat belanja <strong>'.$item->kode_penjualan.'</strong> akan dihapus dari daftar" class="badge badge-danger hps">
-				Hapus</a> ';
+				$hapus = '';
 				$lunas = '';
 				$cetak = '';
 			}
 			$aksi 	  = '
 				<div class="mt-2">
 					'.$lunas.'
-					'.$hapus.'
 					<a href="#modal_detail_riwayat" data-toggle="modal" data-id="'.$item->kode_penjualan.'" class="badge badge-secondary btn_detail_riwayat">
 						Detail
 					</a>                                        
