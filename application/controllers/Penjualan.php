@@ -822,7 +822,7 @@ class Penjualan extends CI_Controller {
 					<medium>'.$id.'</medium>
 					<p style="margin:0;padding:0">
 					    <span style="float:left">
-						    Chasier: '.$detail->nama_ksr.'  
+						    Chasier: '.$detail->nama_admin.'  
 					    </span><br>
 					    <span style="float:left">
 							Sales: '.$detail->nama_ksr.'  
