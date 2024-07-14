@@ -819,11 +819,14 @@ class Penjualan extends CI_Controller {
 					<p style="border-bottom: 1px dashed #000">'.admin()->alamat.' '.admin()->kecamatan.' '.admin()->kabupaten.' '.admin()->provinsi.' '.admin()->kode_pos.'</p>
 				</header>
 				<div class="nota">
-					<strong>'.$id.'</strong>
+					<medium>'.$id.'</medium>
 					<p style="margin:0;padding:0">
 					    <span style="float:left">
 						    Chasier: '.$detail->nama_ksr.'  
 					    </span><br>
+					    <span style="float:left">
+							Sales: '.$detail->nama_ksr.'  
+						</span><br>
 						<span style="float:left">
 						    Customer: '.$pelanggan.'  
 					    </span><br>
