@@ -22,7 +22,7 @@ class m_penjualan extends CI_Model {
         $this->db->join('tb_pelanggan tpp', 'tdp.id_plg = tpp.id_plg', 'LEFT');
         $this->db->join('tb_kasir tk', 'tdp.id_ksr = tk.id_ksr', 'LEFT');
         $this->db->join('tb_bank tbn', 'tdp.id_bank = tbn.id_bank', 'LEFT');
-        $this->db->join($this->kasir . ' ksr', 'detail.id_kasir = ksr.id_kasir', 'LEFT');
+        $this->db->join($this->kasir . ' ksr', 'detail.id_ksr = ksr.id_ksr', 'LEFT');
 
         $i = 0;
         foreach ($this->src_riwayat as $item) {  
