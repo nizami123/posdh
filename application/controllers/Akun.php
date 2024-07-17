@@ -166,6 +166,7 @@ class Akun extends CI_Controller {
                             'sesi_id_admin' => $data->row ()->id_admin,
                             'sesi_toko'     => $data->row ()->id_toko,
                             'sesi_level'    => $data->row ()->level,
+			    'sesi_kasir'    => $data->row ()->id_karyawan,
                             'sesi_waktu'    => date('Y-m-d G:i:s'),
                         ];
                         $success = '
