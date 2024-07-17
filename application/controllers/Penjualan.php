@@ -507,7 +507,14 @@ class Penjualan extends CI_Controller {
 						</select>
 					</div>
 				</div>
-
+				<div class="form-group">
+		                    <label> Jasa </label>
+		                    <input class="form-control form-control-sm bg-secondary _bayar" id="bayarJasa" name="bayarJasa">
+		                </div>
+				<div class="form-group">
+		                    <label> Keterangan </label>
+		                    <textarea class="form-control form-control-sm" id="ket" name="ket"></textarea>
+		                </div>
 				'.$trade.'
 				<div class="form-group">
 					<label class="mr-2">Tipe Penjualan</label>
@@ -701,11 +708,11 @@ class Penjualan extends CI_Controller {
 			'kode_penjualan' 	=> $kode,
 			'id_admin' 		 	=> admin()->id_admin,
 			'total_kembalian'   => $input['total_kembalian'],
-			'total_keranjang'   => $input['total_keranjang'],
+			'total_keranjang'   => $input['total_keranjang']+intval(preg_replace("/[^0-9]/", "", $input['bayarJasa'])),
 			'bayar'      	 	=> $bayar,
 			'diskon'      	 	=> $diskon_total,
-			'cashback'			=> $cashback_total,
-			'total_penjualan'	=> $jual_total,
+			'cashback'		=> $cashback_total,
+			'total_penjualan'	=> $jual_total+intval(preg_replace("/[^0-9]/", "", $input['bayarJasa'])),
 			'id_plg'      	 	=> $input['id_plg'],
 			'id_ksr'      	 	=> $input['id_ksr'],
 			'cara_bayar'	 	=> $cara_bayar,
@@ -715,7 +722,8 @@ class Penjualan extends CI_Controller {
 			'kredit'			=> intval(preg_replace("/[^0-9]/", "", $input['bayarKredit'])),
 			'bank'				=> intval(preg_replace("/[^0-9]/", "", $input['bayarBank'])),
 			'is_donasi'  		=> $is_donasi,
-			'jml_donasi'  		=> isset($input['is_donasi']) ? $input['jml_donasi'] : 0,
+			'jml_donasi'		=> intval(preg_replace("/[^0-9]/", "", $input['bayarJasa'])),
+			'jasa'				=> $input['ket'],
 			'tgl_transaksi' 	=> date('Y-m-d G:i:s'),
 			'id_toko' 			=> $id_toko
 		];
@@ -737,6 +745,7 @@ class Penjualan extends CI_Controller {
 	}
 
 	function struk($id = null) {
+		$id = str_replace('O', '/', $id);
 		$detail 	= $this->jual->detail($id);
 		$data_jual  = $this->jual->penjualan($id);
 		$width 		= conf()->jenis_kertas_struk == 'HVS' ? '100%' : conf()->ukuran_kertas . 'mm';
@@ -882,6 +891,13 @@ class Penjualan extends CI_Controller {
 							<th style="text-align:right;">'.nf($total_jual).'</th>
 							<span style="clear:both;float:none"></span>
 						</tr>
+      						<tr>
+							<th style="text-align:left;">Jasa</th>
+							<th></th>
+							
+							<th style="text-align:right;">'.nf($detail->jml_donasi).'</th>
+							
+						</tr>
 						<tr>
 							<th style="text-align:left;">Cashback</th>
 							<th></th>
@@ -939,7 +955,7 @@ class Penjualan extends CI_Controller {
 							<th style="text-align:left;">Kembalian</th>
 						
 							<th></th>
-							<th style="text-align:right;">'.nf($detail->total_kembalian - $detail->jml_donasi).'</th>
+							<th style="text-align:right;">'.nf($detail->total_kembalian).'</th>
 							
 						</tr>
 					</tfoot>
@@ -1185,7 +1201,7 @@ class Penjualan extends CI_Controller {
 				if (strlen($item->email_pel) > 0){
 					$email = '<a href="' . site_url('penjualan/lunas/' . $item->kode_penjualan) . '" class="badge badge-success border btn-cetak-inv">Email</a>';
 				}
-				$cetak = '<a href="' . site_url('penjualan/struk/' . $item->kode_penjualan) . '" target="_blank" class="badge badge-light border btn-cetak-inv">Cetak struk</a>';
+				$cetak = '<a href="' . site_url('penjualan/struk/' . str_replace('/', 'O', $item->kode_penjualan)) . '" target="_blank" class="badge badge-light border btn-cetak-inv">Cetak struk</a>';
 			}else if ($item->status_penjualan == 2){
 				$status_penjualan = '<span class="label label-success">Sudah Dikonfirmasi</span>';
 				$hapus = '';
@@ -1196,7 +1212,7 @@ class Penjualan extends CI_Controller {
 				if (strlen($item->email_pel) > 0){
 					$email = '<a href="' . site_url('email/send_email/'. $item->kode_penjualan) . '" class="badge badge-success border btn-cetak-inv">Email</a>';
 				}
-				$cetak = '<a href="' . site_url('penjualan/struk/' . $item->kode_penjualan) . '" target="_blank" class="badge badge-light border btn-cetak-inv">Cetak struk</a>';
+				$cetak = '<a href="' . site_url('penjualan/struk/' . str_replace('/', 'O', $item->kode_penjualan)) . '" target="_blank" class="badge badge-light border btn-cetak-inv">Cetak struk</a>';
 			}else{
 				$status_penjualan = '<span class="label label-danger">Diretur</span>';
 				$hapus = '';
