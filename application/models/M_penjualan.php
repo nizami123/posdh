@@ -92,10 +92,16 @@ class m_penjualan extends CI_Model {
 
     function kode() {
         $id_toko = $this->session->userdata('sesi_toko');
-        $q       = $this->db->query(
-                        "SELECT MAX(RIGHT(kode_penjualan, 4)) AS kode FROM tb_detail_penjualan 
-                         WHERE id_toko = '$id_toko' AND DATE(tgl_transaksi) = CURDATE()"
-                    );
+        $id_kasir = $this->session->userdata('sesi_kasir'); 
+    
+        // Get current month and year
+        $month = date('m');
+        $year = date('y');
+
+        $cut_off = '2024-07-18';
+        $q = $this->db->query(
+            "SELECT MAX(LEFT(kode_penjualan, 4)) AS kode FROM tb_detail_penjualan where tgl_transaksi >= '".$cut_off."' "
+        );
         $kd      = '';
 
         if($q->num_rows() > 0) {
@@ -103,13 +109,30 @@ class m_penjualan extends CI_Model {
                 $tmp = ((int) $k->kode) + 1;
                 $kd  = sprintf('%04s', $tmp);
             }
-            
         } else {
             $kd = 0001;
         }
-               
-        $rand = rand(11, 99);
-        return date('dmy').$rand.$id_toko.$kd;
+
+        $q = $this->db->query(
+            "SELECT SUBSTRING(kode_penjualan, 6, 2) AS kode FROM tb_detail_penjualan order by tgl_transaksi desc limit 1"
+        );
+        $mnt      = '';
+
+        if($q->num_rows() > 0) {
+            foreach($q->result() as $k) {
+                if ($k->kode == $month){
+                    $mnt = $month;
+                }else{
+                    $tmp = ((int) $k->kode) + 1;
+                    $mnt  = sprintf('%02s', $tmp);
+                    $kd = 0001;
+                }
+            }
+        } else {
+            $mnt = $month;
+        }
+
+        return $kd.'/'.$mnt.'/'.$year.'/'.$id_toko.'/'.$id_kasir;
     }
     
     function data_keranjang() {
