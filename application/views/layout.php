@@ -2654,7 +2654,7 @@
                         $('#bayarK').hide();
                         $('#bayarB').hide();
                         $('#bayarT').hide();
-                        $('#bayar,#bayarTunai,#bayarKredit,#bayarBank, ._diskon').on('input',  function() {
+                        $('#bayar,#bayarTunai,#bayarKredit,#bayarBank,#bayarJasa, ._diskon').on('input',  function() {
                             hitung_pembayaran();
                             $(this).val(format_rupiah(this.value));
                         });
@@ -2739,6 +2739,7 @@
                 let bayarB            = parseFloat($("#bayarBank").val().replace(/\D/g, ''));
                 let bayarT            = parseFloat($("#bayarTunai").val().replace(/\D/g, ''));
                 let bayarK            = parseFloat($("#bayarKredit").val().replace(/\D/g, ''));
+                let bayarJ            = parseFloat($("#bayarJasa").val().replace(/\D/g, ''));
                 let diskon           = $('._diskon').val() ? $('._diskon').val() : 0;
                 let jenis_diskon     = $('.jenis_diskon').val();
                 let trade           = $('._trade').val() ? $('._trade').val() : 0;
@@ -2748,6 +2749,7 @@
                 let hitung_diskon;
                 let hitung_kembalian;
 
+                total = parseFloat(total) + bayarJ;
                 bayar = (parseInt(bayarB) || 0) + (parseInt(bayarT) || 0) + (parseInt(bayarK) || 0);
 
                 total = parseInt(total) - parseInt(trade);
