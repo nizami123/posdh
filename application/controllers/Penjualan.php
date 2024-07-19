@@ -86,7 +86,7 @@ class Penjualan extends CI_Controller {
 		}
 		$output = [
 			"draw"             => $this->input->post('draw'),
-			"recordsTotal"     => $this->brg->count_all_brg(),tur
+			"recordsTotal"     => $this->brg->count_all_brg(),
 			"recordsFiltered"  => $this->brg->count_brg(),
 			"data"             => $data,
 		];
@@ -1221,14 +1221,11 @@ class Penjualan extends CI_Controller {
 			}
 			$aksi 	  = '
 				<div class="mt-2">
-    					'.$lunas.'
 					<a href="#modal_detail_riwayat" data-toggle="modal" data-id="'.$item->kode_penjualan.'" class="badge badge-secondary btn_detail_riwayat">
 						Detail
 					</a>                                        
 					'.$cetak.'    
 					'.$email.'   
-     					<span class="mx-2"> | </span>           
-					'.$retur.'   
 					
 				</div>
 			';				
