@@ -86,7 +86,7 @@ class Penjualan extends CI_Controller {
 		}
 		$output = [
 			"draw"             => $this->input->post('draw'),
-			"recordsTotal"     => $this->brg->count_all_brg(),
+			"recordsTotal"     => $this->brg->count_all_brg(),tur
 			"recordsFiltered"  => $this->brg->count_brg(),
 			"data"             => $data,
 		];
@@ -1225,9 +1225,7 @@ class Penjualan extends CI_Controller {
 						Detail
 					</a>                                        
 					'.$cetak.'    
-					'.$email.'    
-					<span class="mx-2"> | </span>           
-					'.$retur.'                         
+					'.$email.'        
 					
 				</div>
 			';				
