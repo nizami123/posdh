@@ -24,7 +24,7 @@ class Email extends CI_Controller {
 	}
 
     public function send_email($id) {
-
+	$id = str_replace('O', '/', $id);
         $detail	= $this->jual->detail($id);
 		$data_jual = $this->jual->penjualan($id);
         $width 		= conf()->jenis_kertas_struk == 'HVS' ? '100%' : conf()->ukuran_kertas . 'mm';
