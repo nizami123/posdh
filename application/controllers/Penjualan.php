@@ -1221,7 +1221,6 @@ class Penjualan extends CI_Controller {
 			}
 			$aksi 	  = '
 				<div class="mt-2">
-					'.$lunas.'
 					<a href="#modal_detail_riwayat" data-toggle="modal" data-id="'.$item->kode_penjualan.'" class="badge badge-secondary btn_detail_riwayat">
 						Detail
 					</a>                                        
