@@ -2168,16 +2168,18 @@
                         }); 
 
                         $('.btn_detail_riwayat').on('click', function(e) {
-                            let id   = $(this).data('id');
+                            let id = $(this).data('id');
                             $('#modal_detail_riwayat .modal-content').html(__modal_loading());
 
-                            $.get(
-                                '<?= site_url('penjualan/load_detail_riwayat/') ?>' + id,
+                            $.post(
+                                '<?= site_url('penjualan/load_detail_riwayat/') ?>', 
+                                { id: id },
                                 function(data) {
                                     $('#modal_detail_riwayat .modal-content').html(data);
                                 }
                             );
                         });
+
 
                         $('.btn_retur').on('click', function(e) {
                             let id   = $(this).data('id');
