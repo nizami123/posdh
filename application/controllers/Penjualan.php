@@ -746,7 +746,6 @@ class Penjualan extends CI_Controller {
 
 	function struk($id = null) {
 		$id = str_replace('O', '/', $id);
-		// print_r($id);die;
 		$detail 	= $this->jual->detail($id);
 		$data_jual  = $this->jual->penjualan($id);
 		$width 		= conf()->jenis_kertas_struk == 'HVS' ? '100%' : conf()->ukuran_kertas . 'mm';
@@ -760,7 +759,6 @@ class Penjualan extends CI_Controller {
 			<style>
     			@font-face {
     				font-family: verdana;
-    				src: url("../../assets/vendor/font/fake-receipt/fake-receipt.ttf");
     				font-display: block;
 					font-size: 14px;
     			}
@@ -826,14 +824,17 @@ class Penjualan extends CI_Controller {
 				<header>
 					<img src="'.base_url().'/upload/logo.jpg" style="width:140px;height: 60px;" alt="Store Logo"> 
 					<p style="padding-bottom: 5px;"> '.admin()->nama_toko.'</p>
-					<p style="border-bottom: 1px dashed #000">'.admin()->alamat.' '.admin()->kecamatan.' '.admin()->kabupaten.' '.admin()->provinsi.' '.admin()->kode_pos.'</p>
+					<p style="border-bottom: 1px dashed #000">'.admin()->alamat.'</p>
 				</header>
 				<div class="nota">
-					<strong>'.$id.'</strong>
+					<medium>'.$id.'</medium>
 					<p style="margin:0;padding:0">
 					    <span style="float:left">
-						    Chasier: '.$detail->nama_ksr.'  
+						    Chasier: '.$detail->nama_admin.'  
 					    </span><br>
+					    <span style="float:left">
+							Sales: '.$detail->nama_ksr.'  
+						</span><br>
 						<span style="float:left">
 						    Customer: '.$pelanggan.'  
 					    </span><br>
@@ -888,6 +889,13 @@ class Penjualan extends CI_Controller {
 							
 							<th style="text-align:right;">'.nf($total_jual).'</th>
 							<span style="clear:both;float:none"></span>
+						</tr>
+      						<tr>
+							<th style="text-align:left;">Jasa</th>
+							<th></th>
+							
+							<th style="text-align:right;">'.nf($detail->jml_donasi).'</th>
+							
 						</tr>
 						<tr>
 							<th style="text-align:left;">Jasa</th>
@@ -1197,7 +1205,7 @@ class Penjualan extends CI_Controller {
 							Retur
 						</a>';
 				if (strlen($item->email_pel) > 0){
-					$email = '<a href="' . site_url('penjualan/lunas/' . str_replace('/', 'O', $item->kode_penjualan)) . '" class="badge badge-success border btn-cetak-inv">Email</a>';
+					$email = '<a href="' . site_url('email/send_email/'. str_replace('/', 'O', $item->kode_penjualan)) . '" class="badge badge-success border btn-cetak-inv">Email</a>';
 				}
 				$cetak = '<a href="' . site_url('penjualan/struk/' . str_replace('/', 'O', $item->kode_penjualan)) . '" target="_blank" class="badge badge-light border btn-cetak-inv">Cetak struk</a>';
 			}else if ($item->status_penjualan == 2){
@@ -1213,8 +1221,7 @@ class Penjualan extends CI_Controller {
 				$cetak = '<a href="' . site_url('penjualan/struk/' . str_replace('/', 'O', $item->kode_penjualan)) . '" target="_blank" class="badge badge-light border btn-cetak-inv">Cetak struk</a>';
 			}else{
 				$status_penjualan = '<span class="label label-danger">Diretur</span>';
-				$hapus = '<a href="'.site_url('penjualan/hps_riwayat/'.str_replace('/', 'O', $item->kode_penjualan)).'" data-text="Riwayat belanja <strong>'.$item->kode_penjualan.'</strong> akan dihapus dari daftar" class="badge badge-danger hps">
-				Hapus</a> ';
+				$hapus = '';
 				$lunas = '';
 				$cetak = '';
 			}
@@ -1225,9 +1232,7 @@ class Penjualan extends CI_Controller {
 						Detail
 					</a>                                        
 					'.$cetak.'    
-					'.$email.'    
-					<span class="mx-2"> | </span>           
-					'.$retur.'                         
+					'.$email.'   
 					
 				</div>
 			';				

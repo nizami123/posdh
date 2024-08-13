@@ -38,7 +38,6 @@ class Email extends CI_Controller {
 			<style>
     			@font-face {
     				font-family: verdana;
-    				src: url("../../assets/vendor/font/fake-receipt/fake-receipt.ttf");
     				font-display: block;
 					font-size: 14px;
     			}
@@ -104,7 +103,7 @@ class Email extends CI_Controller {
 				<header>
 					<img src="'.base_url().'/upload/logo.jpg" style="width:140px;height: 60px;" alt="Store Logo"> 
 					<p style="padding-bottom: 5px;"> '.admin()->nama_toko.'</p>
-					<p style="border-bottom: 1px dashed #000">'.admin()->alamat.' '.admin()->kecamatan.' '.admin()->kabupaten.' '.admin()->provinsi.' '.admin()->kode_pos.'</p>
+					<p style="border-bottom: 1px dashed #000">'.admin()->alamat.'</p>
 				</header>
 				<div class="nota">
 					<strong>'.$id.'</strong>

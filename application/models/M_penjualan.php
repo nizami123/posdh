@@ -98,8 +98,9 @@ class m_penjualan extends CI_Model {
         $month = date('m');
         $year = date('y');
 
+        $cut_off = '2024-07-18';
         $q = $this->db->query(
-            "SELECT MAX(LEFT(kode_penjualan, 4)) AS kode FROM tb_detail_penjualan"
+            "SELECT MAX(LEFT(kode_penjualan, 4)) AS kode FROM tb_detail_penjualan where tgl_transaksi >= '".$cut_off."' "
         );
         $kd      = '';
 
