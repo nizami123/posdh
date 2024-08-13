@@ -890,13 +890,6 @@ class Penjualan extends CI_Controller {
 							<th style="text-align:right;">'.nf($total_jual).'</th>
 							<span style="clear:both;float:none"></span>
 						</tr>
-      						<tr>
-							<th style="text-align:left;">Jasa</th>
-							<th></th>
-							
-							<th style="text-align:right;">'.nf($detail->jml_donasi).'</th>
-							
-						</tr>
 						<tr>
 							<th style="text-align:left;">Jasa</th>
 							<th></th>
@@ -1371,12 +1364,28 @@ class Penjualan extends CI_Controller {
 							</tr>
 							'.$trade.'
 							<tr>
-								<th class="text-right" colspan="3">Diskon</th>
-								<th class="text-right text-danger">'.nf($detail->diskon).'</th>
+								<th class="text-right" colspan="3">Jasa</th>
+								<th class="text-right">'.nf($detail->jml_donasi).'</th>
 							</tr>
 							<tr>
-								<th class="text-right" colspan="3">Bayar</th>
-								<th class="text-right">'.nf($detail->bayar).'</th>
+								<th class="text-right" colspan="3">Cashback</th>
+								<th class="text-right">'.nf($detail->harga_cashback).'</th>
+							</tr>
+							<tr>
+								<th class="text-right" colspan="3">Diskon</th>
+								<th class="text-right">'.nf($detail->diskon).'</th>
+							</tr>
+							<tr>
+								<th class="text-right" colspan="3">Tunai</th>
+								<th class="text-right">'.nf($detail->tunai).'</th>
+							</tr>
+							<tr>
+								<th class="text-right" colspan="3">Kartu Kredit</th>
+								<th class="text-right">'.nf($detail->kredit).'</th>
+							</tr>
+							<tr>
+								<th class="text-right" colspan="3">Kartu Debet</th>
+								<th class="text-right">'.nf($detail->bank).'</th>
 							</tr>
 							'.$table.'
 						</tfoot>                      
