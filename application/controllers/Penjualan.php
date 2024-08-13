@@ -830,7 +830,7 @@ class Penjualan extends CI_Controller {
 					<medium>'.$id.'</medium>
 					<p style="margin:0;padding:0">
 					    <span style="float:left">
-						    Chasier: '.$detail->nama_admin.'  
+						    Cashier: '.$detail->nama_admin.'  
 					    </span><br>
 					    <span style="float:left">
 							Sales: '.$detail->nama_ksr.'  
@@ -961,7 +961,7 @@ class Penjualan extends CI_Controller {
 				</table>
 				<div style="text-align:center;padding-top:20px;margin-bottom:0px; display: flex; justify-content: center; align-items: center;	">
 					<img src="'.base_url().'/upload/qr.jpg" alt="Description of the image" width="100" height="100" style="margin-right: 10px;">
-					<span>SCAN INI UNTUK TAU TENTANG DH STORE</span>
+					<span>SCAN INI UNTUK TAHU TENTANG DH STORE</span>
 				</div>
 				<div style="text-align:center;padding-top:20px;margin-bottom:0px;">
 					Terima kasih sudah berkunjung
