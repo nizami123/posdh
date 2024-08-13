@@ -2742,7 +2742,6 @@
                 let bayarT            = parseFloat($("#bayarTunai").val().replace(/\D/g, ''));
                 let bayarJ            = parseFloat($("#bayarJasa").val().replace(/\D/g, ''));
                 let bayarK            = parseFloat($("#bayarKredit").val().replace(/\D/g, ''));
-                let bayarJ            = parseFloat($("#bayarJasa").val().replace(/\D/g, ''));
                 let diskon           = $('._diskon').val() ? $('._diskon').val() : 0;
                 let jenis_diskon     = $('.jenis_diskon').val();
                 let trade           = $('._trade').val() ? $('._trade').val() : 0;
