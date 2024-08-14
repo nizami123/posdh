@@ -1244,7 +1244,7 @@ class Penjualan extends CI_Controller {
 					</small>
 				</div>
 			';
-
+			$row[]  = $item->nama_toko;
 			$row[]  = $item->cara_bayar;
 			$row[]  = $status_penjualan;
 			$row[]  = $aksi;

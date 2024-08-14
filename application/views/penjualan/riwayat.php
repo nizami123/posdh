@@ -16,6 +16,7 @@
                                 <th>No</th>
                                 <th>Tanggal</th>
                                 <th>Nama Pelanggan</th>
+                                <th>Cabang</th>
                                 <th>Cara Bayar</th>
                                 <th>Status</th>
                                 <th>Aksi</th>
