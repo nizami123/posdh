@@ -226,7 +226,7 @@ class m_penjualan extends CI_Model {
         
         $idKeluar = $this->db->query("select id_keluar from tb_brg_keluar tbk 
         join tb_brg_masuk tbm on tbk.id_masuk = tbm.id_masuk 
-        where tbm.sn_brg = '".$kode."'")->row();
+        where tbm.sn_brg = '".$kode."' and tbk.status = 2")->row();
 
         $where = [
             'id_keluar' => $idKeluar->id_keluar, 
