@@ -92,7 +92,7 @@ class m_penjualan extends CI_Model {
 
     function kode() {
         $id_toko = $this->session->userdata('sesi_toko');
-        $id_kasir = $this->session->userdata('sesi_kasir'); 
+        $id_kasir = $this->session->userdata('sesi_id_admin'); 
     
         // Get current month and year
         $month = date('m');
