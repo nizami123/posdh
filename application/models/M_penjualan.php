@@ -385,7 +385,7 @@ class m_penjualan extends CI_Model {
         $this->__data_detail();
         $this->db->where('tp.kode_penjualan', $id);
         $this->db->where('tp.jml > ',  0);
-        $this->db->where('tt.id_toko', $id_toko);
+        // $this->db->where('tt.id_toko', $id_toko);
         return $this->db->get()->result();
     }
 
