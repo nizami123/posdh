@@ -10,7 +10,7 @@ class m_penjualan extends CI_Model {
     private $pelanggan  = 'tb_pelanggan';
     private $retur      = 'tb_data_retur';
 
-    var $src_riwayat    = ['tdp.kode_penjualan', 'tpp.nama_plg', 'tpp.id_plg'];
+    var $src_riwayat    = ['tdp.kode_penjualan', 'tpp.nama_plg', 'tpp.id_plg', 'tt.nama_toko'];
     var $src_retur      = ['nama_brg'];
 
     private function __data_riwayat() {
