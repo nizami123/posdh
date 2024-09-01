@@ -92,47 +92,55 @@ class m_penjualan extends CI_Model {
 
     function kode() {
         $id_toko = $this->session->userdata('sesi_toko');
-        $id_kasir = $this->session->userdata('sesi_id_admin'); 
+        $id_kasir = $this->session->userdata('sesi_id_admin');
     
         // Get current month and year
         $month = date('m');
         $year = date('y');
-
-        $cut_off = '2024-07-18';
+    
+        // Query to get the highest code for the current month and year
         $q = $this->db->query(
-            "SELECT MAX(LEFT(kode_penjualan, 4)) AS kode FROM tb_detail_penjualan where tgl_transaksi >= '".$cut_off."' "
+            "SELECT MAX(LEFT(kode_penjualan, 4)) AS kode 
+             FROM tb_detail_penjualan 
+             WHERE SUBSTRING(kode_penjualan, 6, 2) = '" . $month . "' 
+             AND SUBSTRING(kode_penjualan, 9, 2) = '" . $year . "'"
         );
-        $kd      = '';
-
-        if($q->num_rows() > 0) {
-            foreach($q->result() as $k) {
-                $tmp = ((int) $k->kode) + 1;
-                $kd  = sprintf('%04s', $tmp);
-            }
+    
+        $kd = '';
+    
+        // Set the code value based on the query result
+        if ($q->num_rows() > 0 && $q->row()->kode !== null) {
+            $tmp = ((int)$q->row()->kode) + 1;
+            $kd = sprintf('%04s', $tmp);
         } else {
-            $kd = 0001;
+            $kd = '0001';
         }
-
+    
+        // Query to get the last recorded month and year from the kode_penjualan field
         $q = $this->db->query(
-            "SELECT SUBSTRING(kode_penjualan, 6, 2) AS kode FROM tb_detail_penjualan order by tgl_transaksi desc limit 1"
+            "SELECT SUBSTRING(kode_penjualan, 6, 2) AS lastMonth, 
+                    SUBSTRING(kode_penjualan, 9, 2) AS lastYear 
+             FROM tb_detail_penjualan 
+             ORDER BY tgl_transaksi DESC 
+             LIMIT 1"
         );
-        $mnt      = '';
-
-        if($q->num_rows() > 0) {
-            foreach($q->result() as $k) {
-                if ($k->kode == $month){
-                    $mnt = $month;
-                }else{
-                    $tmp = ((int) $k->kode) + 1;
-                    $mnt  = sprintf('%02s', $tmp);
-                    $kd = 0001;
-                }
+    
+        $mnt = $month;
+        $yr = $year;
+    
+        // Set the month and year values based on the query result
+        if ($q->num_rows() > 0) {
+            $lastMonth = $q->row()->lastMonth;
+            $lastYear = $q->row()->lastYear;
+    
+            // If the current month is not the same as the last recorded month or a new year is detected
+            if ($lastMonth != $month || $lastYear != $year) {
+                $kd = '0001'; // Reset the sequence number to '0001' if a new month or year is detected
             }
-        } else {
-            $mnt = $month;
         }
-
-        return $kd.'/'.$mnt.'/'.$year.'/'.$id_toko.'/'.$id_kasir;
+    
+        // Return the formatted kode_penjualan
+        return $kd . '/' . $mnt . '/' . $yr . '/' . $id_toko . '/' . $id_kasir;
     }
     
     function data_keranjang() {
