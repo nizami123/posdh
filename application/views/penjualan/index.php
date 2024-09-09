@@ -466,9 +466,3 @@
         </div>
     </div>
 </div>
-
-<script>
-     $('#pelanggan_cek').select2({
-            theme: 'bootstrap4'
-        });    
-</script>
