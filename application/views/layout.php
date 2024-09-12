@@ -2304,16 +2304,17 @@
                         }
                     }).done(
                         function(data) {
-                            if(data == 'grosir-0') {
-                                toast('warning', 'Item tidak tersedia penjualan grosir');
+                            const response = JSON.parse(data);
+                            if(response.message == 'Error') {
+                                $('#src_kode_brg').val('').blur()
+                                $('#src_kode_brg').focus();
+                                toast('warning', 'Item tidak termukan');
                             } else {
-                                if(data == '') {
-                                    data_keranjang();
-                                    $('.total_kembalian').text(0);
-                                    $('.total_kembalian_inp').val(0);
-                                    $('#src_kode_brg').val('').blur();
-                                    toast('info', 'Item sudah ditambahkan ke keranjang');
-                                }
+                                data_keranjang();
+                                $('.total_kembalian').text(0);
+                                $('.total_kembalian_inp').val(0);
+                                $('#src_kode_brg').val('').blur();
+                                toast('info', 'Item sudah ditambahkan ke keranjang');
                             }
                         }
                     );

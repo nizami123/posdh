@@ -232,28 +232,37 @@ class m_penjualan extends CI_Model {
         $id_toko = $this->session->userdata('sesi_toko');
         $admin   = $this->session->userdata('sesi_id_admin');
         
-        $idKeluar = $this->db->query("select id_keluar from tb_brg_keluar tbk 
+        $idKeluar = $this->db->query("select id_keluar, id_toko from tb_brg_keluar tbk 
         join tb_brg_masuk tbm on tbk.id_masuk = tbm.id_masuk 
         where tbm.sn_brg = '".$kode."' and tbk.status = 2")->row();
+        if (empty($idKeluar)) {
+            echo json_encode(["message" => "Error"]);
+        }else{
+            if ($idKeluar->id_toko == $id_toko) {
+                $where = [
+                    'id_keluar' => $idKeluar->id_keluar, 
+                    'id_toko'  => $id_toko,
+                    'kasir'    => $admin
+                ];
+                
+                $insert = [
+                    'id_keluar'       => $idKeluar->id_keluar,
+                    'jml'             => 1,
+                    'id_toko'         => $id_toko,
+                    'kasir'           => $admin,    
+                    'diskon'          => 0
+                ];
+                
+                $cek    = $this->db->get_where($this->keranjang, $where)->row();
+                $this->db->insert($this->keranjang, $insert);
+                $upstok['status']  = 3;
+                $this->db->update('tb_brg_keluar', $upstok, ['id_keluar' => $idKeluar->id_keluar]);
+                echo json_encode(["message" => "Success" ]);
+            }else{
+                echo json_encode(["message" => "Error"]);
+            }
+        }
 
-        $where = [
-            'id_keluar' => $idKeluar->id_keluar, 
-            'id_toko'  => $id_toko,
-            'kasir'    => $admin
-        ];
-        
-        $insert = [
-            'id_keluar'       => $idKeluar->id_keluar,
-            'jml'             => 1,
-            'id_toko'         => $id_toko,
-            'kasir'           => $admin,    
-            'diskon'          => 0
-        ];
-        
-        $cek    = $this->db->get_where($this->keranjang, $where)->row();
-        $this->db->insert($this->keranjang, $insert);
-        $upstok['status']  = 3;
-        $this->db->update('tb_brg_keluar', $upstok, ['id_keluar' => $idKeluar->id_keluar]);
     }
 
     function submit_keranjang($data) {
