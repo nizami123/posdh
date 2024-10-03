@@ -2293,33 +2293,39 @@
                     
                 }
             });
-
-            $('#src_kode_brg').on('input', function() {
+            function debounce(func, delay) {
+                let debounceTimer;
+                return function() {
+                    const context = this;
+                    const args = arguments;
+                    clearTimeout(debounceTimer);
+                    debounceTimer = setTimeout(() => func.apply(context, args), delay);
+                };
+            }
+            $('#src_kode_brg').on('input', debounce(function() {
                 let val = this.value;
-                if(val != '' && val.length >= 3) {
+                if (val != '' && val.length >= 0) {
                     $.post({
                         url: '<?= site_url('penjualan/tambah_keranjang_search') ?>',
                         data: {
                             kode: val,
                         }
-                    }).done(
-                        function(data) {
-                            const response = JSON.parse(data);
-                            if(response.message == 'Error') {
-                                $('#src_kode_brg').val('').blur()
-                                $('#src_kode_brg').focus();
-                                toast('warning', 'Item tidak termukan');
-                            } else {
-                                data_keranjang();
-                                $('.total_kembalian').text(0);
-                                $('.total_kembalian_inp').val(0);
-                                $('#src_kode_brg').val('').blur();
-                                toast('info', 'Item sudah ditambahkan ke keranjang');
-                            }
+                    }).done(function(data) {
+                        const response = JSON.parse(data);
+                        if (response.message == 'Error') {
+                            $('#src_kode_brg').val('').blur();
+                            $('#src_kode_brg').focus();
+                            toast('warning', 'Item tidak termukan');
+                        } else {
+                            data_keranjang();
+                            $('.total_kembalian').text(0);
+                            $('.total_kembalian_inp').val(0);
+                            $('#src_kode_brg').val('').blur();
+                            toast('info', 'Item sudah ditambahkan ke keranjang');
                         }
-                    );
+                    });
                 }
-            });
+            }, 300));
 
             $('#diskon_id134').on('input', function() {
                 let val = this.value;
