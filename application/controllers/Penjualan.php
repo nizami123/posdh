@@ -824,7 +824,8 @@ class Penjualan extends CI_Controller {
 				<header>
 					<img src="'.base_url().'/upload/logo.jpg" style="width:140px;height: 60px;" alt="Store Logo"> 
 					<p style="padding-bottom: 5px;"> '.admin()->nama_toko.'</p>
-					<p style="border-bottom: 1px dashed #000">'.admin()->alamat.'</p>
+					<p style="padding-bottom: 4px;">'.admin()->alamat.'</p>
+					<p style="border-bottom: 1px dashed #000;">Telp & WA ' . (admin()->id_toko == "DHC-0001" ? "(081231369444) (085161168002)" : "(081392025008) (087733663091)") . '</p>
 				</header>
 				<div class="nota">
 					<medium>'.$id.'</medium>
