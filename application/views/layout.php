@@ -2321,6 +2321,7 @@
                             $('.total_kembalian').text(0);
                             $('.total_kembalian_inp').val(0);
                             $('#src_kode_brg').val('').blur();
+                            $('#src_kode_brg').focus();
                             toast('info', 'Item sudah ditambahkan ke keranjang');
                         }
                     });
