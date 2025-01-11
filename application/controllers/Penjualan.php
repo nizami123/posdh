@@ -749,7 +749,7 @@ class Penjualan extends CI_Controller {
 		$detail 	= $this->jual->detail($id);
 		$data_jual  = $this->jual->penjualan($id);
 		$width 		= conf()->jenis_kertas_struk == 'HVS' ? '100%' : conf()->ukuran_kertas . 'mm';
-		$pelanggan  = strlen($detail->nama_plg) > 0 ? $detail->nama_plg : 'Umum';
+		$pelanggan  = !empty($detail->nama_plg) ? $detail->nama_plg : 'Umum';
 
 		$html = '
 		<html>
@@ -964,7 +964,13 @@ class Penjualan extends CI_Controller {
 					<img src="'.base_url().'/upload/qr.jpg" alt="Description of the image" width="100" height="100" style="margin-right: 10px;">
 					<span>SCAN INI UNTUK TAHU TENTANG DH STORE</span>
 				</div>
-				<div style="text-align:center;padding-top:20px;margin-bottom:0px;">
+				<div style="text-align:center;padding-top:10px;margin-bottom:0px;">
+					<span>BARANG YANG DIBELI TIDAK DAPAT DIKEMBALIKAN</span>
+				</div>
+				<div style="text-align:center;margin-bottom:0px;">
+					<span>SYARAT DAN KETENTUAN BERLAKU</span>
+				</div>
+				<div style="text-align:center;padding-top:8px;margin-bottom:0px;">
 					Terima kasih sudah berkunjung
 				</div>
 			</div>
@@ -1198,7 +1204,7 @@ class Penjualan extends CI_Controller {
 				$retur = '<a href="#modal_retur" data-toggle="modal" data-id="'.$item->kode_penjualan.'" class="badge badge-secondary btn_retur">
 							Retur
 						</a>';
-				if (strlen($item->email_pel) > 0){
+				if (!empty($item->email_pel)){
 					$email = '<a href="' . site_url('email/send_email/'. str_replace('/', 'O', $item->kode_penjualan)) . '" class="badge badge-success border btn-cetak-inv">Email</a>';
 				}
 				$cetak = '<a href="' . site_url('penjualan/struk/' . str_replace('/', 'O', $item->kode_penjualan)) . '" target="_blank" class="badge badge-light border btn-cetak-inv">Cetak struk</a>';
@@ -1209,7 +1215,7 @@ class Penjualan extends CI_Controller {
 				$retur = '<a href="#modal_retur" data-toggle="modal" data-id="'.$item->kode_penjualan.'" class="badge badge-secondary btn_retur">
 							Retur
 						</a>';
-				if (strlen($item->email_pel) > 0){
+				if (!empty($item->email_pel)){
 					$email = '<a href="' . site_url('email/send_email/'. str_replace('/', 'O', $item->kode_penjualan)) . '" class="badge badge-success border btn-cetak-inv">Email</a>';
 				}
 				$cetak = '<a href="' . site_url('penjualan/struk/' . str_replace('/', 'O', $item->kode_penjualan)) . '" target="_blank" class="badge badge-light border btn-cetak-inv">Cetak struk</a>';
