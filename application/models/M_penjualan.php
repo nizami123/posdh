@@ -361,7 +361,9 @@ class m_penjualan extends CI_Model {
         // $this->db->where('ta.id_toko', $id_toko);
         $this->db->order_by('tgl_transaksi', 'desc');
         // $this->db->where('tdp.id_admin', $id_admin);
-
+        if(@$_POST['length'] != -1) {
+            $this->db->limit(@$_POST['length'], @$_POST['start']);
+        }
         if($limit) {
             $this->db->limit($limit);
         }

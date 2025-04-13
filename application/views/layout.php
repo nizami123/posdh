@@ -2152,7 +2152,7 @@
             });
 
             let data_riwayat = $('#data_riwayat').dataTable({
-                pageLength: 50,
+                pageLength: 10,
                 ordering: false,
                 serverSide: true,
                 processing: true,
