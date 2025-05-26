@@ -98,7 +98,7 @@
 					<div class="card">
 						<div class="card-header pt-4 d-flex justify-content-between align-items-start">
 							<div>
-								<h5 class="mb-0 text-primary">Produk DH Store</h5>
+								<h5 class="mb-0 text-primary">Produk H3T Store</h5>
 								<small>Data Produk</small>
 							</div>
 						</div>
