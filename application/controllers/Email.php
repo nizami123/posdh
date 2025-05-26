@@ -237,7 +237,7 @@ class Email extends CI_Controller {
 				</table>
 				<div style="text-align:center;padding-top:20px;margin-bottom:0px; display: flex; justify-content: center; align-items: center;	">
 					<img src="'.base_url().'/upload/qr.jpg" alt="Description of the image" width="100" height="100" style="margin-right: 10px;">
-					<span>SCAN INI UNTUK TAU TENTANG DH STORE</span>
+					<span>SCAN INI UNTUK TAU TENTANG H3T STORE</span>
 				</div>
 				<div style="text-align:center;padding-top:20px;margin-bottom:0px;">
 					Terima kasih sudah berkunjung
@@ -259,7 +259,7 @@ class Email extends CI_Controller {
         $mail->Port = 465;
 
         // Atur alamat pengirim, penerima, subjek, dan isi pesan
-        $mail->setFrom('care@dhstore.id', 'DH Store');
+        $mail->setFrom('care@dhstore.id', 'H3T Store');
         $mail->addAddress($detail->email_pel);
         $subject = 'INVOICE PENJUALAN';
         $message = $html;

@@ -411,9 +411,9 @@ class Penjualan extends CI_Controller {
         if (!empty($data['lastID'][0]['id_plg'])) {
           $numericPart = isset($data['lastID'][0]['id_plg']) ? preg_replace('/[^0-9]/', '', $data['lastID'][0]['id_plg']) : '';
           $incrementedNumericPart = sprintf('%04d', intval($numericPart) + 1);
-          $data['newID'] = 'DHCS-' . $incrementedNumericPart;
+          $data['newID'] = 'H3TCS-' . $incrementedNumericPart;
         }else {
-          $data['newID'] = 'DHCS-0001';
+          $data['newID'] = 'H3TCS-0001';
         }
         return $data['newID'];
         
@@ -822,10 +822,10 @@ class Penjualan extends CI_Controller {
 		<body>
 			<div class="print_area">
 				<header>
-					<img src="'.base_url().'/upload/logo.jpg" style="width:140px;height: 60px;" alt="Store Logo"> 
+					<img src="'.base_url().'/upload/logo.png" style="width:140px;height: 60px;" alt="Store Logo"> 
 					<p style="padding-bottom: 5px;"> '.admin()->nama_toko.'</p>
 					<p style="padding-bottom: 4px;">'.admin()->alamat.'</p>
-					<p style="border-bottom: 1px dashed #000;">Telp & WA ' . (admin()->id_toko == "DHC-0001" ? "(081231369444) (085161168002)" : "(081392025008) (087733663091)") . '</p>
+					<p style="border-bottom: 1px dashed #000;">Telp & WA ' . (admin()->id_toko == "H3TC-0001" ? "(081231369444) (085161168002)" : "(081392025008) (087733663091)") . '</p>
 				</header>
 				<div class="nota">
 					<medium>'.$id.'</medium>
@@ -961,8 +961,8 @@ class Penjualan extends CI_Controller {
 					</tfoot>
 				</table>
 				<div style="text-align:center;padding-top:20px;margin-bottom:0px; display: flex; justify-content: center; align-items: center;	">
-					<img src="'.base_url().'/upload/qr.jpg" alt="Description of the image" width="100" height="100" style="margin-right: 10px;">
-					<span>SCAN INI UNTUK TAHU TENTANG DH STORE</span>
+					<img src="'.base_url().'/upload/qrcode.png" alt="Description of the image" width="100" height="100" style="margin-right: 10px;">
+					<span>SCAN INI UNTUK TAHU TENTANG H3T STORE</span>
 				</div>
 				<div style="text-align:center;padding-top:10px;margin-bottom:0px;">
 					<span>BARANG YANG DIBELI TIDAK DAPAT DIKEMBALIKAN</span>

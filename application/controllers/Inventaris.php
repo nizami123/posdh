@@ -708,7 +708,7 @@ class Inventaris extends CI_Controller {
 		$uniqueId = uniqid('', true); // Include more entropy
 		$randomNumericPart = rand(1000, 9999); // Generate a random 4-digit number using rand()
 		
-		$newID = 'DHP-' . str_pad($randomNumericPart, 4, '0', STR_PAD_LEFT);
+		$newID = 'H3TP-' . str_pad($randomNumericPart, 4, '0', STR_PAD_LEFT);
 
 		$input = $this->input->post(null, true);
 
@@ -728,7 +728,7 @@ class Inventaris extends CI_Controller {
 			$barang = $this->db->insert('tb_barang', $data);
 
 			$data = array(
-				'id_supplier'	=> 'DHSUPP-0001',
+				'id_supplier'	=> 'H3TSUPP-0001',
 				'id_brg'		=> $newID,
 				'tgl_masuk'		=> date('Y-m-d H:i:s'),
 				'no_fm'			=> '123',

@@ -108,9 +108,9 @@ class Pelanggan extends CI_Controller {
         if (!empty($data['lastID'][0]['id_plg'])) {
           $numericPart = isset($data['lastID'][0]['id_plg']) ? preg_replace('/[^0-9]/', '', $data['lastID'][0]['id_plg']) : '';
           $incrementedNumericPart = sprintf('%04d', intval($numericPart) + 1);
-          $data['newID'] = 'DHCS-' . $incrementedNumericPart;
+          $data['newID'] = 'H3TCS-' . $incrementedNumericPart;
         }else {
-          $data['newID'] = 'DHCS-0001';
+          $data['newID'] = 'H3TCS-0001';
         }
         return $data['newID'];
         
