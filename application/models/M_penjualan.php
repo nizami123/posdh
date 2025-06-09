@@ -223,8 +223,11 @@ class m_penjualan extends CI_Model {
         
         $cek    = $this->db->get_where($this->keranjang, $where)->row();
         $this->db->insert($this->keranjang, $insert);
-        $upstok['status']  = 3;
-        $this->db->update('tb_brg_keluar', $upstok, ['id_keluar' => $kode]);
+       $upstok['status'] = 3;
+
+        $this->db->where('id_keluar', $kode);
+        $this->db->where('hrg_jual >', 0);
+        $this->db->update('tb_brg_keluar', $upstok);
     }
 
     function tambah_keranjang_search ($input) {
