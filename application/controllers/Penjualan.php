@@ -564,7 +564,7 @@ class Penjualan extends CI_Controller {
 				</div>
 				
 				<div class="mt-4">
-					<button class="btn btn-primary w-100" disabled id="btn_simpan">
+					<button class="btn btn-primary w-100" id="btn_simpan">
 						Simpan
 					</button>
 				</div>

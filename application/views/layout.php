@@ -2794,7 +2794,8 @@
                 } else if (parseInt(bayar) >= parseInt(hitung_diskon) && parseInt(total_inp) > 0) {
                     $('#btn_simpan').removeAttr('disabled');
                 } else {
-                    $('#btn_simpan').prop('disabled', true);
+                    $('#btn_simpan').removeAttr('disabled');
+                    // $('#btn_simpan').prop('disabled', true);
                 }
 
 
