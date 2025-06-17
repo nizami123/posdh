@@ -475,16 +475,6 @@ class Penjualan extends CI_Controller {
 				$optionsBank .= '<option value="' . $bank->id_bank . '">' . $bank->nama_bank . '</option>';
 			}
 		}
-		$optionsBank .= '<option value="Indodana">Indodana</option>';
-		$optionsBank .= '<option value="Kredivo">Kredivo</option>';
-		$optionsBank .= '<option value="Akulaku">Akulaku</option>';
-		$optionsBank .= '<option value="Home Credit">Home Credit</option>';
-		$optionsBank .= '<option value="SPayLater">SPayLater</option>';
-		$optionsBank .= '<option value="OVO">OVO</option>';
-		$optionsBank .= '<option value="GoPay">GoPay</option>';
-		$optionsBank .= '<option value="DANA">DANA</option>';
-		$optionsBank .= '<option value="LinkAja">LinkAja</option>';
-		$optionsBank .= '<option value="ShopeePay">ShopeePay</option>';
 
 		$bank = $this->plg->data_bank();
 
@@ -493,36 +483,13 @@ class Penjualan extends CI_Controller {
 		foreach ($bank as $bank) {
 			$optionsKredit .= '<option value="' . $bank->id_bank . '">' . $bank->nama_bank . '</option>';
 		}}
-		$optionsKredit .= '<option value="Indodana">Indodana</option>';
-		$optionsKredit .= '<option value="Kredivo">Kredivo</option>';
-		$optionsKredit .= '<option value="Akulaku">Akulaku</option>';
-		$optionsKredit .= '<option value="Home Credit">Home Credit</option>';
-		$optionsKredit .= '<option value="SPayLater">SPayLater</option>';
-		$optionsKredit .= '<option value="OVO">OVO</option>';
-		$optionsKredit .= '<option value="GoPay">GoPay</option>';
-		$optionsKredit .= '<option value="DANA">DANA</option>';
-		$optionsKredit .= '<option value="LinkAja">LinkAja</option>';
-		$optionsKredit .= '<option value="ShopeePay">ShopeePay</option>';
 
 		$bank = $this->plg->data_bank();
 		$optionsWallet = '';
 		if (!empty($bank)) {
 		foreach ($bank as $bank) {
 			$optionsWallet .= '<option value="' . $bank->id_bank . '">' . $bank->nama_bank . '</option>';
-		}}
-		$optionsWallet .= '<option value="Indodana">Indodana</option>';
-		$optionsWallet .= '<option value="Kredivo">Kredivo</option>';
-		$optionsWallet .= '<option value="Akulaku">Akulaku</option>';
-		$optionsWallet .= '<option value="Home Credit">Home Credit</option>';
-		$optionsWallet .= '<option value="SPayLater">SPayLater</option>';
-		$optionsWallet .= '<option value="OVO">OVO</option>';
-		$optionsWallet .= '<option value="GoPay">GoPay</option>';
-		$optionsWallet .= '<option value="DANA">DANA</option>';
-		$optionsWallet .= '<option value="LinkAja">LinkAja</option>';
-		$optionsWallet .= '<option value="ShopeePay">ShopeePay</option>';
-
-
-		
+		}}		
 
 		if($cek) {
 			$html = '
@@ -787,6 +754,55 @@ class Penjualan extends CI_Controller {
 		$this->jual->submit_keranjang($brg);
 		$this->jual->submit_detail($detail);
 
+		$bayarTunai = intval(preg_replace("/[^0-9]/", "", $input['bayarTunai']));
+		$bayarKredit = intval(preg_replace("/[^0-9]/", "", $input['bayarKredit']));
+		$bayarBank = intval(preg_replace("/[^0-9]/", "", $input['bayarBank']));
+		$bayarWallet = intval(preg_replace("/[^0-9]/", "", $input['bayarWallet']));
+
+		if ($bayarTunai > 0) {
+			$data = [
+				'kode_penjualan' 	=> $kode,
+				'id_bank' 	=> 'Tunai',
+				'total' => $bayarTunai,
+				// tambahkan kolom lain sesuai kebutuhan
+			];
+
+			$this->db->insert('tb_penjualan_bank', $data);
+		}
+
+		if ($bayarBank > 0) {
+			$data = [
+				'kode_penjualan' 	=> $kode,
+				'id_bank' 	=> $input['id_bank'],
+				'total' => $bayarBank,
+				// tambahkan kolom lain sesuai kebutuhan
+			];
+
+			$this->db->insert('tb_penjualan_bank', $data);
+		}
+
+		if ($bayarKredit > 0) {
+			$data = [
+				'kode_penjualan' 	=> $kode,
+				'id_bank' 	=> $input['id_kredit'],
+				'total' => $bayarKredit,
+				// tambahkan kolom lain sesuai kebutuhan
+			];
+
+			$this->db->insert('tb_penjualan_bank', $data);
+		}
+
+		if ($bayarWallet > 0) {
+			$data = [
+				'kode_penjualan' 	=> $kode,
+				'total' => $bayarWallet,
+				'id_bank' 	=> $input['id_wallet'],
+				// tambahkan kolom lain sesuai kebutuhan
+			];
+
+			$this->db->insert('tb_penjualan_bank', $data);
+		}
+
 		if($is_donasi == 1) {
 			$kd_donasi = 'DNI' . date('ymdGis');
 			$data_donasi = [
@@ -798,6 +814,21 @@ class Penjualan extends CI_Controller {
 		}
 
 		echo $kode; 
+	}
+
+	 public function nota($id) {
+		$id = str_replace('O', '/', $id);
+		$data['header'] = $this->db->query("select * from tb_detail_penjualan tdp
+		left join tb_pelanggan tp on tdp.id_plg = tp.id_plg where kode_penjualan = '".$id."'")->row();
+		$data['bank'] = $this->db->query("select * from tb_penjualan_bank tp
+		left join tb_bank tb on tp.id_bank = tb.id_bank
+		where nama_bank = 'Indodana' and kode_penjualan = '".$id."'")->row();
+		$data['items'] = $this->db->query("select * from tb_penjualan tp 
+		left join tb_brg_keluar tbk on tp.id_keluar = tbk.id_keluar
+		left join tb_brg_masuk tbm on tbk.id_masuk = tbm.id_masuk
+		left join tb_barang tbb on tbb.id_brg  = tbm.id_brg where kode_penjualan = '".$id."'")->result_array();
+		
+		$this->load->view('nota', $data);
 	}
 
 	function struk($id = null) {
