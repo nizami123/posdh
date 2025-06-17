@@ -556,7 +556,7 @@ class Penjualan extends CI_Controller {
 				</div>
 				<div class="form-group">
                     <label> Jasa </label>
-                    <input class="form-control form-control-sm bg-secondary _bayar" id="bayarJasa" name="bayarJasa">
+                    <input class="form-control form-control-sm bg-secondary _bayar" id="bayarJasa" value="0" name="bayarJasa">
                 </div>
 				<div class="form-group">
                     <label> Keterangan </label>
