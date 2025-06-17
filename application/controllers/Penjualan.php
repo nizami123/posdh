@@ -475,6 +475,53 @@ class Penjualan extends CI_Controller {
 				$optionsBank .= '<option value="' . $bank->id_bank . '">' . $bank->nama_bank . '</option>';
 			}
 		}
+		$optionsBank .= '<option value="Indodana">Indodana</option>';
+		$optionsBank .= '<option value="Kredivo">Kredivo</option>';
+		$optionsBank .= '<option value="Akulaku">Akulaku</option>';
+		$optionsBank .= '<option value="Home Credit">Home Credit</option>';
+		$optionsBank .= '<option value="SPayLater">SPayLater</option>';
+		$optionsBank .= '<option value="OVO">OVO</option>';
+		$optionsBank .= '<option value="GoPay">GoPay</option>';
+		$optionsBank .= '<option value="DANA">DANA</option>';
+		$optionsBank .= '<option value="LinkAja">LinkAja</option>';
+		$optionsBank .= '<option value="ShopeePay">ShopeePay</option>';
+
+		$bank = $this->plg->data_bank();
+
+		$optionsKredit = '';
+		if (!empty($bank)) {
+		foreach ($bank as $bank) {
+			$optionsKredit .= '<option value="' . $bank->id_bank . '">' . $bank->nama_bank . '</option>';
+		}}
+		$optionsKredit .= '<option value="Indodana">Indodana</option>';
+		$optionsKredit .= '<option value="Kredivo">Kredivo</option>';
+		$optionsKredit .= '<option value="Akulaku">Akulaku</option>';
+		$optionsKredit .= '<option value="Home Credit">Home Credit</option>';
+		$optionsKredit .= '<option value="SPayLater">SPayLater</option>';
+		$optionsKredit .= '<option value="OVO">OVO</option>';
+		$optionsKredit .= '<option value="GoPay">GoPay</option>';
+		$optionsKredit .= '<option value="DANA">DANA</option>';
+		$optionsKredit .= '<option value="LinkAja">LinkAja</option>';
+		$optionsKredit .= '<option value="ShopeePay">ShopeePay</option>';
+
+		$bank = $this->plg->data_bank();
+		$optionsWallet = '';
+		if (!empty($bank)) {
+		foreach ($bank as $bank) {
+			$optionsWallet .= '<option value="' . $bank->id_bank . '">' . $bank->nama_bank . '</option>';
+		}}
+		$optionsWallet .= '<option value="Indodana">Indodana</option>';
+		$optionsWallet .= '<option value="Kredivo">Kredivo</option>';
+		$optionsWallet .= '<option value="Akulaku">Akulaku</option>';
+		$optionsWallet .= '<option value="Home Credit">Home Credit</option>';
+		$optionsWallet .= '<option value="SPayLater">SPayLater</option>';
+		$optionsWallet .= '<option value="OVO">OVO</option>';
+		$optionsWallet .= '<option value="GoPay">GoPay</option>';
+		$optionsWallet .= '<option value="DANA">DANA</option>';
+		$optionsWallet .= '<option value="LinkAja">LinkAja</option>';
+		$optionsWallet .= '<option value="ShopeePay">ShopeePay</option>';
+
+
 		
 
 		if($cek) {
@@ -546,11 +593,19 @@ class Penjualan extends CI_Controller {
 					</div>	
 					<div class="input-group input-group-sm ui-widget" id="bayarK">
 						<div class="input-group-prepend">
-							<div class="input-group-text bg-white px-4">
-								Kredit
-							</div>
+								<select class="form-control form-control-sm id_kredit" name="id_kredit">
+								' . $optionsKredit . '
+								</select>
 						</div>
 						<input type="text"  class="form-control form-control-sm bg-secondary _bayar" name="bayarKredit" id="bayarKredit">
+					</div>	
+					<div class="input-group input-group-sm ui-widget" id="bayarW">
+						<div class="input-group-prepend">
+								<select class="form-control form-control-sm id_wallet" name="id_wallet">
+								' . $optionsWallet . '
+								</select>
+						</div>
+						<input type="text"  class="form-control form-control-sm bg-secondary _bayar" name="bayarWallet" id="bayarWallet">
 					</div>	
 				</div>
 				<div class="form-group">
@@ -701,8 +756,9 @@ class Penjualan extends CI_Controller {
 		$bayarB = isset($input['bayarB']) ? intval(preg_replace("/[^0-9]/", "", $input['bayarB'])) : 0;
 		$bayarT = isset($input['bayarT']) ? intval(preg_replace("/[^0-9]/", "", $input['bayarT'])) : 0;
 		$bayarK = isset($input['bayarK']) ? intval(preg_replace("/[^0-9]/", "", $input['bayarK'])) : 0;
+		$bayarw = isset($input['bayarw']) ? intval(preg_replace("/[^0-9]/", "", $input['bayarw'])) : 0;
 
-		$bayar = $bayarB + $bayarT + $bayarK;
+		$bayar = $bayarB + $bayarT + $bayarK + $bayarW;
 
 		$detail = [
 			'kode_penjualan' 	=> $kode,

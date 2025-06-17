@@ -2664,7 +2664,8 @@
                         $('#bayarK').hide();
                         $('#bayarB').hide();
                         $('#bayarT').hide();
-                        $('#bayar,#bayarTunai,#bayarKredit,#bayarBank,#bayarJasa, ._diskon').on('input',  function() {
+                        $('#bayarW').hide();
+                        $('#bayar,#bayarTunai,#bayarKredit,#bayarWallet,#bayarBank,#bayarJasa, ._diskon').on('input',  function() {
                             hitung_pembayaran();
                             $(this).val(format_rupiah(this.value));
                         });
@@ -2706,14 +2707,17 @@
                                 $('#bayarT').show();
                                 $('#bayarK').hide();
                                 $('#bayarB').hide();
+                                $('#bayarW').hide();
                             } else if (selectedOption === 'Transfer') {
                                 $('#bayarB').show();
                                 $('#bayarK').hide();
                                 $('#bayarT').hide();
+                                $('#bayarW').hide();
                             } else {
                                 $('#bayarK').show();
                                 $('#bayarB').show();
                                 $('#bayarT').show();
+                                $('#bayarW').show();
                             }
                         });
                     }
@@ -2750,6 +2754,7 @@
                 let bayarT            = parseFloat($("#bayarTunai").val().replace(/\D/g, ''));
                 let bayarJ            = parseFloat($("#bayarJasa").val().replace(/\D/g, ''));
                 let bayarK            = parseFloat($("#bayarKredit").val().replace(/\D/g, ''));
+                let bayarW            = parseFloat($("#bayarWallet").val().replace(/\D/g, ''));
                 let diskon           = $('._diskon').val() ? $('._diskon').val() : 0;
                 let jenis_diskon     = $('.jenis_diskon').val();
                 let trade           = $('._trade').val() ? $('._trade').val() : 0;
@@ -2760,7 +2765,7 @@
                 let hitung_kembalian;
 
                 total = parseFloat(total) + bayarJ;
-                bayar = (parseInt(bayarB) || 0) + (parseInt(bayarT) || 0) + (parseInt(bayarK) || 0);
+                bayar = (parseInt(bayarB) || 0) + (parseInt(bayarT) || 0) + (parseInt(bayarK) || 0) + (parseInt(bayarW) || 0);
 
                 total = parseInt(total) - parseInt(trade);
                 if(jenis_diskon == 'Nominal') {
