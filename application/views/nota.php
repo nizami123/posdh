@@ -69,7 +69,7 @@
     <table>
         <tr>
             <td style="width: 8%;">
-                <img src="<?=base_url()?>assets/images/logo/logo-icon.png" alt="Logo" style="max-width: 100px;">
+                <img src="<?=base_url()?>upload/logo-icon.png" alt="Logo" style="max-width: 100px;">
             </td>
             <td style="width: 52%;">
                 <strong>H3T OFFICE</strong><br>

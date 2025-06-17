@@ -1294,7 +1294,7 @@ class Penjualan extends CI_Controller {
 				if (!empty($item->email_pel)){
 					$email = '<a href="' . site_url('email/send_email/'. str_replace('/', 'O', $item->kode_penjualan)) . '" class="badge badge-success border btn-cetak-inv">Email</a>';
 				}
-				$cetak = '<a href="' . site_url('penjualan/struk/' . str_replace('/', 'O', $item->kode_penjualan)) . '" target="_blank" class="badge badge-light border btn-cetak-inv">Cetak struk</a>';
+				$cetak = '<a href="' . site_url('penjualan/nota/' . str_replace('/', 'O', $item->kode_penjualan)) . '" target="_blank" class="badge badge-light border btn-cetak-inv">Cetak struk</a>';
 			}else if ($item->status_penjualan == 2){
 				$status_penjualan = '<span class="label label-success">Sudah Dikonfirmasi</span>';
 				$hapus = '';
@@ -1305,7 +1305,7 @@ class Penjualan extends CI_Controller {
 				if (!empty($item->email_pel)){
 					$email = '<a href="' . site_url('email/send_email/'. str_replace('/', 'O', $item->kode_penjualan)) . '" class="badge badge-success border btn-cetak-inv">Email</a>';
 				}
-				$cetak = '<a href="' . site_url('penjualan/struk/' . str_replace('/', 'O', $item->kode_penjualan)) . '" target="_blank" class="badge badge-light border btn-cetak-inv">Cetak struk</a>';
+				$cetak = '<a href="' . site_url('penjualan/nota/' . str_replace('/', 'O', $item->kode_penjualan)) . '" target="_blank" class="badge badge-light border btn-cetak-inv">Cetak struk</a>';
 			}else{
 				$status_penjualan = '<span class="label label-danger">Diretur</span>';
 				$hapus = '';
