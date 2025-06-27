@@ -128,7 +128,16 @@
     ?>
     <tr>
         <td style="text-align: center;"><?= $no++ ?></td>
-        <td><?= $item['sn_brg'].' - '.$item['nama_brg'] ?></td>
+        <td>
+            <table>
+                <tr>
+                    <td><?= $item['nama_brg'] ?></td>
+                </tr>
+                <tr>
+                    <td><?= $item['sn_brg'] ?></td>
+                </tr>
+            </table>
+        </td>
         <td></td>
         <td style="text-align: center;"><?= $item['jml'] ?></td>
         <td style="text-align: right;"><?= number_format($harga_asli, 0, ',', '.') ?></td>
@@ -186,6 +195,12 @@
                     </strong></td>
                 </tr>
                 <?php } ?>
+                <!-- <tr>
+                    <td style="text-align:right;"><strong>Kembalian:</strong></td>
+                    <td style="text-align:right;"><strong>
+                        <?= number_format($header->total_kembalian, 0, ',', '.') ?>
+                    </strong></td>
+                </tr> -->
             </table>
 
             <!-- Tanda Tangan -->
