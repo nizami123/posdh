@@ -74,7 +74,7 @@
             <td style="width: 52%;">
                 <strong>H3T OFFICE</strong><br>
                 SIDOTOPO WETAN BARU 2/33<br>
-                Email : h3h3h3@gmail.com<br>
+                Email : h3toffice1@gmail.com<br>
                 NO TELEPON : 03137390409, 081333466614 <br>
                 http://www.h3tcomputer.com
             </td>
@@ -128,7 +128,7 @@
     ?>
     <tr>
         <td style="text-align: center;"><?= $no++ ?></td>
-        <td><?= $item['nama_brg'] ?></td>
+        <td><?= $item['sn_brg'].' - '.$item['nama_brg'] ?></td>
         <td></td>
         <td style="text-align: center;"><?= $item['jml'] ?></td>
         <td style="text-align: right;"><?= number_format($harga_asli, 0, ',', '.') ?></td>
