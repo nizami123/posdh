@@ -117,18 +117,38 @@ class Pelanggan extends CI_Controller {
     }
 
 	function proses_tambah_plg() {
-		$input = $this->input->post(null, true);
-		$data = [
-            'id_plg'    => $input['id_plg'],
-            'nama_plg'   => $input['nama_plg'],
-            'no_ponsel'  => $input['no_ponsel'],
-            'alamat'     => $input['alamat'],
-            'email'      => $input['email'],
-        ];
+    $input = $this->input->post(null, true);
 
-        $this->db->insert('tb_pelanggan', $data);
-        return $data['id_plg'];
-	}
+    // Ambil ID pelanggan terakhir
+    $last_id = $this->db->select('id_plg')
+                        ->like('id_plg', 'H3TCUS-')
+                        ->order_by('id_plg', 'DESC')
+                        ->limit(1)
+                        ->get('tb_pelanggan')
+                        ->row();
+
+    if ($last_id) {
+        $last_number = (int)substr($last_id->id_plg, 7); // Ambil angka dari H3TCUS-0005 → 0005
+        $new_number = $last_number + 1;
+    } else {
+        $new_number = 1;
+    }
+
+    // Format ID baru
+    $new_id = 'H3TCUS-' . str_pad($new_number, 4, '0', STR_PAD_LEFT);
+
+    $data = [
+        'id_plg'     => $new_id,
+        'nama_plg'   => $input['nama_plg'],
+        'no_ponsel'  => $input['no_ponsel'],
+        'alamat'     => $input['alamat'],
+        'email'      => $input['email'],
+    ];
+
+    $this->db->insert('tb_pelanggan', $data);
+    return $data['id_plg'];
+}
+
 
 	function proses_ubah_plg() {
 		$input = $this->input->post(null, true);
