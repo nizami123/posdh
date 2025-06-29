@@ -526,6 +526,17 @@ class Penjualan extends CI_Controller {
                     <input class="form-control form-control-sm bg-secondary _bayar" id="bayarJasa" value="0" name="bayarJasa">
                 </div>
 				<div class="form-group">
+					<label class="mr-2">TR</label>
+					<div class="input-group input-group-sm ui-widget">
+						<select class="form-control form-control-sm komisi" name="komisi" id="komisi">
+							<option value="" disabled selected>-- Pilih Nominal--</option>
+							<option value="25000">25.000</option>
+							<option value="50000">50.000</option>
+							<option value="100000">100.000</option>
+						</select>
+					</div>					
+				</div>
+				<div class="form-group">
                     <label> Keterangan </label>
                     <textarea class="form-control form-control-sm" id="ket" name="ket"></textarea>
                 </div>
@@ -746,6 +757,7 @@ class Penjualan extends CI_Controller {
 			'bank'				=> intval(preg_replace("/[^0-9]/", "", $input['bayarBank'])),
 			'jml_donasi'		=> intval(preg_replace("/[^0-9]/", "", $input['bayarJasa'])),
 			'jasa'				=> $input['ket'],
+			'komisi'			=> $input['komisi'],
 			'is_donasi'  		=> $is_donasi,
 			'tgl_transaksi' 	=> date('Y-m-d G:i:s'),
 			'id_toko' 			=> $id_toko
