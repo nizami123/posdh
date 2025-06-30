@@ -72,11 +72,9 @@
                 <img src="<?=base_url()?>upload/logo-icon.png" alt="Logo" style="max-width: 100px;">
             </td>
             <td style="width: 52%;">
-                <strong>H3T OFFICE</strong><br>
-                SIDOTOPO WETAN BARU 2/33<br>
-                Email : h3toffice1@gmail.com<br>
-                NO TELEPON : 03137390409, 081333466614 <br>
-                http://www.h3tcomputer.com
+                <strong><?= $toko->nama_toko ?></strong><br>
+                <?= $toko->alamat ?><br>
+                No Telp : <?= $toko->no_telp ?> 
             </td>
             <td style="width: 40%; text-align: right;">
                 <table>
