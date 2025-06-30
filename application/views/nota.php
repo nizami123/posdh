@@ -131,9 +131,15 @@
                 <tr>
                     <td><?= $item['nama_brg'] ?></td>
                 </tr>
-                <tr>
-                    <td><?= $item['sn_brg'] ?></td>
-                </tr>
+                <?php
+                $snList = $this->db->query("select sn_brg from tb_penjualan tp 
+		left join tb_brg_keluar tbk on tp.id_keluar = tbk.id_keluar
+		left join tb_brg_masuk tbm on tbk.id_masuk = tbm.id_masuk
+		left join tb_barang tbb on tbb.id_brg  = tbm.id_brg WHERE nama_brg = ?", [$item['nama_brg']])->result_array();
+                foreach ($snList as $sn) {
+                    echo '<tr><td>' . $sn['sn_brg'] . '</td></tr>';
+                }
+                ?>
             </table>
         </td>
         <td></td>

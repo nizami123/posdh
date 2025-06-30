@@ -835,10 +835,11 @@ class Penjualan extends CI_Controller {
 		$data['bank'] = $this->db->query("select * from tb_penjualan_bank tp
 		left join tb_bank tb on tp.id_bank = tb.id_bank
 		where nama_bank = 'Indodana' and kode_penjualan = '".$id."'")->row();
-		$data['items'] = $this->db->query("select * from tb_penjualan tp 
+		$data['items'] = $this->db->query("select sum(harga_diskon) harga_diskon,harga_jual,sum(jml) jml,nama_brg from tb_penjualan tp
 		left join tb_brg_keluar tbk on tp.id_keluar = tbk.id_keluar
 		left join tb_brg_masuk tbm on tbk.id_masuk = tbm.id_masuk
-		left join tb_barang tbb on tbb.id_brg  = tbm.id_brg where kode_penjualan = '".$id."'")->result_array();
+		left join tb_barang tbb on tbb.id_brg  = tbm.id_brg where kode_penjualan = '".$id."'
+		group by nama_brg ")->result_array();
 		$data['toko'] = $this->db->query("select * from tb_toko where id_toko = '".admin()->id_toko."'")->row();
 		// print_r($data['toko']);die;
 		
