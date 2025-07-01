@@ -494,14 +494,19 @@ class Penjualan extends CI_Controller {
 		if($cek) {
 			$html = '
 				<script>
+					$(document).on("select2:open", () => {
+						setTimeout(() => {
+							document.querySelector(".select2-container--open .select2-search__field")?.focus();
+						}, 0);
+					});
 					$("#pelanggan_cek").select2({
             			theme: "bootstrap4"
-        			});
+        			}).val("").trigger("change");
 				</script>
 				<div class="form-group">
 					<label> Pelanggan </label>
 					<div class="input-group">
-						<select class="form-control form-control-sm id_plg" name="id_plg" id="pelanggan_cek">
+						<select class="form-control form-control-sm id_plg" name="id_plg" id="pelanggan_cek" required>
 							<option value="Umum">Umum</option>
 							' . $optionsPel . '
 						</select>
