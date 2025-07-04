@@ -844,7 +844,7 @@ class Penjualan extends CI_Controller {
 		left join tb_brg_keluar tbk on tp.id_keluar = tbk.id_keluar
 		left join tb_brg_masuk tbm on tbk.id_masuk = tbm.id_masuk
 		left join tb_barang tbb on tbb.id_brg  = tbm.id_brg where kode_penjualan = '".$id."'
-		group by nama_brg ")->result_array();
+		group by nama_brg, tp.harga_jual ")->result_array();
 		$data['toko'] = $this->db->query("select * from tb_toko where id_toko = '".admin()->id_toko."'")->row();
 		// print_r($data['toko']);die;
 		

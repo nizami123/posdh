@@ -113,54 +113,56 @@
             <th style="width:12%;">Subtotal</th>
         </tr>
     </thead>
-    <tbody>
-    <?php
-    $no = 1;
-    $subtotal = 0;
-    foreach ($items as $item):
-        $diskon_rp = ($item['harga_diskon'] ?? 0);
-        $harga_asli = $item['harga_jual'];
-        $harga_akhir = $harga_asli - $diskon_rp;
-        $total_item = $harga_akhir * $item['jml'];
-        $subtotal += $total_item;
-    ?>
-    <tr>
-        <td style="text-align: center;"><?= $no++ ?></td>
-        <td>
-            <table>
-                <tr>
-                    <td><?= $item['nama_brg'] ?></td>
-                </tr>
-                <?php
-                $snList = $this->db->query("
-                    SELECT sn_brg 
-                    FROM tb_penjualan tp 
-                    LEFT JOIN tb_brg_keluar tbk ON tp.id_keluar = tbk.id_keluar
-                    LEFT JOIN tb_brg_masuk tbm ON tbk.id_masuk = tbm.id_masuk
-                    LEFT JOIN tb_barang tbb ON tbb.id_brg = tbm.id_brg 
-                    WHERE nama_brg = ? AND kode_penjualan = ?
-                ", [$item['nama_brg'], $item['kode_penjualan']])->result_array();
-                foreach ($snList as $sn) {
-                    echo '<tr><td>' . $sn['sn_brg'] . '</td></tr>';
-                }
-                ?>
-            </table>
-        </td>
-        <td></td>
-        <td style="text-align: center;"><?= $item['jml'] ?></td>
-        <td style="text-align: right;"><?= number_format($harga_asli, 0, ',', '.') ?></td>
-        <td style="text-align: right;"><?= number_format($diskon_rp, 0, ',', '.') ?></td>
-        <td style="text-align: right;"><?= number_format($total_item, 0, ',', '.') ?></td>
-    </tr>
-    <?php endforeach; ?>
-    <?php if (!empty($header->jasa)): ?>
-    <tr>
-        <td colspan="7" style="font-size: 11px; color: #555;">
-            Catatan : <?= nl2br($header->jasa) ?>
-        </td>
-    </tr>
-    <?php endif; ?>
+<tbody>
+<?php
+$no = 1;
+$subtotal = 0;
+
+foreach ($items as $item):
+    $snList = $this->db->query("
+        SELECT sn_brg, harga_jual
+        FROM tb_penjualan tp 
+        LEFT JOIN tb_brg_keluar tbk ON tp.id_keluar = tbk.id_keluar
+        LEFT JOIN tb_brg_masuk tbm ON tbk.id_masuk = tbm.id_masuk
+        LEFT JOIN tb_barang tbb ON tbb.id_brg = tbm.id_brg 
+        WHERE nama_brg = ? AND kode_penjualan = ? AND tp.harga_jual = ?
+    ", [$item['nama_brg'], $item['kode_penjualan'], $item['harga_jual']])->result_array();
+
+    $rowspan = count($snList);
+    $harga_asli = $item['harga_jual'];
+    $diskon_rp = $item['harga_diskon'] ?? 0;
+    $harga_akhir = $harga_asli - $diskon_rp;
+    $total_item = $harga_asli * $item['jml'];
+    $subtotal += $total_item;
+?>
+<tr>
+    <td rowspan="<?= $rowspan + 1 ?>" style="text-align: center;"><?= $no++ ?></td>
+    <td><?= $item['nama_brg'] ?></td>
+    <td rowspan="<?= $rowspan + 1 ?>"></td> <!-- Garansi -->
+    <td rowspan="<?= $rowspan + 1 ?>" style="text-align: center;"><?= $item['jml'] ?></td>
+    <td rowspan="<?= $rowspan + 1 ?>" style="text-align: right;"><?= number_format($harga_asli, 0, ',', '.') ?></td>
+    <td rowspan="<?= $rowspan + 1 ?>" style="text-align: right;"><?= number_format($diskon_rp, 0, ',', '.') ?></td>
+    <td rowspan="<?= $rowspan + 1 ?>" style="text-align: right;"><?= number_format($total_item, 0, ',', '.') ?></td>
+</tr>
+
+<?php foreach ($snList as $sn): ?>
+<tr>
+    <td><?= $sn['sn_brg'] ?></td>
+</tr>
+<?php endforeach; ?>
+
+<?php endforeach; ?>
+
+<?php if (!empty($header->jasa)): ?>
+<tr>
+    <td colspan="6" style="font-size: 11px; color: #555;">
+        Catatan : <?= nl2br($header->jasa) ?>
+    </td>
+    <td style="text-align: right;"><?= number_format($header->jml_donasi, 0, ',', '.') ?></td>
+</tr>
+<?php endif; ?>
 </tbody>
+
 
 </table>
 
@@ -180,7 +182,7 @@
                 <tr>
                     <td style="text-align:right;"><strong>Subtotal:</strong></td>
                     <td style="text-align:right; width: 30%;">
-                        <?= number_format($header->total_keranjang, 0, ',', '.') ?>
+                        <?= number_format(($header->total_penjualan - $header->jml_donasi), 0, ',', '.') ?>
                     </td>
                 </tr>
                 <tr>
@@ -192,7 +194,7 @@
                 <tr>
                     <td style="text-align:right;"><strong>Total:</strong></td>
                     <td style="text-align:right;"><strong>
-                        <?= number_format($header->total_penjualan, 0, ',', '.') ?>
+                        <?= number_format($header->total_keranjang, 0, ',', '.') ?>
                     </strong></td>
                 </tr>
                 <?php if (!empty($bank->total)) { ?>
@@ -233,9 +235,9 @@
 </table>
 
 
-<script>
+<!-- <script>
     window.print();
-</script>
+</script> -->
 
 </body>
 </html>
