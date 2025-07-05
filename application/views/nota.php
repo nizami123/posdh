@@ -235,9 +235,9 @@ foreach ($items as $item):
 </table>
 
 
-<!-- <script>
+<script>
     window.print();
-</script> -->
+</script>
 
 </body>
 </html>
