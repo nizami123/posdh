@@ -507,7 +507,7 @@ class Penjualan extends CI_Controller {
 					<label> Pelanggan </label>
 					<div class="input-group">
 						<select class="form-control form-control-sm id_plg" name="id_plg" id="pelanggan_cek" required>
-							<option value="Umum">Umum</option>
+							
 							' . $optionsPel . '
 						</select>
 						<a class="btn btn-sm bg-white border px-3" 
@@ -856,7 +856,7 @@ class Penjualan extends CI_Controller {
 		$detail 	= $this->jual->detail($id);
 		$data_jual  = $this->jual->penjualan($id);
 		$width 		= conf()->jenis_kertas_struk == 'HVS' ? '100%' : conf()->ukuran_kertas . 'mm';
-		$pelanggan  = !empty($detail->nama_plg) ? $detail->nama_plg : 'Umum';
+		$pelanggan  = !empty($detail->nama_plg) ? $detail->nama_plg : '';
 
 		$html = '
 		<html>
@@ -1095,7 +1095,7 @@ class Penjualan extends CI_Controller {
 		$width 		= conf()->jenis_kertas_struk == 'HVS' ? '100%' : conf()->ukuran_kertas . 'mm';
 		
 		if($detail) {
-			$nama_plg = $detail->nama_plg ? $detail->nama_plg : 'Umum';
+			$nama_plg = $detail->nama_plg ? $detail->nama_plg : '';
 			$html = '
 				<html>
 					<head>
@@ -1292,7 +1292,7 @@ class Penjualan extends CI_Controller {
 		$data = [];
 		$no = $this->input->post('start');
 		foreach ($list as $item) { 
-			$nama_plg = $item->id_plg ? $item->nama_plg : 'Umum';
+			$nama_plg = $item->id_plg ? $item->nama_plg : '';
 			$jml = $this->jual->cek_jml_jual($item->kode_penjualan);
 			$email = '';
 			$retur = '';
@@ -1378,7 +1378,7 @@ class Penjualan extends CI_Controller {
 		$id = $post['id'];
 		$jual = $this->jual->penjualan($id);
 		$detail = $this->jual->detail($id);
-		$nama_plg = $detail->id_plg ? $detail->nama_plg : 'Umum';
+		$nama_plg = $detail->id_plg ? $detail->nama_plg : '';
 
 		$html = '
 			<div class="modal-header">
