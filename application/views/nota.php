@@ -98,7 +98,9 @@
     <strong>Kepada Yth:</strong><br>
     <?= $header->nama_plg ?><br>
     <?= $header->no_ponsel ?><br>
-    <?= nl2br($header->alamat) ?>
+    <?php if (!empty($header->alamat)): ?>
+        <?= nl2br($header->alamat) ?>
+    <?php endif; ?>
 </div>
 
 <table class="item-table" style="margin-top:10px;">
