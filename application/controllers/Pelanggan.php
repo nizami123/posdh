@@ -104,16 +104,18 @@ class Pelanggan extends CI_Controller {
 
 	
     function generateid(){
-        $data['lastID'] = $this->db->query("select id_plg from tb_pelanggan order by id_plg desc limit 1")->result_array();
-        if (!empty($data['lastID'][0]['id_plg'])) {
-          $numericPart = isset($data['lastID'][0]['id_plg']) ? preg_replace('/[^0-9]/', '', $data['lastID'][0]['id_plg']) : '';
-          $incrementedNumericPart = sprintf('%04d', intval($numericPart) + 1);
-          $data['newID'] = 'H3TCS-' . $incrementedNumericPart;
-        }else {
-          $data['newID'] = 'H3TCS-0001';
-        }
-        return $data['newID'];
+        $data['lastID'] = $this->db->query("SELECT id_plg FROM tb_pelanggan ORDER BY id_plg DESC LIMIT 1")->result_array();
         
+        if (!empty($data['lastID'][0]['id_plg'])) {
+            $parts = explode('-', $data['lastID'][0]['id_plg']);
+            $numericPart = isset($parts[1]) ? $parts[1] : '0000';
+            $incrementedNumericPart = sprintf('%04d', intval($numericPart) + 1);
+            $data['newID'] = 'H3TCUS-' . $incrementedNumericPart;
+        } else {
+            $data['newID'] = 'H3TCUS-0001';
+        }
+
+        return $data['newID'];
     }
 
 	function proses_tambah_plg() {
