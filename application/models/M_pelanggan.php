@@ -39,25 +39,30 @@ class m_pelanggan extends CI_Model {
         }
     }
 
+
     private function __data_keluar() {
         $this->db->from($this->tb_keluar . ' plg');
         $this->db->where('status', 2);
         $this->db->where('hrg_jual > 0');
         
-        $i = 0;
-        foreach ($this->src_keluar as $item) {  
-            if(@$_POST['search']['value']) { 
-                if($i == 0) { 
-                    $this->db->group_start();
-                    $this->db->like($item, $_POST['search']['value']);
-                } else {
-                    $this->db->or_like($item, $_POST['search']['value']);
+        if (!empty($_POST['search']['value'])) {
+            $searchTerms = explode(' ', $_POST['search']['value']);
+
+            $this->db->group_start();
+            foreach ($searchTerms as $term) {
+                $this->db->group_start();
+                $i = 0;
+                foreach ($this->src_keluar as $item) {
+                    if ($i == 0) {
+                        $this->db->like($item, $term);
+                    } else {
+                        $this->db->or_like($item, $term);
+                    }
+                    $i++;
                 }
-                if(count($this->src_keluar) - 1 == $i) {
-                    $this->db->group_end(); 
-                }
+                $this->db->group_end(); // end OR group for this word
             }
-            $i++;
+            $this->db->group_end(); // end AND group for all words
         }
     }
 
