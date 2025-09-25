@@ -32,6 +32,7 @@
     <link rel="stylesheet" href="<?= base_url() ?>assets/css/main.css">
     <link rel="stylesheet" href="<?= base_url() ?>assets/css/media.css">
     <link rel="stylesheet" href="<?= base_url() ?>assets/css/animasi.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css">
 
     <style>
         .wp-15 {
@@ -335,6 +336,8 @@
     <script src="<?= base_url() ?>assets/vendor/DataTables/datatables.min.js"></script>
     <script src="<?= base_url() ?>assets/vendor/sweetalert/sweetalert2.all.min.js"></script>
     <script src="<?= base_url() ?>assets/vendor/select2/js/select2.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
     <!-- <script src="https://js.pusher.com/7.2/pusher.min.js"></script> -->
     <?php if($uri1 == 'lap_global') : ?>
         <script>
@@ -2150,6 +2153,31 @@
                     }
                 ]
             });
+            let startOfMonth = moment().startOf('month').format('YYYY-MM-DD');
+            let endOfMonth   = moment().endOf('month').format('YYYY-MM-DD');
+            $(function() {
+                $('#daterange').daterangepicker({
+                    opens: 'right',
+                    autoUpdateInput: true,
+                    startDate: moment().startOf('month'), // 1st day of this month
+                    endDate: moment().endOf('month'), 
+                    locale: {
+                        format: 'YYYY-MM-DD',
+                        cancelLabel: 'Clear'
+                    }
+                });
+
+                $('#daterange').on('cancel.daterangepicker', function(ev, picker) {
+                    $(this).val(startOfMonth + ' - ' + endOfMonth);
+                    picker.setStartDate(startOfMonth);
+                    picker.setEndDate(endOfMonth);
+                    data_riwayat.api().ajax.reload(); 
+                });
+                $('#daterange').on('apply.daterangepicker', function(ev, picker) {
+                    $(this).val(picker.startDate.format('YYYY-MM-DD') + ' - ' + picker.endDate.format('YYYY-MM-DD'));
+                    data_riwayat.api().ajax.reload(); 
+                });
+            });
 
             let data_riwayat = $('#data_riwayat').dataTable({
                 pageLength: 10,
@@ -2159,6 +2187,11 @@
                 ajax: {
                     type: 'post',
                     url: '<?= site_url('penjualan/load_data_riwayat') ?>',
+                    data: function(d) {
+                        let drp = $('#daterange').data('daterangepicker');
+                        d.start_date = drp ? drp.startDate.format('YYYY-MM-DD') : startOfMonth;
+                        d.end_date   = drp ? drp.endDate.format('YYYY-MM-DD') : endOfMonth;
+                    },
                     complete: function() {    
                         $('.hps').on('click', function(e) {
                             e.preventDefault();

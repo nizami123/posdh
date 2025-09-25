@@ -10,6 +10,12 @@
             </div>
             <div class="card-body">
                 <div class="table-responsive">
+                    <div class="row mb-2">
+                        <div class="col-md-3">
+                            <label for="daterange">Filter Tanggal</label>
+                            <input type="text" id="daterange" class="form-control" />
+                        </div>
+                    </div>
                     <table class="table table-bordered w-100" id="data_riwayat">
                         <thead class="bg-light">
                             <tr>

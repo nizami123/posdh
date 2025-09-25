@@ -331,10 +331,18 @@ class m_penjualan extends CI_Model {
         $id_toko  = $this->session->userdata('sesi_toko');
         $id_admin = $this->session->userdata('sesi_id_admin');
         $level    =  $this->session->userdata('sesi_level');
+        $start = $this->input->post('start_date');
+        $end   = $this->input->post('end_date');
 
         $this->__data_riwayat();
-        $this->db->where('ta.id_toko', $id_toko);
-        $this->db->where('tdp.id_admin', $id_admin);
+        if ($id_admin !== 'H3TEMP-0015' || $id_admin !=='H3TEMP-0001' && $level == 'Kasir') {
+            $this->db->where('ta.id_toko', $id_toko);
+            $this->db->where('tdp.id_admin', $id_admin);
+        }
+        if ($start && $end) {
+            $this->db->where('DATE(tgl_transaksi) >=', $start);
+            $this->db->where('DATE(tgl_transaksi) <=', $end);
+        }
 
         return $this->db->get()->num_rows();
     }
@@ -359,8 +367,16 @@ class m_penjualan extends CI_Model {
         $id_toko  = $this->session->userdata('sesi_toko');
         $id_admin = $this->session->userdata('sesi_id_admin');
         $level    =  $this->session->userdata('sesi_level');
+        $start = $this->input->post('start_date');
+        $end   = $this->input->post('end_date');
 
         $this->__data_riwayat();
+
+        if ($start && $end) {
+            $this->db->where('DATE(tgl_transaksi) >=', $start);
+            $this->db->where('DATE(tgl_transaksi) <=', $end);
+        }
+
         // $this->db->where('ta.id_toko', $id_toko);
         $this->db->order_by('tgl_transaksi', 'desc');
         // $this->db->where('tdp.id_admin', $id_admin);
