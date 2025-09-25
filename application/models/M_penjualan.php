@@ -335,10 +335,10 @@ class m_penjualan extends CI_Model {
         $end   = $this->input->post('end_date');
 
         $this->__data_riwayat();
-        if ($id_admin !== 'H3TEMP-0015' || $id_admin !=='H3TEMP-0001' && $level == 'Kasir' || $level == 'Owner') {
-            $this->db->where('ta.id_toko', $id_toko);
-            $this->db->where('tdp.id_admin', $id_admin);
-        }
+        // if ($id_admin !== 'H3TEMP-0015' || $id_admin !=='H3TEMP-0001' && $level == 'Kasir' || $level == 'Owner') {
+        //     $this->db->where('ta.id_toko', $id_toko);
+        //     $this->db->where('tdp.id_admin', $id_admin);
+        // }
         if ($start && $end) {
             $this->db->where('DATE(tgl_transaksi) >=', $start);
             $this->db->where('DATE(tgl_transaksi) <=', $end);
