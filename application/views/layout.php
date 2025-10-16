@@ -336,6 +336,11 @@
     <script src="<?= base_url() ?>assets/vendor/sweetalert/sweetalert2.all.min.js"></script>
     <script src="<?= base_url() ?>assets/vendor/select2/js/select2.full.min.js"></script>
     <!-- <script src="https://js.pusher.com/7.2/pusher.min.js"></script> -->
+     <script>
+        $(document).ready(function () {
+            $.fn.dataTable.ext.errMode = 'none';
+        });
+    </script>
     <?php if($uri1 == 'lap_global') : ?>
         <script>
             let base_url = '<?= site_url() ?>';
