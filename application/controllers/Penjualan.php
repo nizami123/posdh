@@ -508,7 +508,7 @@ class Penjualan extends CI_Controller {
 				<div class="form-group">
 					<label> Pelanggan </label>
 					<div class="input-group">
-						<select class="form-control form-control-sm id_plg" name="id_plg" id="pelanggan_cek" required>
+						<select class="form-control form-control-sm id_plg" name="id_pela" id="pelanggan_cek" required>
 							<option value="" disabled selected> Pilih Pelanggan </option>
 							' . $optionsPel . '
 						</select>
@@ -754,7 +754,7 @@ class Penjualan extends CI_Controller {
 			'diskon'      	 	=> $diskon_total,
 			'cashback'			=> $cashback_total,
 			'total_penjualan'	=> $jual_total+intval(preg_replace("/[^0-9]/", "", $input['bayarJasa'])),
-			'id_plg'      	 	=> $input['id_plg'],
+			'id_plg'      	 	=> $input['id_pela'],
 			'id_ksr'      	 	=> $input['id_ksr'],
 			'cara_bayar'	 	=> $cara_bayar,
 			'jenis_diskon'  	=> '',

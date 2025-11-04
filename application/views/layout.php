@@ -2282,7 +2282,7 @@
                 }).done(function() {
                     data_plg.api().ajax.reload(null, true);
                     let option = new Option(nama, id);
-                    $('select[name="id_plg"]').append(option).val(id);
+                    $('select[name="id_pela"]').append(option).val(id);
                     $('.modal').trigger('reset').modal('hide');
                     toast('success', 'Pelanggan baru sudah ditambahkan');
                     // tambahkan d
