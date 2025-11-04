@@ -339,6 +339,11 @@
     <script src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
     <!-- <script src="https://js.pusher.com/7.2/pusher.min.js"></script> -->
+    <script>
+        $(document).ready(function () {
+            $.fn.dataTable.ext.errMode = 'none';
+        });
+    </script>
     <?php if($uri1 == 'lap_global') : ?>
         <script>
             let base_url = '<?= site_url() ?>';
