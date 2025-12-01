@@ -194,13 +194,32 @@ class m_penjualan extends CI_Model {
         }
     }
 
+    // function hps_keranjang($id) {
+    //     $admin   = $this->session->userdata('sesi_id_admin');
+    //     $cart    = $this->db->get_where($this->keranjang, ['id_keranjang' => $id, 'kasir' => $admin])->row();
+    //     $upstok['status']  = 2;
+    //     $this->db->update('tb_brg_keluar', $upstok, ['id_keluar' => $cart->id_keluar]);
+    //     $this->db->delete($this->keranjang, ['id_keranjang' => $id, 'kasir' => $admin]);
+    // }
+
     function hps_keranjang($id) {
-        $admin   = $this->session->userdata('sesi_id_admin');
-        $cart    = $this->db->get_where($this->keranjang, ['id_keranjang' => $id, 'kasir' => $admin])->row();
-        $upstok['status']  = 2;
-        $this->db->update('tb_brg_keluar', $upstok, ['id_keluar' => $cart->id_keluar]);
-        $this->db->delete($this->keranjang, ['id_keranjang' => $id, 'kasir' => $admin]);
+        $admin = $this->session->userdata('sesi_id_admin');
+
+        $this->db->trans_start();
+
+        $cart = $this->db->get_where($this->keranjang, [
+            'id_keranjang' => $id,
+            'kasir'        => $admin
+        ])->row();
+
+        if ($cart) {
+            $this->db->update('tb_brg_keluar', ['status' => 2], ['id_keluar' => $cart->id_keluar]);
+            $this->db->delete($this->keranjang, ['id_keranjang' => $id, 'kasir' => $admin]);
+        }
+
+        $this->db->trans_complete();
     }
+
 
     function tambah_keranjang ($input) {
         $kode    = $input['kode'];

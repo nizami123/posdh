@@ -27,12 +27,12 @@ class Penjualan extends CI_Controller {
 						<a href="' . site_url('penjualan') . '" class="btn ' . ((!isset($_GET['status']) || empty($_GET['status'])) ? 'dashed bg-black' : 'dashed bg-white') . '">
 							Transaksi
 						</a>
-                        <a href="'.site_url('penjualan?status=dp').'" class="btn ' . (isset($_GET['status']) && $_GET['status'] == 'dp' ? 'dashed bg-black' : 'dashed bg-white') . '">
+                        <!-- <a href="'.site_url('penjualan?status=dp').'" class="btn ' . (isset($_GET['status']) && $_GET['status'] == 'dp' ? 'dashed bg-black' : 'dashed bg-white') . '">
                             DP
                         </a>
                         <a href="'.site_url('penjualan/riwayat').'" class="btn bg-white dashed">
                             Riwayat
-                        </a>
+                        </a> -->
                         
                     </div>
 					<div class="text-right">
