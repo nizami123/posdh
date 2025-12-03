@@ -144,6 +144,8 @@ class Pelanggan extends CI_Controller {
         'nama_plg'   => $input['nama_plg'],
         'no_ponsel'  => $input['no_ponsel'],
         'alamat'     => $input['alamat'],
+        'tgl_lahir'  => $input['tgl_lahir'],
+        'agama'      => $input['agama'],
         'email'      => $input['email'],
     ];
 

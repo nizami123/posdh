@@ -47,7 +47,7 @@
                     <div class="form-group col-md-12">
                         <label for="">Nama Pelanggan <span class="text-danger">*</span> </label>
                         <input type="text" class="form-control form-control-sm" name="nama_plg" required>
-                    </div>                    
+                    </div>                
                     <div class="form-group col-md-12">
                         <label for="">No Ponsel</label>
                         <input type="text" class="form-control form-control-sm" name="no_ponsel" >
@@ -55,7 +55,23 @@
                     <div class="form-group col-md-12">
                         <label for="">Email</label>
                         <input type="text" class="form-control form-control-sm" name="email" >
-                    </div>                    
+                    </div>  
+                    <div class="form-group col-md-12">
+                        <label for="">Tgl Lahir</label>
+                        <input type="date" class="form-control form-control-sm" name="tgl_lahir">
+                    </div>     
+                    <div class="form-group col-md-12">
+                        <label for="">Agama</label>
+                        <select class="form-control form-control-sm" name="agama" required>
+                            <option value="">-- Pilih Agama --</option>
+                            <option value="Islam">Islam</option>
+                            <option value="Kristen Protestan">Kristen Protestan</option>
+                            <option value="Katolik">Katolik</option>
+                            <option value="Hindu">Hindu</option>
+                            <option value="Buddha">Buddha</option>
+                            <option value="Konghucu">Konghucu</option>
+                        </select>
+                    </div>                  
                     <div class="form-group col-md-12">
                         <label for="">Alamat</label>
                         <input type="text" class="form-control form-control-sm" name="alamat">
