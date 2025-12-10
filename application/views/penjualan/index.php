@@ -186,11 +186,11 @@
                         <input type="text" class="form-control form-control-sm" name="email" >
                     </div>       
                     <div class="form-group col-md-12">
-                        <label for="">Tgl Lahir</label>
-                        <input type="date" class="form-control form-control-sm" name="tgl_lahir">
+                        <label for="">Tgl Lahir <span class="text-danger">*</span></label>
+                        <input type="date" class="form-control form-control-sm" name="tgl_lahir" required>
                     </div>     
                     <div class="form-group col-md-12">
-                        <label for="">Agama</label>
+                        <label for="">Agama <span class="text-danger">*</span></label>
                         <select class="form-control form-control-sm" name="agama" required>
                             <option value="">-- Pilih Agama --</option>
                             <option value="Islam">Islam</option>
