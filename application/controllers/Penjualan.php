@@ -864,6 +864,8 @@ class Penjualan extends CI_Controller {
 						$total_reg	+= (int) $jual->jml;
 						$total_jual	+= (int) $jual->harga_jual;
 						$hemat		 = (int) ($total_reg - $total_cart) + $detail->diskon;
+						$hrg_diskon = $jual->harga_diskon > 0 ? ($jual->harga_jual - $jual->harga_diskon) : 0;
+						$diskon = $jual->harga_diskon;
 
 						$html .= '
 							<tr>
@@ -875,7 +877,7 @@ class Penjualan extends CI_Controller {
 									'.$jual->jml.' Pcs
 								</td>
 								<td style="text-align:right; padding-left: 20px">
-									'.nf($sub).'
+									'.($diskon > 0 ? '<s>'.nf($sub).'</s><br><i>' . nf($hrg_diskon) . '</i>' : nf($sub)).'
 								</td>
 							</tr>
 							';
@@ -906,14 +908,14 @@ class Penjualan extends CI_Controller {
 							
 						</tr>
 						<tr>
-							<th style="text-align:left;">Diskon</th>
+							<th style="text-align:left;">Total Diskon</th>
 							
 							<th></th>
 							<th style="text-align:right;">'.nf($detail->diskon).'</th>
 							
 						</tr>
 
-						<tr>
+						<!--<tr>
 							<th style="text-align:left; padding-top: 15px;
 							padding-bottom: 4px; ">Total</th>
 							
@@ -921,15 +923,15 @@ class Penjualan extends CI_Controller {
 							<th style="text-align:right;padding-top: 15px;
 							padding-bottom: 4px;">'.nf($detail->total_keranjang).'</th>
 							
-						</tr>
+						</tr>-->
 
 
 						
 						<tr>
-							<th style="text-align:left;">Tunai</th>
+							<th style="text-align:left; padding-top: 15px;">Tunai</th>
 							
 							<th></th>
-							<th style="text-align:right;">'.nf($detail->tunai).'</th>
+							<th style="text-align:right; padding-top: 15px;">'.nf($detail->tunai).'</th>
 							
 						</tr>
 
@@ -952,10 +954,10 @@ class Penjualan extends CI_Controller {
 
 						$html .= '
 						<tr>
-							<th style="text-align:left;">Kembalian</th>
+							<th style="text-align:left; padding-top: 15px; font-size: 20px;">Grand Total</th>
 						
 							<th></th>
-							<th style="text-align:right;">'.nf($detail->total_kembalian).'</th>
+							<th style="text-align:right; padding-top: 15px; font-size: 20px;">'.nf($detail->total_keranjang).'</th>
 							
 						</tr>
 					</tfoot>
