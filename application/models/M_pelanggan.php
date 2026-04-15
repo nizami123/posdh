@@ -211,6 +211,7 @@ class m_pelanggan extends CI_Model {
 
     function data_ksr() {
         $this->__data_ksr();
+        $this->db->where('status', null);
         $this->db->order_by('id_ksr', 'desc');
         if(@$_POST['length'] != -1) {
             $this->db->limit(@$_POST['length'], @$_POST['start']);
