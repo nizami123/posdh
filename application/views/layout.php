@@ -2796,7 +2796,7 @@
 
                 if (status === 'dp') {
                     $('#btn_simpan').removeAttr('disabled');
-                } else if (parseInt(bayar) >= parseInt(hitung_diskon) && parseInt(total_inp) > 0) {
+                } else if (parseInt(bayar) >= parseInt(hitung_diskon) && parseInt(total_inp) >= 0) {
                     $('#btn_simpan').removeAttr('disabled');
                 } else {
                     $('#btn_simpan').prop('disabled', true);
